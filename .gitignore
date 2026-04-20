@@ -1,0 +1,49 @@
+# ═══════════════════════════════════════════════════════
+# Jorge Díaz · .gitignore
+# ═══════════════════════════════════════════════════════
+
+# Secretos y credenciales (NUNCA subir)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+
+# Editores / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencias (si en el futuro agregamos Node)
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+build/
+out/
+
+# Archivos temporales
+*.tmp
+*.bak
+*.backup
+.cache/
+
+# Datos sensibles de prueba
+/datos-privados/
+/levantamientos-papa/
+*.local.json

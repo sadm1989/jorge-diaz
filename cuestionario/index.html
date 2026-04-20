@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jorge Díaz · Levantamiento de Información</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a1628;
+  --deep: #0f2540;
+  --steel: #1e3a5f;
+  --brass: #c8a870;
+  --brass-bright: #e8c885;
+  --foam: #f5f1e8;
+  --cream: #ebe4d2;
+  --coral: #e85a4f;
+  --algae: #5c8d70;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Fraunces', Georgia, serif;
+  background: var(--ink);
+  color: var(--foam);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at top right, rgba(200, 168, 112, 0.08), transparent 50%),
+    radial-gradient(ellipse at bottom left, rgba(30, 58, 95, 0.4), transparent 60%),
+    linear-gradient(180deg, var(--ink) 0%, #060f1d 100%);
+  background-attachment: fixed;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.3;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+}
+
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 40px 28px 80px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== HEADER ===== */
+header {
+  margin-bottom: 48px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(200, 168, 112, 0.2);
+}
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 14px;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 44px;
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+h1 em {
+  color: var(--brass-bright);
+  font-weight: 500;
+}
+
+.intro {
+  font-size: 17px;
+  font-style: italic;
+  color: var(--cream);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+/* ===== PROGRESS ===== */
+.progress-wrap {
+  margin: 32px 0 48px;
+  padding: 20px 24px;
+  background: rgba(30, 58, 95, 0.3);
+  border: 1px solid rgba(200, 168, 112, 0.15);
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.progress-pct {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--brass-bright);
+}
+
+.progress-bar {
+  height: 4px;
+  background: rgba(200, 168, 112, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brass) 0%, var(--brass-bright) 100%);
+  width: 0%;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.save-indicator {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--algae);
+  margin-top: 10px;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.save-indicator.visible { opacity: 1; }
+
+/* ===== SECCIONES ===== */
+.section {
+  margin-bottom: 56px;
+  padding-bottom: 40px;
+  border-bottom: 1px dashed rgba(200, 168, 112, 0.2);
+}
+
+.section:last-of-type { border-bottom: none; }
+
+.section-number {
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--brass);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 30px;
+  font-weight: 400;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.section-description {
+  font-size: 15px;
+  color: var(--cream);
+  font-style: italic;
+  margin-bottom: 28px;
+  max-width: 620px;
+}
+
+/* ===== CAMPOS ===== */
+.field {
+  margin-bottom: 24px;
+}
+
+.field-label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 10px;
+}
+
+.field-hint {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(245, 241, 232, 0.6);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(30, 58, 95, 0.35);
+  border: 1px solid rgba(200, 168, 112, 0.2);
+  color: var(--foam);
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--brass-bright);
+  background: rgba(30, 58, 95, 0.55);
+  box-shadow: 0 0 0 3px rgba(200, 168, 112, 0.1);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* ===== LISTAS DINÁMICAS ===== */
+.dynamic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.list-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  background: rgba(30, 58, 95, 0.25);
+  border: 1px solid rgba(200, 168, 112, 0.12);
+  transition: all 0.2s ease;
+}
+
+.list-item:hover {
+  border-color: rgba(200, 168, 112, 0.3);
+}
+
+.list-item-index {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--brass);
+  width: 32px;
+  text-align: center;
+}
+
+.list-item input {
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.list-item input:focus {
+  box-shadow: none;
+  border-bottom: 1px solid var(--brass);
+}
+
+.list-item-multi {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+  flex: 1;
+}
+
+.btn-remove {
+  background: none;
+  border: 1px solid rgba(232, 90, 79, 0.3);
+  color: var(--coral);
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.btn-remove:hover {
+  background: var(--coral);
+  color: var(--ink);
+  border-color: var(--coral);
+}
+
+.btn-add {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 12px 18px;
+  background: transparent;
+  border: 1px dashed var(--brass);
+  color: var(--brass);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.btn-add:hover {
+  background: rgba(200, 168, 112, 0.08);
+  border-style: solid;
+  color: var(--brass-bright);
+}
+
+/* ===== CHECKBOX PILL GROUPS ===== */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chip-check {
+  position: relative;
+  cursor: pointer;
+}
+
+.chip-check input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.chip-check span {
+  display: inline-block;
+  padding: 10px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgba(200, 168, 112, 0.25);
+  color: var(--brass);
+  transition: all 0.2s ease;
+}
+
+.chip-check:hover span {
+  border-color: var(--brass);
+  color: var(--foam);
+}
+
+.chip-check input:checked + span {
+  background: var(--brass);
+  color: var(--ink);
+  border-color: var(--brass);
+  font-weight: 600;
+}
+
+/* ===== CTA FINAL ===== */
+.final-cta {
+  margin-top: 56px;
+  padding: 40px;
+  background: linear-gradient(135deg, rgba(200, 168, 112, 0.1) 0%, rgba(30, 58, 95, 0.4) 100%);
+  border: 1px solid rgba(200, 168, 112, 0.3);
+  text-align: center;
+}
+
+.final-cta h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 400;
+  font-style: italic;
+  margin-bottom: 14px;
+}
+
+.final-cta p {
+  font-size: 14px;
+  color: var(--cream);
+  margin-bottom: 24px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-primary {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 18px 32px;
+  background: var(--brass);
+  color: var(--ink);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin: 0 6px 10px;
+}
+
+.btn-primary:hover {
+  background: var(--brass-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(200, 168, 112, 0.2);
+}
+
+.btn-secondary {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 18px 32px;
+  background: transparent;
+  color: var(--brass);
+  border: 1px solid var(--brass);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 6px 10px;
+}
+
+.btn-secondary:hover {
+  background: rgba(200, 168, 112, 0.1);
+  color: var(--brass-bright);
+}
+
+/* ===== MODAL ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 15, 29, 0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal.visible { display: flex; }
+
+.modal-content {
+  background: var(--deep);
+  border: 1px solid var(--brass);
+  padding: 40px;
+  max-width: 640px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-style: italic;
+  color: var(--brass-bright);
+  margin-bottom: 16px;
+}
+
+.modal pre {
+  background: var(--ink);
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--cream);
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid rgba(200, 168, 112, 0.2);
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+  h1 { font-size: 32px; }
+  .section-title { font-size: 24px; }
+  .container { padding: 24px 16px 60px; }
+  .list-item-multi { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<header>
+  <div class="eyebrow">Jorge Díaz · Levantamiento #01</div>
+  <h1><em>Cuestionario</em><br>para calibrar el sistema</h1>
+  <p class="intro">
+    Este levantamiento alimenta el Radar de Licitaciones de la empresa.
+    Responder con tiempo: mientras más precisas sean las respuestas, mejor detecta el sistema las oportunidades reales.
+    Los datos se guardan automáticamente en este computador.
+  </p>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-top">
+    <span class="progress-label">Avance del formulario</span>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="save-indicator" id="saveIndicator">✓ Guardado automáticamente</div>
+</div>
+
+<form id="questionnaire">
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 1: DATOS DE LA EMPRESA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="1">
+  <div class="section-number">I · IDENTIDAD</div>
+  <h2 class="section-title">Datos de la empresa</h2>
+  <p class="section-description">Información básica para identificar la empresa en ChileCompra y poder consultar su historial.</p>
+
+  <div class="field">
+    <label class="field-label">Razón social completa</label>
+    <input type="text" name="empresa_razon_social" placeholder="Ej: Comercial Náutica Díaz Ltda.">
+  </div>
+
+  <div class="field">
+    <label class="field-label">RUT de la empresa (con puntos y guión)</label>
+    <input type="text" name="empresa_rut" placeholder="Ej: 76.123.456-7">
+    <p class="field-hint">Formato exacto requerido por la API de Mercado Público.</p>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Nombre comercial o fantasía</label>
+    <input type="text" name="empresa_nombre_fantasia" placeholder="Ej: Náutica Díaz">
+  </div>
+
+  <div class="field">
+    <label class="field-label">Región(es) donde opera / entrega</label>
+    <input type="text" name="empresa_regiones" placeholder="Ej: Valparaíso, Magallanes, Los Lagos, nacional">
+  </div>
+
+  <div class="field">
+    <label class="field-label">Años de trayectoria vendiendo al Estado</label>
+    <input type="number" name="empresa_anios" min="0" max="60" placeholder="Ej: 12">
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 2: CATÁLOGO DE PRODUCTOS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="2">
+  <div class="section-number">II · CATÁLOGO</div>
+  <h2 class="section-title">Productos principales</h2>
+  <p class="section-description">
+    Lista los 20–30 productos que más vende al Estado. Escribe el término técnico como aparece en los pliegos,
+    no el nombre comercial. Ejemplo: escribir "regulador de buceo balanced 1st stage" en lugar de "regulador marca X".
+    Esto es lo más importante del cuestionario — define qué detecta el radar.
+  </p>
+
+  <div class="field">
+    <label class="field-label">Productos (término técnico + código ONU/CPC si lo tienes)</label>
+    <div class="dynamic-list" id="productos-list"></div>
+    <button type="button" class="btn-add" onclick="agregarItem('productos', ['producto', 'codigo_onu'])">
+      + Agregar producto
+    </button>
+    <p class="field-hint">Si no conoces el código ONU/CPC, déjalo vacío — luego lo identificamos desde los pliegos históricos.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 3: PALABRAS CLAVE TÉCNICAS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="3">
+  <div class="section-number">III · LENGUAJE TÉCNICO</div>
+  <h2 class="section-title">Palabras clave del rubro</h2>
+  <p class="section-description">
+    Términos específicos que aparecen en los títulos o descripciones de las licitaciones del rubro.
+    Estas son las que el sistema usa para detectar oportunidades. Piensa: "si leo esta palabra en un título, probablemente me interesa".
+  </p>
+
+  <div class="field">
+    <label class="field-label">Palabras clave CRÍTICAS (siempre son del rubro)</label>
+    <div class="dynamic-list" id="keywords-hot-list"></div>
+    <button type="button" class="btn-add" onclick="agregarItem('keywords-hot', ['keyword'])">
+      + Agregar palabra clave crítica
+    </button>
+    <p class="field-hint">Ej: "rebreather", "regulador de buceo", "compresor de aire alta presión", "traje seco"</p>
+  </div>
+
+  <div class="field" style="margin-top: 32px;">
+    <label class="field-label">Palabras clave SECUNDARIAS (a veces son del rubro, conviene revisar)</label>
+    <div class="dynamic-list" id="keywords-warm-list"></div>
+    <button type="button" class="btn-add" onclick="agregarItem('keywords-warm', ['keyword'])">
+      + Agregar palabra clave secundaria
+    </button>
+    <p class="field-hint">Ej: "ferretería naval", "elementos de amarre", "equipo de seguridad marítima"</p>
+  </div>
+
+  <div class="field" style="margin-top: 32px;">
+    <label class="field-label">Palabras a EXCLUIR (descartan la licitación aunque aparezcan términos del rubro)</label>
+    <div class="dynamic-list" id="keywords-exclude-list"></div>
+    <button type="button" class="btn-add" onclick="agregarItem('keywords-exclude', ['keyword'])">
+      + Agregar palabra a excluir
+    </button>
+    <p class="field-hint">Ej: "servicio de buceo" (si solo vendes equipos, no servicios), "arrendamiento", "mantención integral"</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 4: CLIENTES PRINCIPALES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="4">
+  <div class="section-number">IV · CLIENTES</div>
+  <h2 class="section-title">Organismos con los que trabajas</h2>
+  <p class="section-description">
+    Los organismos públicos a los que más vendes. Estos reciben un boost en el score para detectar
+    sus licitaciones con prioridad.
+  </p>
+
+  <div class="field">
+    <label class="field-label">Organismos clientes (con frecuencia de compra)</label>
+    <div class="dynamic-list" id="clientes-list"></div>
+    <button type="button" class="btn-add" onclick="agregarItem('clientes', ['nombre', 'frecuencia'])">
+      + Agregar organismo
+    </button>
+    <p class="field-hint">En frecuencia pon: "muy alta", "alta", "media", "ocasional"</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 5: LICITACIONES GANADAS (últimos 2 años) -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="5">
+  <div class="section-number">V · HISTORIAL</div>
+  <h2 class="section-title">Últimas licitaciones ganadas</h2>
+  <p class="section-description">
+    Las 10 más recientes/representativas que haya ganado la empresa. El sistema las usa como referencia
+    de lo que califica como "oportunidad real" y para calibrar el scoring.
+  </p>
+
+  <div class="field">
+    <label class="field-label">Código de licitación + Monto adjudicado</label>
+    <div class="dynamic-list" id="ganadas-list"></div>
+    <button type="button" class="btn-add" onclick="agregarItem('ganadas', ['codigo', 'monto'])">
+      + Agregar licitación ganada
+    </button>
+    <p class="field-hint">Formato del código: XXXX-XX-LXYY (ej: 1234-56-LP25). Monto en CLP, solo números (ej: 45000000).</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 6: COMPETIDORES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="6">
+  <div class="section-number">VI · COMPETENCIA</div>
+  <h2 class="section-title">Competidores conocidos</h2>
+  <p class="section-description">
+    Empresas que suelen competir por las mismas licitaciones. Esto alimenta la capa de inteligencia competitiva.
+  </p>
+
+  <div class="field">
+    <label class="field-label">Competidores principales</label>
+    <div class="dynamic-list" id="competidores-list"></div>
+    <button type="button" class="btn-add" onclick="agregarItem('competidores', ['nombre', 'nivel'])">
+      + Agregar competidor
+    </button>
+    <p class="field-hint">En nivel pon: "alto" (muy fuerte, gana mucho), "medio", "bajo". Si conoces su RUT o algún patrón (ej: baja precio al final), anótalo en notas al final.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 7: FILTROS DE NEGOCIO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="7">
+  <div class="section-number">VII · REGLAS</div>
+  <h2 class="section-title">Criterios del negocio</h2>
+  <p class="section-description">Umbrales y reglas para que el sistema descarte lo que no aplica.</p>
+
+  <div class="field">
+    <label class="field-label">Monto mínimo de licitación que vale la pena postular (CLP)</label>
+    <input type="number" name="monto_minimo" placeholder="Ej: 5000000" min="0">
+    <p class="field-hint">Por debajo de este monto el sistema no genera alerta. Cero si no hay mínimo.</p>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Monto máximo típico de licitación que postulan (CLP)</label>
+    <input type="number" name="monto_maximo" placeholder="Ej: 200000000" min="0">
+    <p class="field-hint">Si una licitación supera este monto, el sistema la marcará como "revisar capacidad" antes de postular.</p>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Días mínimos que necesitas para preparar una propuesta</label>
+    <input type="number" name="dias_preparacion" placeholder="Ej: 5" min="1" max="60">
+    <p class="field-hint">Si una licitación cierra antes de este plazo, el sistema la marca como "cierre demasiado pronto".</p>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Regiones donde NO entregas</label>
+    <input type="text" name="regiones_excluidas" placeholder="Ej: Aysén, Arica (si no llegas allá)">
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 8: CANALES DE ALERTA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="8">
+  <div class="section-number">VIII · ALERTAS</div>
+  <h2 class="section-title">Dónde recibir las notificaciones</h2>
+  <p class="section-description">Cómo y dónde debe llegarte el aviso cuando el sistema detecte una oportunidad HOT.</p>
+
+  <div class="field">
+    <label class="field-label">Email principal para recibir alertas</label>
+    <input type="email" name="email_alertas" placeholder="jorge@empresa.cl">
+  </div>
+
+  <div class="field">
+    <label class="field-label">WhatsApp (opcional, para alertas urgentes)</label>
+    <input type="text" name="whatsapp" placeholder="+56 9 xxxx xxxx">
+  </div>
+
+  <div class="field">
+    <label class="field-label">Canales que prefieres activar</label>
+    <div class="chip-group">
+      <label class="chip-check">
+        <input type="checkbox" name="canal_email" checked>
+        <span>Email diario</span>
+      </label>
+      <label class="chip-check">
+        <input type="checkbox" name="canal_email_hot">
+        <span>Email instantáneo (solo HOT)</span>
+      </label>
+      <label class="chip-check">
+        <input type="checkbox" name="canal_whatsapp">
+        <span>WhatsApp (solo HOT)</span>
+      </label>
+      <label class="chip-check">
+        <input type="checkbox" name="canal_dashboard" checked>
+        <span>Dashboard web</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="field" style="margin-top: 32px;">
+    <label class="field-label">Horario preferido para alertas diarias</label>
+    <select name="horario_alertas">
+      <option value="06:00">06:00 AM (temprano)</option>
+      <option value="07:00" selected>07:00 AM (mañana)</option>
+      <option value="08:00">08:00 AM (inicio jornada)</option>
+      <option value="09:00">09:00 AM (después del café)</option>
+      <option value="12:00">12:00 PM (mediodía)</option>
+    </select>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECCIÓN 9: NOTAS LIBRES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="section" data-section="9">
+  <div class="section-number">IX · CONTEXTO</div>
+  <h2 class="section-title">Cualquier cosa más</h2>
+  <p class="section-description">
+    Información adicional que pueda ayudar a calibrar el sistema: certificaciones especiales,
+    acuerdos marco vigentes, estacionalidad típica del negocio, patrones de competidores, etc.
+  </p>
+
+  <div class="field">
+    <label class="field-label">Certificaciones o acreditaciones relevantes</label>
+    <textarea name="certificaciones" placeholder="Ej: ISO 9001, homologación DIRECTEMAR para equipos de buceo, representación oficial marca X..."></textarea>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Meses del año con más ventas al Estado</label>
+    <input type="text" name="estacionalidad" placeholder="Ej: marzo, septiembre, noviembre (fin de período presupuestario)">
+  </div>
+
+  <div class="field">
+    <label class="field-label">Patrones de competidores identificados</label>
+    <textarea name="patrones_competencia" placeholder="Ej: 'Náutica Austral siempre baja precio 8% en últimas 48h', 'ImporNaval no cumple plazo de entrega'..."></textarea>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Cualquier otra cosa importante</label>
+    <textarea name="notas_libres" placeholder="Espacio libre para anotar lo que quieras..."></textarea>
+  </div>
+</section>
+
+</form>
+
+<!-- CTA FINAL -->
+<div class="final-cta">
+  <h3>Al terminar...</h3>
+  <p>Exporta tus respuestas como archivo JSON y envíaselo a Seba para configurar el sistema con tu data real.</p>
+  <button type="button" class="btn-primary" onclick="exportarJSON()">📥 Exportar respuestas</button>
+  <button type="button" class="btn-secondary" onclick="resetear()">Empezar de nuevo</button>
+</div>
+
+</div>
+
+<!-- MODAL DE EXPORTACIÓN -->
+<div class="modal" id="modalExport">
+  <div class="modal-content">
+    <h3>Respuestas listas para enviar</h3>
+    <p style="font-style: italic; color: var(--cream); margin-bottom: 20px; font-size: 14px;">
+      Descarga el archivo o copia el contenido y mándaselo a Seba por el medio que prefieras.
+    </p>
+    <pre id="jsonOutput"></pre>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="descargarJSON()">⬇ Descargar archivo</button>
+      <button class="btn-secondary" onclick="copiarJSON()">Copiar al portapapeles</button>
+      <button class="btn-secondary" onclick="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// JORGE DÍAZ · CUESTIONARIO INTERACTIVO
+// ═══════════════════════════════════════════════════════
+
+const STORAGE_KEY = 'jorge_diaz_cuestionario_v1';
+const form = document.getElementById('questionnaire');
+const progressFill = document.getElementById('progressFill');
+const progressPct = document.getElementById('progressPct');
+const saveIndicator = document.getElementById('saveIndicator');
+
+// Estado de listas dinámicas
+let state = {
+  productos: [],
+  'keywords-hot': [],
+  'keywords-warm': [],
+  'keywords-exclude': [],
+  clientes: [],
+  ganadas: [],
+  competidores: []
+};
+
+// ═══════ LISTAS DINÁMICAS ═══════
+
+const placeholders = {
+  productos: {
+    producto: 'Término técnico del producto',
+    codigo_onu: 'Código ONU (ej: 46181500)'
+  },
+  'keywords-hot': { keyword: 'palabra o frase clave' },
+  'keywords-warm': { keyword: 'palabra secundaria' },
+  'keywords-exclude': { keyword: 'palabra a excluir' },
+  clientes: {
+    nombre: 'Nombre del organismo',
+    frecuencia: 'muy alta / alta / media / ocasional'
+  },
+  ganadas: {
+    codigo: 'Código licitación',
+    monto: 'Monto CLP'
+  },
+  competidores: {
+    nombre: 'Nombre empresa',
+    nivel: 'alto / medio / bajo'
+  }
+};
+
+function agregarItem(tipo, campos) {
+  const item = {};
+  campos.forEach(c => item[c] = '');
+  state[tipo].push(item);
+  renderLista(tipo);
+  guardar();
+}
+
+function removerItem(tipo, index) {
+  state[tipo].splice(index, 1);
+  renderLista(tipo);
+  guardar();
+}
+
+function renderLista(tipo) {
+  const container = document.getElementById(`${tipo}-list`);
+  const items = state[tipo];
+  const campos = Object.keys(placeholders[tipo]);
+
+  container.innerHTML = items.map((item, idx) => {
+    const inputs = campos.map(c => {
+      const isMonto = c === 'monto';
+      return `<input type="${isMonto ? 'number' : 'text'}"
+                     value="${(item[c] || '').toString().replace(/"/g, '&quot;')}"
+                     placeholder="${placeholders[tipo][c]}"
+                     oninput="state['${tipo}'][${idx}]['${c}'] = this.value; guardar();">`;
+    });
+
+    const multiClass = campos.length > 1 ? 'list-item-multi' : '';
+    const inputsWrapped = campos.length > 1
+      ? `<div class="${multiClass}">${inputs.join('')}</div>`
+      : inputs[0];
+
+    return `
+      <div class="list-item">
+        <span class="list-item-index">${idx + 1}</span>
+        ${inputsWrapped}
+        <button type="button" class="btn-remove" onclick="removerItem('${tipo}', ${idx})">×</button>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════ GUARDADO LOCAL ═══════
+
+function guardar() {
+  const data = {
+    estado_listas: state,
+    campos_simples: {}
+  };
+
+  form.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.type === 'checkbox') {
+      data.campos_simples[el.name] = el.checked;
+    } else if (el.name) {
+      data.campos_simples[el.name] = el.value;
+    }
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  mostrarGuardado();
+  actualizarProgreso();
+}
+
+function cargar() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    // Inicializar con un item vacío en cada lista para guiar
+    Object.keys(state).forEach(tipo => {
+      const campos = Object.keys(placeholders[tipo]);
+      const item = {};
+      campos.forEach(c => item[c] = '');
+      state[tipo].push(item);
+      renderLista(tipo);
+    });
+    return;
+  }
+
+  try {
+    const data = JSON.parse(raw);
+    if (data.estado_listas) {
+      state = data.estado_listas;
+      Object.keys(state).forEach(tipo => renderLista(tipo));
+    }
+    if (data.campos_simples) {
+      Object.entries(data.campos_simples).forEach(([name, value]) => {
+        const el = form.querySelector(`[name="${name}"]`);
+        if (!el) return;
+        if (el.type === 'checkbox') el.checked = value;
+        else el.value = value;
+      });
+    }
+  } catch (e) {
+    console.error('Error cargando:', e);
+  }
+  actualizarProgreso();
+}
+
+let saveTimeout;
+function mostrarGuardado() {
+  clearTimeout(saveTimeout);
+  saveIndicator.classList.add('visible');
+  saveTimeout = setTimeout(() => {
+    saveIndicator.classList.remove('visible');
+  }, 1500);
+}
+
+// ═══════ PROGRESO ═══════
+
+function actualizarProgreso() {
+  let total = 0;
+  let llenos = 0;
+
+  // Campos simples
+  form.querySelectorAll('input[type="text"], input[type="email"], input[type="number"], textarea, select').forEach(el => {
+    total++;
+    if (el.value.trim()) llenos++;
+  });
+
+  // Listas dinámicas (cuenta si hay al menos 1 item con datos)
+  Object.entries(state).forEach(([tipo, items]) => {
+    total++;
+    const hasContent = items.some(item =>
+      Object.values(item).some(v => v && v.toString().trim())
+    );
+    if (hasContent) llenos++;
+  });
+
+  const pct = total > 0 ? Math.round((llenos / total) * 100) : 0;
+  progressFill.style.width = pct + '%';
+  progressPct.textContent = pct + '%';
+}
+
+// ═══════ EXPORTACIÓN ═══════
+
+function exportarJSON() {
+  // Limpiar items vacíos de las listas antes de exportar
+  const cleanState = {};
+  Object.entries(state).forEach(([tipo, items]) => {
+    cleanState[tipo] = items.filter(item =>
+      Object.values(item).some(v => v && v.toString().trim())
+    );
+  });
+
+  const campos = {};
+  form.querySelectorAll('input, textarea, select').forEach(el => {
+    if (!el.name) return;
+    if (el.type === 'checkbox') campos[el.name] = el.checked;
+    else campos[el.name] = el.value;
+  });
+
+  const exported = {
+    meta: {
+      generado_en: new Date().toISOString(),
+      version: '1.0',
+      sistema: 'Jorge Díaz · Radar Licitaciones'
+    },
+    empresa: {
+      razon_social: campos.empresa_razon_social || '',
+      rut: campos.empresa_rut || '',
+      nombre_fantasia: campos.empresa_nombre_fantasia || '',
+      regiones_operacion: campos.empresa_regiones || '',
+      anios_vendiendo_estado: campos.empresa_anios || ''
+    },
+    productos: cleanState.productos || [],
+    keywords: {
+      hot: (cleanState['keywords-hot'] || []).map(k => k.keyword),
+      warm: (cleanState['keywords-warm'] || []).map(k => k.keyword),
+      exclude: (cleanState['keywords-exclude'] || []).map(k => k.keyword)
+    },
+    clientes: cleanState.clientes || [],
+    licitaciones_ganadas: cleanState.ganadas || [],
+    competidores: cleanState.competidores || [],
+    reglas_negocio: {
+      monto_minimo_clp: parseInt(campos.monto_minimo) || 0,
+      monto_maximo_clp: parseInt(campos.monto_maximo) || 0,
+      dias_preparacion_min: parseInt(campos.dias_preparacion) || 0,
+      regiones_excluidas: campos.regiones_excluidas || ''
+    },
+    alertas: {
+      email: campos.email_alertas || '',
+      whatsapp: campos.whatsapp || '',
+      canales: {
+        email_diario: !!campos.canal_email,
+        email_instantaneo_hot: !!campos.canal_email_hot,
+        whatsapp_hot: !!campos.canal_whatsapp,
+        dashboard: !!campos.canal_dashboard
+      },
+      horario: campos.horario_alertas || '07:00'
+    },
+    contexto_adicional: {
+      certificaciones: campos.certificaciones || '',
+      estacionalidad: campos.estacionalidad || '',
+      patrones_competencia: campos.patrones_competencia || '',
+      notas_libres: campos.notas_libres || ''
+    }
+  };
+
+  const jsonStr = JSON.stringify(exported, null, 2);
+  document.getElementById('jsonOutput').textContent = jsonStr;
+  document.getElementById('modalExport').classList.add('visible');
+
+  // Guardar también para descarga
+  window._lastExport = jsonStr;
+}
+
+function descargarJSON() {
+  const blob = new Blob([window._lastExport], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const fecha = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = `jorge-diaz-levantamiento-${fecha}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function copiarJSON() {
+  try {
+    await navigator.clipboard.writeText(window._lastExport);
+    alert('✓ Copiado al portapapeles');
+  } catch (e) {
+    alert('No se pudo copiar automáticamente. Selecciona manualmente el texto del cuadro.');
+  }
+}
+
+function cerrarModal() {
+  document.getElementById('modalExport').classList.remove('visible');
+}
+
+function resetear() {
+  if (confirm('¿Seguro? Se borrará todo lo que hayas llenado hasta ahora.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+}
+
+// ═══════ EVENT LISTENERS ═══════
+
+form.addEventListener('input', guardar);
+form.addEventListener('change', guardar);
+
+// Hacer funciones globales para onclick inline
+window.agregarItem = agregarItem;
+window.removerItem = removerItem;
+window.state = state;
+window.guardar = guardar;
+window.exportarJSON = exportarJSON;
+window.descargarJSON = descargarJSON;
+window.copiarJSON = copiarJSON;
+window.cerrarModal = cerrarModal;
+window.resetear = resetear;
+
+// Cerrar modal con ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') cerrarModal();
+});
+
+// Cargar datos previos al iniciar
+cargar();
+</script>
+</body>
+</html>

@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jorge Díaz · Inteligencia de Licitaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a1628;
+  --deep: #0f2540;
+  --steel: #1e3a5f;
+  --brass: #c8a870;
+  --brass-bright: #e8c885;
+  --foam: #f5f1e8;
+  --cream: #ebe4d2;
+  --coral: #e85a4f;
+  --algae: #5c8d70;
+  --rust: #a84a2f;
+  --mist: rgba(245, 241, 232, 0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Fraunces', Georgia, serif;
+  background: var(--ink);
+  color: var(--foam);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at top right, rgba(200, 168, 112, 0.08), transparent 50%),
+    radial-gradient(ellipse at bottom left, rgba(30, 58, 95, 0.4), transparent 60%),
+    linear-gradient(180deg, var(--ink) 0%, #060f1d 100%);
+  background-attachment: fixed;
+}
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== HEADER ===== */
+header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(200, 168, 112, 0.2);
+  margin-bottom: 48px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.compass {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.compass-outer {
+  stroke: var(--brass);
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.compass-inner {
+  fill: var(--brass);
+  animation: rotate 40s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+.title {
+  font-family: 'Fraunces', serif;
+  font-size: 42px;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--foam);
+}
+
+.title em {
+  color: var(--brass-bright);
+  font-style: normal;
+  font-weight: 500;
+}
+
+.subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-top: 8px;
+}
+
+.status-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border: 1px solid var(--algae);
+  border-radius: 2px;
+  color: var(--algae);
+  background: rgba(92, 141, 112, 0.08);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--algae);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ===== KPI STRIP ===== */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-bottom: 56px;
+  border-top: 1px solid rgba(200, 168, 112, 0.15);
+  border-bottom: 1px solid rgba(200, 168, 112, 0.15);
+}
+
+.kpi {
+  padding: 28px 24px;
+  border-right: 1px solid rgba(200, 168, 112, 0.15);
+  position: relative;
+}
+
+.kpi:last-child { border-right: none; }
+
+.kpi-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 12px;
+}
+
+.kpi-value {
+  font-family: 'Fraunces', serif;
+  font-size: 44px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.kpi-unit {
+  font-size: 16px;
+  color: var(--brass);
+  font-style: italic;
+  margin-left: 4px;
+}
+
+.kpi-delta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  margin-top: 10px;
+  color: var(--algae);
+}
+
+.kpi-delta.neg { color: var(--coral); }
+
+/* ===== SECTIONS ===== */
+.section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(200, 168, 112, 0.2);
+}
+
+.section-title h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--foam);
+}
+
+.section-title span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 32px;
+  margin-bottom: 56px;
+}
+
+/* ===== OPPORTUNITY CARDS ===== */
+.opportunities {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.opportunity {
+  background: linear-gradient(135deg, rgba(30, 58, 95, 0.4) 0%, rgba(15, 37, 64, 0.6) 100%);
+  border: 1px solid rgba(200, 168, 112, 0.15);
+  padding: 24px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.opportunity::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--brass);
+  transition: width 0.3s ease;
+}
+
+.opportunity.hot::before { background: var(--coral); }
+.opportunity.warm::before { background: var(--brass); }
+.opportunity.cold::before { background: var(--steel); }
+
+.opportunity:hover {
+  border-color: var(--brass);
+  transform: translateX(4px);
+}
+
+.opportunity:hover::before { width: 6px; }
+
+.opp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.opp-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--brass);
+  text-transform: uppercase;
+}
+
+.opp-title {
+  font-family: 'Fraunces', serif;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-top: 6px;
+  color: var(--foam);
+}
+
+.opp-score {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--brass-bright);
+  font-style: italic;
+}
+
+.opp-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(200, 168, 112, 0.2);
+}
+
+.opp-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
+.opp-meta-item .lbl {
+  color: var(--brass);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 9px;
+}
+
+.opp-meta-item .val {
+  color: var(--foam);
+  font-size: 13px;
+}
+
+.hot-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  background: var(--coral);
+  color: var(--ink);
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* ===== SIDEBAR CARDS ===== */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  background: rgba(30, 58, 95, 0.25);
+  border: 1px solid rgba(200, 168, 112, 0.15);
+  padding: 24px;
+}
+
+.card-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(200, 168, 112, 0.15);
+}
+
+/* Client ranking */
+.client-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px dashed rgba(200, 168, 112, 0.1);
+}
+
+.client-row:last-child { border-bottom: none; }
+
+.client-rank {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  font-style: italic;
+  color: var(--brass);
+  width: 32px;
+  flex-shrink: 0;
+}
+
+.client-info { flex: 1; min-width: 0; }
+
+.client-name {
+  font-family: 'Fraunces', serif;
+  font-size: 14px;
+  color: var(--foam);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.client-bar {
+  height: 3px;
+  background: rgba(200, 168, 112, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.client-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brass) 0%, var(--brass-bright) 100%);
+  transition: width 1s ease;
+}
+
+.client-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--brass);
+  margin-top: 4px;
+}
+
+/* Calendar heatmap */
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  margin-top: 12px;
+}
+
+.heat-cell {
+  aspect-ratio: 1;
+  background: rgba(200, 168, 112, 0.1);
+  border-radius: 1px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.heat-cell:hover {
+  transform: scale(1.15);
+  z-index: 10;
+}
+
+.heat-cell[data-level="1"] { background: rgba(200, 168, 112, 0.25); }
+.heat-cell[data-level="2"] { background: rgba(200, 168, 112, 0.5); }
+.heat-cell[data-level="3"] { background: rgba(200, 168, 112, 0.75); }
+.heat-cell[data-level="4"] { background: var(--brass-bright); }
+
+.heat-labels {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--brass);
+  text-align: center;
+}
+
+/* ===== COMPETITIVE INTEL ===== */
+.intel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin-bottom: 56px;
+}
+
+.competitor-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px dashed rgba(200, 168, 112, 0.1);
+}
+
+.competitor-row:last-child { border-bottom: none; }
+
+.comp-name {
+  font-family: 'Fraunces', serif;
+  font-size: 14px;
+  color: var(--foam);
+}
+
+.comp-stats {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--brass);
+  letter-spacing: 0.05em;
+}
+
+.comp-threat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.threat-high { background: rgba(232, 90, 79, 0.15); color: var(--coral); border: 1px solid var(--coral); }
+.threat-med { background: rgba(200, 168, 112, 0.1); color: var(--brass); border: 1px solid var(--brass); }
+.threat-low { background: rgba(92, 141, 112, 0.1); color: var(--algae); border: 1px solid var(--algae); }
+
+/* Price intel */
+.price-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px dashed rgba(200, 168, 112, 0.1);
+}
+
+.price-row:last-child { border-bottom: none; }
+
+.price-product {
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  color: var(--foam);
+  line-height: 1.3;
+}
+
+.price-range {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--brass);
+  text-align: right;
+}
+
+.price-suggested {
+  color: var(--algae);
+  font-weight: 600;
+  font-size: 11px;
+  margin-top: 3px;
+  display: block;
+}
+
+/* ===== FILTERS ===== */
+.filter-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  margin-bottom: 28px;
+  align-items: center;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 18px;
+  width: 16px;
+  height: 16px;
+  stroke: var(--brass);
+  fill: none;
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 20px 16px 48px;
+  background: rgba(30, 58, 95, 0.35);
+  border: 1px solid rgba(200, 168, 112, 0.2);
+  color: var(--foam);
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: rgba(200, 168, 112, 0.5);
+  font-style: italic;
+}
+
+.search-input:focus {
+  border-color: var(--brass-bright);
+  background: rgba(30, 58, 95, 0.55);
+  box-shadow: 0 0 0 3px rgba(200, 168, 112, 0.1);
+}
+
+.search-clear {
+  position: absolute;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--brass);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  padding: 6px 10px;
+  border: 1px solid rgba(200, 168, 112, 0.25);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  text-transform: uppercase;
+}
+
+.search-clear.visible {
+  opacity: 1;
+}
+
+.search-clear:hover {
+  border-color: var(--brass);
+  color: var(--foam);
+}
+
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  background: transparent;
+  border: 1px solid rgba(200, 168, 112, 0.25);
+  color: var(--brass);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: var(--brass-bright);
+  color: var(--foam);
+}
+
+.chip.active {
+  background: var(--brass);
+  color: var(--ink);
+  border-color: var(--brass);
+  font-weight: 600;
+}
+
+.chip.active.hot {
+  background: var(--coral);
+  border-color: var(--coral);
+}
+
+.chip.active.warm {
+  background: var(--brass);
+  border-color: var(--brass);
+}
+
+.chip.active.cold {
+  background: var(--steel);
+  color: var(--foam);
+  border-color: var(--steel);
+}
+
+.result-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed rgba(200, 168, 112, 0.15);
+}
+
+.result-count strong {
+  color: var(--brass-bright);
+  font-weight: 500;
+}
+
+.no-results {
+  padding: 60px 24px;
+  text-align: center;
+  border: 1px dashed rgba(200, 168, 112, 0.2);
+  background: rgba(30, 58, 95, 0.15);
+  display: none;
+}
+
+.no-results.visible {
+  display: block;
+}
+
+.no-results-icon {
+  font-size: 40px;
+  color: var(--brass);
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.no-results-text {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--foam);
+  margin-bottom: 6px;
+}
+
+.no-results-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--brass);
+  letter-spacing: 0.1em;
+}
+
+.opportunity.hidden {
+  display: none;
+}
+
+/* Highlight matches */
+mark {
+  background: rgba(200, 168, 112, 0.3);
+  color: var(--brass-bright);
+  padding: 0 2px;
+  border-radius: 1px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(200, 168, 112, 0.15);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: end;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--brass);
+  text-transform: uppercase;
+}
+
+footer em {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--foam);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.wave-divider {
+  height: 1px;
+  margin: 40px 0;
+  background: linear-gradient(90deg, transparent 0%, var(--brass) 50%, transparent 100%);
+  position: relative;
+}
+
+.wave-divider::before {
+  content: '✦';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--brass);
+  background: var(--ink);
+  padding: 0 16px;
+  font-size: 14px;
+}
+
+/* Fade in animation on load */
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.fade-in:nth-child(1) { animation-delay: 0.1s; }
+.fade-in:nth-child(2) { animation-delay: 0.2s; }
+.fade-in:nth-child(3) { animation-delay: 0.3s; }
+.fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+@media (max-width: 900px) {
+  .kpis { grid-template-columns: repeat(2, 1fr); }
+  .kpi { border-right: none; border-bottom: 1px solid rgba(200, 168, 112, 0.15); }
+  .grid-2 { grid-template-columns: 1fr; }
+  .intel-grid { grid-template-columns: 1fr; }
+  .title { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <svg class="compass" viewBox="0 0 100 100">
+      <circle class="compass-outer" cx="50" cy="50" r="46"/>
+      <circle class="compass-outer" cx="50" cy="50" r="38"/>
+      <g class="compass-inner">
+        <path d="M 50 15 L 55 50 L 50 45 L 45 50 Z" fill="#c8a870"/>
+        <path d="M 50 85 L 55 50 L 50 55 L 45 50 Z" fill="#c8a870" opacity="0.4"/>
+        <circle cx="50" cy="50" r="3" fill="#c8a870"/>
+      </g>
+      <text x="50" y="12" text-anchor="middle" fill="#c8a870" font-family="serif" font-size="8" font-style="italic">N</text>
+    </svg>
+    <div>
+      <h1 class="title"><em>Jorge</em> Díaz</h1>
+      <div class="subtitle">Inteligencia de Licitaciones · ChileCompra</div>
+    </div>
+  </div>
+  <div class="status-pill">
+    <span class="pulse"></span>
+    Sincronizado · 06:42 AM
+  </div>
+</header>
+
+<!-- KPIs -->
+<div class="kpis">
+  <div class="kpi fade-in">
+    <div class="kpi-label">Activas hoy</div>
+    <div class="kpi-value">14</div>
+    <div class="kpi-delta">▲ 3 nuevas vs ayer</div>
+  </div>
+  <div class="kpi fade-in">
+    <div class="kpi-label">Monto pipeline</div>
+    <div class="kpi-value">$487<span class="kpi-unit">M CLP</span></div>
+    <div class="kpi-delta">▲ 18% MoM</div>
+  </div>
+  <div class="kpi fade-in">
+    <div class="kpi-label">Tasa adjudicación</div>
+    <div class="kpi-value">32<span class="kpi-unit">%</span></div>
+    <div class="kpi-delta">▲ vs 24% sector</div>
+  </div>
+  <div class="kpi fade-in">
+    <div class="kpi-label">Cierran esta semana</div>
+    <div class="kpi-value">6</div>
+    <div class="kpi-delta neg">▼ 2 urgentes</div>
+  </div>
+</div>
+
+<!-- SECTION 1: OPORTUNIDADES -->
+<div class="section-title">
+  <h2>Oportunidades del día</h2>
+  <span>Priorizadas por match score</span>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="search-wrapper">
+    <svg class="search-icon" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7"/>
+      <line x1="16" y1="16" x2="21" y2="21"/>
+    </svg>
+    <input
+      type="text"
+      class="search-input"
+      id="searchInput"
+      placeholder="Buscar por producto, organismo, código o palabra clave…"
+      autocomplete="off"
+    >
+    <button class="search-clear" id="searchClear">Limpiar</button>
+  </div>
+  <div class="filter-chips">
+    <button class="chip active" data-filter="all">Todas</button>
+    <button class="chip" data-filter="hot">Hot</button>
+    <button class="chip" data-filter="warm">Warm</button>
+    <button class="chip" data-filter="cold">Cold</button>
+    <button class="chip" data-filter="closing">Cierran ≤7 días</button>
+    <button class="chip" data-filter="high">Monto &gt; $80M</button>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="result-count" id="resultCount">
+      Mostrando <strong>5</strong> de <strong>5</strong> oportunidades
+    </div>
+
+    <div class="opportunities" id="opportunitiesList">
+
+    <div class="opportunity hot" data-state="hot" data-days="9" data-amount="118" data-search="DIRISNAV buceo rebreather circuito cerrado tecnico equipos 1234-56-LP25">
+      <div class="opp-header">
+        <div>
+          <span class="opp-code">1234-56-LP25 · DIRISNAV</span>
+          <span class="hot-tag">Hot</span>
+          <h3 class="opp-title">Adquisición equipos de buceo técnico y rebreathers circuito cerrado</h3>
+        </div>
+        <div class="opp-score">94</div>
+      </div>
+      <div class="opp-meta">
+        <div class="opp-meta-item">
+          <span class="lbl">Monto estimado</span>
+          <span class="val">$118M CLP</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Cierre</span>
+          <span class="val">En 9 días</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Histórico cliente</span>
+          <span class="val">3 adjudicadas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="opportunity hot" data-state="hot" data-days="5" data-amount="64" data-search="DIRECTEMAR ferreteria naval amarre estacion maritima valparaiso 2341-78-LE25">
+      <div class="opp-header">
+        <div>
+          <span class="opp-code">2341-78-LE25 · DIRECTEMAR</span>
+          <span class="hot-tag">Hot</span>
+          <h3 class="opp-title">Reposición ferretería naval y elementos de amarre — estación marítima Valparaíso</h3>
+        </div>
+        <div class="opp-score">91</div>
+      </div>
+      <div class="opp-meta">
+        <div class="opp-meta-item">
+          <span class="lbl">Monto estimado</span>
+          <span class="val">$64M CLP</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Cierre</span>
+          <span class="val">En 5 días</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Competidores probables</span>
+          <span class="val">2-3</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="opportunity warm" data-state="warm" data-days="14" data-amount="42" data-search="GOPE carabineros trajes secos buceo reguladores emergencia tactica 5621-112-L125">
+      <div class="opp-header">
+        <div>
+          <span class="opp-code">5621-112-L125 · GOPE Carabineros</span>
+          <h3 class="opp-title">Trajes secos de buceo + reguladores de emergencia para unidad táctica</h3>
+        </div>
+        <div class="opp-score">78</div>
+      </div>
+      <div class="opp-meta">
+        <div class="opp-meta-item">
+          <span class="lbl">Monto estimado</span>
+          <span class="val">$42M CLP</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Cierre</span>
+          <span class="val">En 14 días</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Histórico cliente</span>
+          <span class="val">1 adjudicada</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="opportunity warm" data-state="warm" data-days="18" data-amount="89" data-search="empresa portuaria compresor aire HP repuestos mantencion servicio integral 0934-45-LQ25">
+      <div class="opp-header">
+        <div>
+          <span class="opp-code">0934-45-LQ25 · Empresa Portuaria</span>
+          <h3 class="opp-title">Servicio integral de mantención y provisión de repuestos para compresores de aire HP</h3>
+        </div>
+        <div class="opp-score">72</div>
+      </div>
+      <div class="opp-meta">
+        <div class="opp-meta-item">
+          <span class="lbl">Monto estimado</span>
+          <span class="val">$89M CLP</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Cierre</span>
+          <span class="val">En 18 días</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Alerta</span>
+          <span class="val">Pagó tarde ×2</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="opportunity cold" data-state="cold" data-days="21" data-amount="28" data-search="INH instituto nacional hidraulica instrumentacion subacuatica mediciones costeras 3847-09-LE25">
+      <div class="opp-header">
+        <div>
+          <span class="opp-code">3847-09-LE25 · INH</span>
+          <h3 class="opp-title">Instrumentación subacuática para mediciones costeras</h3>
+        </div>
+        <div class="opp-score">45</div>
+      </div>
+      <div class="opp-meta">
+        <div class="opp-meta-item">
+          <span class="lbl">Monto estimado</span>
+          <span class="val">$28M CLP</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Cierre</span>
+          <span class="val">En 21 días</span>
+        </div>
+        <div class="opp-meta-item">
+          <span class="lbl">Fit técnico</span>
+          <span class="val">Parcial</span>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <div class="no-results" id="noResults">
+      <div class="no-results-icon">⌀</div>
+      <div class="no-results-text">Sin coincidencias en este filtro</div>
+      <div class="no-results-hint">Intenta con otra palabra clave o limpia los filtros</div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="card">
+      <div class="card-title">Top 5 clientes · últimos 12M</div>
+
+      <div class="client-row">
+        <div class="client-rank">I</div>
+        <div class="client-info">
+          <div class="client-name">Dirección Ingeniería Sistemas Navales</div>
+          <div class="client-bar"><div class="client-bar-fill" style="width: 100%"></div></div>
+          <div class="client-amount">$412M CLP · 8 adjudicadas</div>
+        </div>
+      </div>
+
+      <div class="client-row">
+        <div class="client-rank">II</div>
+        <div class="client-info">
+          <div class="client-name">DIRECTEMAR · Armada de Chile</div>
+          <div class="client-bar"><div class="client-bar-fill" style="width: 72%"></div></div>
+          <div class="client-amount">$298M CLP · 6 adjudicadas</div>
+        </div>
+      </div>
+
+      <div class="client-row">
+        <div class="client-rank">III</div>
+        <div class="client-info">
+          <div class="client-name">Empresa Portuaria Valparaíso</div>
+          <div class="client-bar"><div class="client-bar-fill" style="width: 54%"></div></div>
+          <div class="client-amount">$221M CLP · 4 adjudicadas</div>
+        </div>
+      </div>
+
+      <div class="client-row">
+        <div class="client-rank">IV</div>
+        <div class="client-info">
+          <div class="client-name">GOPE · Carabineros de Chile</div>
+          <div class="client-bar"><div class="client-bar-fill" style="width: 38%"></div></div>
+          <div class="client-amount">$156M CLP · 3 adjudicadas</div>
+        </div>
+      </div>
+
+      <div class="client-row">
+        <div class="client-rank">V</div>
+        <div class="client-info">
+          <div class="client-name">Instituto Nacional de Hidráulica</div>
+          <div class="client-bar"><div class="client-bar-fill" style="width: 22%"></div></div>
+          <div class="client-amount">$89M CLP · 2 adjudicadas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Estacionalidad · últimos 3 años</div>
+      <div class="heatmap" id="heatmap"></div>
+      <div class="heat-labels">
+        <span>E</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span>
+        <span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span>
+      </div>
+      <div style="margin-top: 14px; font-family: 'Fraunces', serif; font-size: 12px; font-style: italic; color: var(--brass-bright); line-height: 1.4;">
+        → Marzo, septiembre y noviembre concentran el 58% del volumen anual. Preparar stock y propuestas tipo desde febrero.
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- SECTION 2: INTELIGENCIA COMPETITIVA -->
+<div class="wave-divider"></div>
+
+<div class="section-title">
+  <h2>Inteligencia competitiva</h2>
+  <span>últimos 18 meses · 47 licitaciones del rubro</span>
+</div>
+
+<div class="intel-grid">
+
+  <div class="card">
+    <div class="card-title">Competidores identificados</div>
+
+    <div class="competitor-row">
+      <div class="comp-name">Comercial Náutica Austral Ltda.</div>
+      <div class="comp-stats">14 ganadas · 42%</div>
+      <div class="comp-threat threat-high">Alto</div>
+    </div>
+
+    <div class="competitor-row">
+      <div class="comp-name">Buceo & Seguridad SpA</div>
+      <div class="comp-stats">9 ganadas · 28%</div>
+      <div class="comp-threat threat-high">Alto</div>
+    </div>
+
+    <div class="competitor-row">
+      <div class="comp-name">ImporNaval Chile</div>
+      <div class="comp-stats">5 ganadas · 16%</div>
+      <div class="comp-threat threat-med">Medio</div>
+    </div>
+
+    <div class="competitor-row">
+      <div class="comp-name">Ferretería Marina Pacífico</div>
+      <div class="comp-stats">3 ganadas · 9%</div>
+      <div class="comp-threat threat-med">Medio</div>
+    </div>
+
+    <div class="competitor-row">
+      <div class="comp-name">DiveTech Importadora</div>
+      <div class="comp-stats">2 ganadas · 6%</div>
+      <div class="comp-threat threat-low">Bajo</div>
+    </div>
+
+    <div style="margin-top: 20px; padding: 14px; background: rgba(232, 90, 79, 0.08); border-left: 2px solid var(--coral); font-family: 'Fraunces', serif; font-size: 12px; font-style: italic; line-height: 1.5;">
+      <strong style="font-style: normal; color: var(--coral); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;">Alerta patrón</strong><br>
+      Náutica Austral siempre baja precio 8-12% en últimos 48h antes del cierre. Presentar con margen.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Precios históricos · ofertas ganadoras</div>
+
+    <div class="price-row">
+      <div class="price-product">Regulador de buceo técnico · equilibrado, balanced 1st stage</div>
+      <div class="price-range">
+        $420K – $580K
+        <span class="price-suggested">→ Ofertar $465K</span>
+      </div>
+    </div>
+
+    <div class="price-row">
+      <div class="price-product">Rebreather circuito cerrado · uso militar/táctico</div>
+      <div class="price-range">
+        $8.2M – $11.4M
+        <span class="price-suggested">→ Ofertar $9.1M</span>
+      </div>
+    </div>
+
+    <div class="price-row">
+      <div class="price-product">Traje seco de buceo · aguas contaminadas</div>
+      <div class="price-range">
+        $1.1M – $1.8M
+        <span class="price-suggested">→ Ofertar $1.35M</span>
+      </div>
+    </div>
+
+    <div class="price-row">
+      <div class="price-product">Compresor HP · banco de aire 6 cilindros</div>
+      <div class="price-range">
+        $14M – $19M
+        <span class="price-suggested">→ Ofertar $15.8M</span>
+      </div>
+    </div>
+
+    <div class="price-row">
+      <div class="price-product">Umbilical buceo asistido · 3 elementos</div>
+      <div class="price-range">
+        $2.1M – $3.4M
+        <span class="price-suggested">→ Ofertar $2.6M</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; padding: 14px; background: rgba(92, 141, 112, 0.08); border-left: 2px solid var(--algae); font-family: 'Fraunces', serif; font-size: 12px; font-style: italic; line-height: 1.5;">
+      <strong style="font-style: normal; color: var(--algae); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;">Sweet spot</strong><br>
+      El valor sugerido maximiza probabilidad ganadora × margen según 47 adjudicaciones similares.
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <em>Jorge Díaz</em> · MVP conectado a <code>api.mercadopublico.cl</code><br>
+    Datos mostrados son demo · Producción requiere ticket ChileCompra
+  </div>
+  <div>v0.1 · Abril 2026</div>
+</footer>
+
+</div>
+
+<script>
+// ===== SISTEMA DE FILTROS Y BÚSQUEDA =====
+const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
+const chips = document.querySelectorAll('.chip');
+const opportunities = document.querySelectorAll('.opportunity');
+const resultCount = document.getElementById('resultCount');
+const noResults = document.getElementById('noResults');
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+// Remover resaltados previos antes de aplicar nuevos
+function clearHighlights() {
+  opportunities.forEach(opp => {
+    const title = opp.querySelector('.opp-title');
+    const code = opp.querySelector('.opp-code');
+    if (title.dataset.original) title.innerHTML = title.dataset.original;
+    if (code.dataset.original) code.innerHTML = code.dataset.original;
+  });
+}
+
+// Resaltar coincidencias en título y código
+function highlightMatches(query) {
+  if (!query) return;
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  opportunities.forEach(opp => {
+    if (opp.classList.contains('hidden')) return;
+    const title = opp.querySelector('.opp-title');
+    const code = opp.querySelector('.opp-code');
+    if (!title.dataset.original) title.dataset.original = title.innerHTML;
+    if (!code.dataset.original) code.dataset.original = code.innerHTML;
+    title.innerHTML = title.dataset.original.replace(regex, '<mark>$1</mark>');
+    code.innerHTML = code.dataset.original.replace(regex, '<mark>$1</mark>');
+  });
+}
+
+// Aplicar filtros combinados (búsqueda + chip activo)
+function applyFilters() {
+  const query = currentSearch.toLowerCase().trim();
+  let visibleCount = 0;
+
+  clearHighlights();
+
+  opportunities.forEach(opp => {
+    const state = opp.dataset.state;
+    const days = parseInt(opp.dataset.days);
+    const amount = parseInt(opp.dataset.amount);
+    const searchText = (opp.dataset.search || '').toLowerCase() + ' ' +
+                       opp.querySelector('.opp-title').textContent.toLowerCase();
+
+    // Filtro por chip
+    let chipMatch = true;
+    if (currentFilter === 'hot') chipMatch = state === 'hot';
+    else if (currentFilter === 'warm') chipMatch = state === 'warm';
+    else if (currentFilter === 'cold') chipMatch = state === 'cold';
+    else if (currentFilter === 'closing') chipMatch = days <= 7;
+    else if (currentFilter === 'high') chipMatch = amount > 80;
+
+    // Filtro por búsqueda
+    const searchMatch = !query || searchText.includes(query);
+
+    if (chipMatch && searchMatch) {
+      opp.classList.remove('hidden');
+      visibleCount++;
+    } else {
+      opp.classList.add('hidden');
+    }
+  });
+
+  // Actualizar contador
+  const total = opportunities.length;
+  resultCount.innerHTML = `Mostrando <strong>${visibleCount}</strong> de <strong>${total}</strong> oportunidades`;
+
+  // Mostrar/ocultar estado vacío
+  if (visibleCount === 0) {
+    noResults.classList.add('visible');
+  } else {
+    noResults.classList.remove('visible');
+  }
+
+  // Aplicar highlights
+  if (query) highlightMatches(query);
+
+  // Mostrar/ocultar botón de limpiar
+  if (query) {
+    searchClear.classList.add('visible');
+  } else {
+    searchClear.classList.remove('visible');
+  }
+}
+
+// Event listener búsqueda (con debounce suave)
+let searchTimeout;
+searchInput.addEventListener('input', (e) => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    currentSearch = e.target.value;
+    applyFilters();
+  }, 120);
+});
+
+// Event listener botón limpiar
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  currentSearch = '';
+  searchInput.focus();
+  applyFilters();
+});
+
+// Event listener chips
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    chips.forEach(c => {
+      c.classList.remove('active', 'hot', 'warm', 'cold');
+    });
+    chip.classList.add('active');
+    const filter = chip.dataset.filter;
+    if (['hot', 'warm', 'cold'].includes(filter)) {
+      chip.classList.add(filter);
+    }
+    currentFilter = filter;
+    applyFilters();
+  });
+});
+
+// Atajo de teclado: "/" para enfocar búsqueda
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+  if (e.key === 'Escape' && document.activeElement === searchInput) {
+    searchInput.blur();
+    if (currentSearch) {
+      searchInput.value = '';
+      currentSearch = '';
+      applyFilters();
+    }
+  }
+});
+
+// ===== HEATMAP Y ANIMACIONES ORIGINALES =====
+// Generar heatmap de estacionalidad (3 años × 12 meses)
+const heatmap = document.getElementById('heatmap');
+// Patrón: marzo, septiembre y noviembre altos; enero y julio bajos
+const seasonalPattern = [1, 0, 4, 2, 1, 0, 0, 2, 4, 2, 3, 1]; // base
+const years = 3;
+
+for (let y = 0; y < years; y++) {
+  for (let m = 0; m < 12; m++) {
+    const cell = document.createElement('div');
+    cell.className = 'heat-cell';
+    // Variación aleatoria sobre el patrón base
+    const variation = Math.floor(Math.random() * 2);
+    let level = Math.max(0, Math.min(4, seasonalPattern[m] + (variation - 1)));
+    if (y === years - 1 && [2, 8, 10].includes(m)) level = 4; // año actual
+    cell.dataset.level = level;
+    cell.title = `${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m]} 202${3+y} · nivel ${level}`;
+    heatmap.appendChild(cell);
+  }
+}
+
+// Animación de barras al cargar
+setTimeout(() => {
+  document.querySelectorAll('.client-bar-fill').forEach(bar => {
+    const width = bar.style.width;
+    bar.style.width = '0';
+    setTimeout(() => { bar.style.width = width; }, 50);
+  });
+}, 300);
+
+// Click en oportunidades
+document.querySelectorAll('.opportunity').forEach(opp => {
+  opp.addEventListener('click', () => {
+    const code = opp.querySelector('.opp-code').textContent.split('·')[0].trim();
+    alert(`Abriendo ficha completa de licitación ${code}\n\n(En producción: fetch a api.mercadopublico.cl/servicios/v1/publico/licitaciones.json?codigo=${code}&ticket=XXX)`);
+  });
+});
+</script>
+</body>
+</html>
