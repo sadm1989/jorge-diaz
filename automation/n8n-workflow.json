@@ -1,0 +1,243 @@
+{
+  "name": "Jorge Díaz · Radar Licitaciones v2.0 (Recasur)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Cada día 08:00 (Chile)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [180, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generar fecha de hoy en formato ddmmaaaa (requerido por API Mercado Público)\nconst hoy = new Date();\nconst dd = String(hoy.getDate()).padStart(2, '0');\nconst mm = String(hoy.getMonth() + 1).padStart(2, '0');\nconst yyyy = hoy.getFullYear();\n\nreturn [{\n  json: {\n    fecha_api: `${dd}${mm}${yyyy}`,\n    fecha_iso: hoy.toISOString().split('T')[0],\n    timestamp: hoy.toISOString()\n  }\n}];"
+      },
+      "id": "formatear-fecha",
+      "name": "Formatear fecha",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [380, 400]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.mercadopublico.cl/servicios/v1/publico/licitaciones.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "fecha", "value": "={{ $json.fecha_api }}" },
+            { "name": "estado", "value": "publicada" },
+            { "name": "ticket", "value": "={{ $vars.MP_TICKET }}" }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": { "response": { "responseFormat": "json" } }
+        }
+      },
+      "id": "fetch-licitaciones",
+      "name": "API ChileCompra · Licitaciones del día",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [580, 400]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "Listado",
+        "options": {}
+      },
+      "id": "split-listado",
+      "name": "Separar licitaciones",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [780, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════════\n// JORGE DÍAZ · RADAR RECASUR v2.0\n// Scoring multirrubro · Boost Magallanes · Alerta Dimarsa\n// Calibrado con data real 22-abr-2026\n// ═══════════════════════════════════════════════════════════════\n\n// ─── CONFIGURACIÓN POR RUBRO ───\nconst RUBROS = {\n  nautico_buceo: {\n    keywords: ['buceo', 'buzo', 'rebreather', 'regulador', 'traje seco', 'traje humedo',\n               'compresor aire', 'compresor buceo', 'cilindro buceo', 'banco de aire',\n               'umbilical', 'subacuatico', 'subacuática', 'rov', 'embarcacion', 'bote',\n               'lancha', 'motor fuera de borda', 'motor centrado', 'motor yamaha',\n               'hdpe', 'winche', 'salvamento', 'cabo polipropileno'],\n    peso: 15,\n    nivel: 'fuerte', // ← Recasur gana frecuentemente\n    bonus: 0\n  },\n  seguridad: {\n    keywords: ['chaleco salvavidas', 'balsa salvavidas', 'ropa termica', 'ropa térmica',\n               'ropa de seguridad', 'equipo de salvataje', 'salvataje maritimo',\n               'pirotecnia', 'señalizacion maritima', 'traje ignifugo'],\n    peso: 13,\n    nivel: 'fuerte',\n    bonus: 0\n  },\n  maquinarias: {\n    keywords: ['maquinaria agricola', 'maquinaria náutica', 'maquinaria pesada',\n               'grua horquilla', 'grúa horquilla', 'motobomba', 'hidrolavadora',\n               'generador electrico', 'motor estacionario'],\n    peso: 13,\n    nivel: 'fuerte',\n    bonus: 0\n  },\n  automotriz: {\n    keywords: ['neumatico', 'neumático', 'repuesto automotor', 'repuesto automotriz',\n               'repuesto motor', 'filtro motor', 'vehiculo', 'vehículo', 'camioneta',\n               'lubricante'],\n    peso: 12,\n    nivel: 'mixto', // ← lubricantes es débil (Mobil), resto okay\n    bonus: 0\n  },\n  comunicaciones: {\n    keywords: ['vhf', 'uhf', 'hf maritimo', 'hf marítimo', 'radio maritima',\n               'radio marítima', 'gps marino', 'gps maritimo', 'gps marítimo',\n               'radar marino', 'sonar', 'navegacion maritima', 'ais'],\n    peso: 11,\n    nivel: 'debil', // ← perdieron aquí el último año\n    bonus: 5 // boost extra para empujar más ofertas en este rubro\n  },\n  electromecanica: {\n    keywords: ['panel solar', 'fotovoltaico', 'sistema hidraulico', 'sistema hidráulico',\n               'bomba hidraulica', 'bomba centrifuga'],\n    peso: 12,\n    nivel: 'mixto',\n    bonus: 0\n  },\n  ferreteria: {\n    keywords: ['ferreteria', 'ferretería', 'herramientas', 'elementos de ferreteria',\n               'accesorios ferreteros'],\n    peso: 8,\n    nivel: 'secundario',\n    bonus: 0\n  }\n};\n\nconst KEYWORDS_WARM = ['ropa', 'vestuario', 'accesorios para vehiculos',\n                       'articulos de seguridad', 'equipos', 'suministro'];\n\n// Excluir licitaciones que NO son de compra de productos\nconst KEYWORDS_EXCLUDE = ['arriendo', 'alquiler', 'consultoria', 'consultoría',\n                         'asesoria técnica', 'asesoría técnica', 'capacitacion',\n                         'capacitación', 'mantencion integral', 'mantención integral',\n                         'servicio de reparacion'];\n\n// ─── CLIENTES CLAVE DE RECASUR ───\nconst CLIENTES_RECASUR = {\n  'INDESPA': 25,           // muy alta · sinergia pesca/náutico Magallanes\n  'MUNICIPAL': 25,         // muy alta\n  'GOBIERNO REGIONAL': 25, // muy alta · GORE\n  'HOSPITAL': 25,          // muy alta\n  'ISP': 15,               // alta · Instituto Salud Pública\n  'CARABINEROS': 15,       // alta\n  'POLICIA DE INVESTIGA': 15, // PDI\n  'FUERZAS ARMADAS': 15,   // FFAA\n  'ARMADA': 15,\n  'EJERCITO': 15,\n  'FUERZA AEREA': 15,\n  'MINISTERIO DE AGRICULTURA': 15, // MINAGRI\n  'SAG': 15,               // Servicio Agrícola Ganadero (MINAGRI)\n  'MOP': 10,               // media\n  'INDAP': 10,             // media\n  'GOBERNACION MARITIMA': 10, // media\n  'DIRECTEMAR': 10,\n  'MINISTERIO DE EDUCACION': 10,\n  'VIALIDAD': 10\n};\n\n// ─── REGIONES PRIORITARIAS (Recasur base Magallanes) ───\nconst REGIONES_BOOST = {\n  'MAGALLANES': 30,        // sede principal · ventaja logística total\n  'ANTARTICA': 30,\n  'AYSEN': 15,             // zona sur cercana\n  'AYSÉN': 15\n};\n\n// ─── COMPETIDORES A DETECTAR ───\nconst COMPETIDORES = {\n  'DIMARSA': { nivel: 'archienemigo', alerta: true },\n  'DIMARINE': { nivel: 'archienemigo', alerta: true }, // división náutica Dimarsa\n  'SALFA': { nivel: 'alto', alerta: false },\n  'MOBIL': { nivel: 'alto', alerta: false },\n  'STARLINE': { nivel: 'alto', alerta: false },\n  'KAUFFMAN': { nivel: 'alto', alerta: false },\n  'HEVIA': { nivel: 'medio', alerta: false },\n  'KRILL': { nivel: 'medio', alerta: false },\n  'ITURRI': { nivel: 'bajo', alerta: false }\n};\n\n// ═══════════════════════════════════════════════════════════════\n// PROCESAR CADA LICITACIÓN\n// ═══════════════════════════════════════════════════════════════\n\nconst item = $json;\n\n// Normalizar campos\nconst codigo = item.CodigoExterno || '';\nconst nombre = (item.Nombre || '').toLowerCase();\nconst descripcion = (item.Descripcion || '').toLowerCase();\nconst organismo = (item.NombreOrganismo || '').toUpperCase();\nconst region = (item.Region || '').toUpperCase();\nconst monto = parseFloat(item.MontoEstimado || 0);\nconst fechaCierre = item.FechaCierre || null;\nconst textoCompleto = `${nombre} ${descripcion} ${organismo.toLowerCase()} ${region.toLowerCase()}`;\n\n// ─── FILTRO DE EXCLUSIÓN TEMPRANA ───\nconst tieneExclude = KEYWORDS_EXCLUDE.some(k => textoCompleto.includes(k));\nif (tieneExclude) return []; // descartar, no es compra de productos\n\n// ─── DETECTAR RUBRO PRINCIPAL ───\nlet rubroPrincipal = null;\nlet rubroScore = 0;\nlet hotMatches = [];\n\nfor (const [rubro, config] of Object.entries(RUBROS)) {\n  const matches = config.keywords.filter(k => textoCompleto.includes(k));\n  if (matches.length > 0) {\n    const score = matches.length * config.peso + config.bonus;\n    if (score > rubroScore) {\n      rubroScore = score;\n      rubroPrincipal = rubro;\n    }\n    hotMatches = hotMatches.concat(matches);\n  }\n}\n\n// Si no matcheó ningún rubro hot, revisar warm\nlet warmMatches = [];\nif (!rubroPrincipal) {\n  warmMatches = KEYWORDS_WARM.filter(k => textoCompleto.includes(k));\n  if (warmMatches.length === 0) return []; // descartar, no es del rubro\n  rubroPrincipal = 'warm_general';\n}\n\n// ─── CALCULAR SCORE GLOBAL ───\nlet score = 0;\nlet matchesInfo = [];\n\n// 1. Keywords del rubro (máx 45)\nconst keywordScore = Math.min(rubroScore, 45);\nscore += keywordScore;\nif (hotMatches.length > 0) {\n  matchesInfo.push(`${hotMatches.length} keyword(s) ${rubroPrincipal}`);\n}\nif (warmMatches.length > 0) {\n  const warmScore = Math.min(warmMatches.length * 8, 20);\n  score += warmScore;\n  matchesInfo.push(`${warmMatches.length} keyword(s) generales`);\n}\n\n// 2. Cliente clave de Recasur\nlet clienteBoost = 0;\nlet clienteDetectado = null;\nfor (const [cliente, boost] of Object.entries(CLIENTES_RECASUR)) {\n  if (organismo.includes(cliente)) {\n    if (boost > clienteBoost) {\n      clienteBoost = boost;\n      clienteDetectado = cliente;\n    }\n  }\n}\nscore += clienteBoost;\nif (clienteDetectado) matchesInfo.push(`cliente: ${clienteDetectado}`);\n\n// 3. Boost geográfico (Magallanes = +30) ← LA GRAN VENTAJA\nlet regionBoost = 0;\nlet regionDetectada = null;\nfor (const [reg, boost] of Object.entries(REGIONES_BOOST)) {\n  if (region.includes(reg) || organismo.includes(reg)) {\n    if (boost > regionBoost) {\n      regionBoost = boost;\n      regionDetectada = reg;\n    }\n  }\n}\nscore += regionBoost;\nif (regionDetectada) matchesInfo.push(`región: ${regionDetectada}`);\n\n// 4. Urgencia de cierre\nlet diasAlCierre = null;\nif (fechaCierre) {\n  const cierre = new Date(fechaCierre);\n  const ahora = new Date();\n  diasAlCierre = Math.ceil((cierre - ahora) / (1000 * 60 * 60 * 24));\n  if (diasAlCierre > 0 && diasAlCierre <= 3) {\n    score += 10;\n    matchesInfo.push('⚠️ cierra en ≤3 días');\n  } else if (diasAlCierre > 0 && diasAlCierre <= 7) {\n    score += 5;\n    matchesInfo.push('cierra pronto');\n  }\n  // Descartar si cierra en menos de 20 días (regla de Jorge)\n  if (diasAlCierre > 0 && diasAlCierre < 20) {\n    // Aún se muestra pero con flag\n    matchesInfo.push('⚠️ poco tiempo preparación');\n  }\n}\n\n// 5. Monto sweet spot ($20M–$200M)\nif (monto >= 20000000 && monto <= 200000000) {\n  score += 10;\n  matchesInfo.push('monto sweet spot');\n} else if (monto > 200000000) {\n  score += 15; // licitación grande = prioridad máxima\n  matchesInfo.push('💰 monto alto');\n} else if (monto >= 500000) {\n  score += 3;\n}\n\n// Cap del score\nscore = Math.min(score, 100);\n\n// ─── DETECTAR COMPETIDORES (solo si la API devuelve oferentes) ───\nlet competidoresDetectados = [];\nlet alertaDimarsa = false;\nconst oferentes = item.Items?.Listado || [];\nfor (const [comp, config] of Object.entries(COMPETIDORES)) {\n  if (JSON.stringify(oferentes).toUpperCase().includes(comp)) {\n    competidoresDetectados.push({ nombre: comp, nivel: config.nivel });\n    if (config.alerta) alertaDimarsa = true;\n  }\n}\n\n// ─── CLASIFICACIÓN HOT/WARM/COLD ───\nlet categoria;\nif (score >= 75 || alertaDimarsa) {\n  categoria = 'hot';\n} else if (score >= 45) {\n  categoria = 'warm';\n} else if (score >= 25) {\n  categoria = 'cold';\n} else {\n  return []; // descartar, score muy bajo\n}\n\n// ─── SUGERENCIA TÁCTICA ───\nlet sugerenciaTactica = '';\nif (alertaDimarsa) {\n  sugerenciaTactica = '🚨 DIMARSA participa. NO competir por precio. Destacar: entrega rápida, stock local Magallanes, post-venta con técnico en Punta Arenas.';\n} else if (regionDetectada === 'MAGALLANES' || regionDetectada === 'ANTARTICA') {\n  sugerenciaTactica = '✨ Ventaja logística Magallanes. Destacar entrega rápida y stock inmediato.';\n} else if (RUBROS[rubroPrincipal]?.nivel === 'debil') {\n  sugerenciaTactica = '⚡ Rubro débil históricamente. Revisar precio con margen ajustado y destacar post-venta.';\n} else if (RUBROS[rubroPrincipal]?.nivel === 'fuerte') {\n  sugerenciaTactica = '💪 Rubro fuerte de Recasur. Confianza total, postular con ticket estándar.';\n}\n\n// ═══════════════════════════════════════════════════════════════\n// OUTPUT\n// ═══════════════════════════════════════════════════════════════\n\nreturn [{\n  json: {\n    codigo_externo: item.CodigoExterno,\n    nombre: item.Nombre,\n    descripcion: (item.Descripcion || '').substring(0, 500),\n    organismo: item.NombreOrganismo,\n    codigo_organismo: item.CodigoOrganismo,\n    region: item.Region || null,\n    monto_estimado: monto,\n    moneda: item.Moneda || 'CLP',\n    fecha_publicacion: item.FechaPublicacion,\n    fecha_cierre: item.FechaCierre,\n    estado: item.CodigoEstado,\n    tipo: item.Tipo,\n    dias_al_cierre: diasAlCierre,\n    score: score,\n    categoria: categoria,\n    rubro_principal: rubroPrincipal,\n    nivel_rubro: RUBROS[rubroPrincipal]?.nivel || 'secundario',\n    matches: matchesInfo.join(' · '),\n    cliente_detectado: clienteDetectado,\n    region_detectada: regionDetectada,\n    competidores_detectados: competidoresDetectados.map(c => c.nombre).join(', '),\n    alerta_dimarsa: alertaDimarsa,\n    sugerencia_tactica: sugerenciaTactica,\n    url_ficha: `https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=${item.CodigoExterno}`,\n    capturado_en: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "filtro-scoring-v2",
+      "name": "Filtro + Score v2.0 (Recasur)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [980, 400]
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "upsert",
+        "tableId": "licitaciones",
+        "matchType": "anyFilter",
+        "filters": {
+          "conditions": [
+            { "keyName": "codigo_externo", "keyValue": "={{ $json.codigo_externo }}" }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldId": "codigo_externo", "fieldValue": "={{ $json.codigo_externo }}" },
+            { "fieldId": "nombre", "fieldValue": "={{ $json.nombre }}" },
+            { "fieldId": "descripcion", "fieldValue": "={{ $json.descripcion }}" },
+            { "fieldId": "organismo", "fieldValue": "={{ $json.organismo }}" },
+            { "fieldId": "region", "fieldValue": "={{ $json.region }}" },
+            { "fieldId": "monto_estimado", "fieldValue": "={{ $json.monto_estimado }}" },
+            { "fieldId": "fecha_cierre", "fieldValue": "={{ $json.fecha_cierre }}" },
+            { "fieldId": "dias_al_cierre", "fieldValue": "={{ $json.dias_al_cierre }}" },
+            { "fieldId": "score", "fieldValue": "={{ $json.score }}" },
+            { "fieldId": "categoria", "fieldValue": "={{ $json.categoria }}" },
+            { "fieldId": "rubro_principal", "fieldValue": "={{ $json.rubro_principal }}" },
+            { "fieldId": "nivel_rubro", "fieldValue": "={{ $json.nivel_rubro }}" },
+            { "fieldId": "matches", "fieldValue": "={{ $json.matches }}" },
+            { "fieldId": "cliente_detectado", "fieldValue": "={{ $json.cliente_detectado }}" },
+            { "fieldId": "region_detectada", "fieldValue": "={{ $json.region_detectada }}" },
+            { "fieldId": "competidores_detectados", "fieldValue": "={{ $json.competidores_detectados }}" },
+            { "fieldId": "alerta_dimarsa", "fieldValue": "={{ $json.alerta_dimarsa }}" },
+            { "fieldId": "sugerencia_tactica", "fieldValue": "={{ $json.sugerencia_tactica }}" },
+            { "fieldId": "estado", "fieldValue": "={{ $json.estado }}" },
+            { "fieldId": "url_ficha", "fieldValue": "={{ $json.url_ficha }}" },
+            { "fieldId": "capturado_en", "fieldValue": "={{ $json.capturado_en }}" }
+          ]
+        }
+      },
+      "id": "guardar-supabase",
+      "name": "Guardar en Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1200, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "version": 2 },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.alerta_dimarsa }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "if-dimarsa",
+      "name": "¿Dimarsa participa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1420, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "jorge-diaz-radar@recasur.cl",
+        "toEmail": "={{ $vars.EMAIL_JORGE }}",
+        "subject": "=🚨 ALERTA DIMARSA · {{ $json.organismo }} · ${{ ($json.monto_estimado / 1000000).toFixed(1) }}M CLP",
+        "html": "=<div style=\"font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #0a1628; color: #f5f1e8; padding: 32px; border: 2px solid #e85a4f;\">\n  <div style=\"background: #e85a4f; color: #0a1628; padding: 12px 20px; margin: -32px -32px 24px -32px; text-align: center; font-weight: 700; letter-spacing: 0.15em; font-size: 13px;\">🚨 ALERTA ARCHIENEMIGO · DIMARSA PARTICIPA</div>\n  <h1 style=\"color: #c8a870; font-size: 22px; margin: 0 0 8px;\">Licitación crítica</h1>\n  <h2 style=\"font-style: italic; font-weight: 400; margin: 12px 0 16px; font-size: 20px;\">{{ $json.nombre }}</h2>\n  <p style=\"color: #c8a870; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;\">{{ $json.codigo_externo }} · {{ $json.organismo }}</p>\n  <div style=\"background: rgba(232,90,79,0.1); padding: 20px; margin: 24px 0; border-left: 4px solid #e85a4f;\">\n    <p style=\"margin: 6px 0;\"><strong>Score:</strong> {{ $json.score }}/100</p>\n    <p style=\"margin: 6px 0;\"><strong>Monto estimado:</strong> ${{ ($json.monto_estimado / 1000000).toFixed(1) }}M CLP</p>\n    <p style=\"margin: 6px 0;\"><strong>Cierra en:</strong> {{ $json.dias_al_cierre }} días</p>\n    <p style=\"margin: 6px 0;\"><strong>Rubro:</strong> {{ $json.rubro_principal }}</p>\n    <p style=\"margin: 6px 0;\"><strong>Región:</strong> {{ $json.region || 'N/A' }}</p>\n    <p style=\"margin: 6px 0;\"><strong>Competidores detectados:</strong> {{ $json.competidores_detectados }}</p>\n  </div>\n  <div style=\"background: rgba(200,168,112,0.15); padding: 20px; margin: 24px 0; border-left: 4px solid #c8a870;\">\n    <p style=\"margin: 0 0 10px; color: #c8a870; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;\">Estrategia recomendada</p>\n    <p style=\"margin: 0; font-style: italic; line-height: 1.5;\">{{ $json.sugerencia_tactica }}</p>\n  </div>\n  <a href=\"{{ $json.url_ficha }}\" style=\"display: inline-block; background: #e85a4f; color: #0a1628; padding: 14px 24px; text-decoration: none; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 12px;\">Ver ficha completa →</a>\n</div>",
+        "options": {}
+      },
+      "id": "alerta-dimarsa",
+      "name": "Alerta Email · DIMARSA",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1640, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "version": 2 },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.categoria }}",
+              "rightValue": "hot",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "if-hot",
+      "name": "¿Es HOT?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1420, 500]
+    },
+    {
+      "parameters": {
+        "fromEmail": "jorge-diaz-radar@recasur.cl",
+        "toEmail": "={{ $vars.EMAIL_JORGE }}",
+        "subject": "=🎯 Oportunidad HOT · {{ $json.organismo }} · ${{ ($json.monto_estimado / 1000000).toFixed(1) }}M CLP",
+        "html": "=<div style=\"font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #0a1628; color: #f5f1e8; padding: 32px;\">\n  <h1 style=\"color: #c8a870; border-bottom: 1px solid #c8a870; padding-bottom: 16px;\">🎯 Oportunidad HOT</h1>\n  <h2 style=\"font-style: italic; font-weight: 400; margin: 20px 0 8px; font-size: 20px;\">{{ $json.nombre }}</h2>\n  <p style=\"color: #c8a870; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;\">{{ $json.codigo_externo }} · {{ $json.organismo }}</p>\n  <div style=\"background: rgba(200,168,112,0.1); padding: 20px; margin: 24px 0; border-left: 3px solid #c8a870;\">\n    <p style=\"margin: 6px 0;\"><strong>Score:</strong> {{ $json.score }}/100</p>\n    <p style=\"margin: 6px 0;\"><strong>Monto estimado:</strong> ${{ ($json.monto_estimado / 1000000).toFixed(1) }}M CLP</p>\n    <p style=\"margin: 6px 0;\"><strong>Cierra en:</strong> {{ $json.dias_al_cierre }} días</p>\n    <p style=\"margin: 6px 0;\"><strong>Rubro:</strong> {{ $json.rubro_principal }} ({{ $json.nivel_rubro }})</p>\n    <p style=\"margin: 6px 0;\"><strong>Match:</strong> {{ $json.matches }}</p>\n  </div>\n  <div style=\"background: rgba(92,141,112,0.15); padding: 20px; margin: 24px 0; border-left: 3px solid #5c8d70;\">\n    <p style=\"margin: 0 0 10px; color: #5c8d70; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;\">Sugerencia táctica</p>\n    <p style=\"margin: 0; font-style: italic; line-height: 1.5;\">{{ $json.sugerencia_tactica }}</p>\n  </div>\n  <a href=\"{{ $json.url_ficha }}\" style=\"display: inline-block; background: #c8a870; color: #0a1628; padding: 14px 24px; text-decoration: none; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-size: 12px;\">Ver ficha completa →</a>\n</div>",
+        "options": {}
+      },
+      "id": "alerta-hot",
+      "name": "Alerta Email · HOT",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1640, 400]
+    },
+    {
+      "parameters": {},
+      "id": "merge-final",
+      "name": "Fin",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [1860, 450]
+    }
+  ],
+  "connections": {
+    "Cada día 08:00 (Chile)": {
+      "main": [[{ "node": "Formatear fecha", "type": "main", "index": 0 }]]
+    },
+    "Formatear fecha": {
+      "main": [[{ "node": "API ChileCompra · Licitaciones del día", "type": "main", "index": 0 }]]
+    },
+    "API ChileCompra · Licitaciones del día": {
+      "main": [[{ "node": "Separar licitaciones", "type": "main", "index": 0 }]]
+    },
+    "Separar licitaciones": {
+      "main": [[{ "node": "Filtro + Score v2.0 (Recasur)", "type": "main", "index": 0 }]]
+    },
+    "Filtro + Score v2.0 (Recasur)": {
+      "main": [[{ "node": "Guardar en Supabase", "type": "main", "index": 0 }]]
+    },
+    "Guardar en Supabase": {
+      "main": [[
+        { "node": "¿Dimarsa participa?", "type": "main", "index": 0 },
+        { "node": "¿Es HOT?", "type": "main", "index": 0 }
+      ]]
+    },
+    "¿Dimarsa participa?": {
+      "main": [
+        [{ "node": "Alerta Email · DIMARSA", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "¿Es HOT?": {
+      "main": [
+        [{ "node": "Alerta Email · HOT", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Alerta Email · DIMARSA": {
+      "main": [[{ "node": "Fin", "type": "main", "index": 0 }]]
+    },
+    "Alerta Email · HOT": {
+      "main": [[{ "node": "Fin", "type": "main", "index": 1 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Santiago"
+  },
+  "tags": [
+    { "name": "ChileCompra" },
+    { "name": "Jorge Díaz" },
+    { "name": "Recasur" },
+    { "name": "v2.0" }
+  ]
+}
