@@ -1143,5 +1143,171 @@ tfoot td.right { font-family:'Geist Mono',monospace; font-style:normal; font-siz
 
 </div>
 
+<script>
+// ════════════════════════════════════════
+// SUPABASE · DATOS REALES EN EL REPORTE
+// ════════════════════════════════════════
+const SB_URL = 'https://ivpgkqmxjuepvkcelzlh.supabase.co';
+const SB_KEY = 'sb_publishable_mXRxs6l1_VsRNF9qutdWbQ_xGYfK_9k';
+
+async function fetchSB(endpoint, params = '') {
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/${endpoint}${params}`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn('Supabase error:', e.message);
+    return null;
+  }
+}
+
+function fmt(n) {
+  if (!n) return '0';
+  return Math.round(n).toLocaleString('es-CL');
+}
+
+function fmtM(n) {
+  if (!n) return '$0M';
+  return `$${Math.round(n/1000000)}M`;
+}
+
+async function cargarReporte() {
+
+  // 1. KPIs generales
+  const kpis = await fetchSB('vw_kpis', '?select=*&limit=1');
+
+  // 2. Performance mensual
+  const perf = await fetchSB('vw_performance_mensual', '?select=*&limit=1');
+
+  // 3. Licitaciones ganadas
+  const ganadas = await fetchSB('licitaciones',
+    '?select=codigo_externo,nombre,organismo,monto_ofertado,rubro_principal&resultado=eq.ganada&order=monto_ofertado.desc&limit=10');
+
+  // 4. Pipeline activo
+  const pipeline = await fetchSB('licitaciones',
+    '?select=codigo_externo,nombre,organismo,monto_estimado,dias_al_cierre&resultado=is.null&postulamos=eq.true&order=dias_al_cierre.asc&limit=5');
+
+  // 5. Alertas Dimarsa
+  const dimarsa = await fetchSB('licitaciones',
+    '?select=codigo_externo,nombre,organismo,resultado&alerta_dimarsa=eq.true&limit=5');
+
+  // Actualizar portada KPIs si hay datos reales
+  if (kpis && kpis.length > 0 && perf && perf.length > 0) {
+    const k = kpis[0];
+    const p = perf[0];
+
+    // Mes actual
+    const now = new Date();
+    const mes = now.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+
+    // Actualizar título del reporte
+    document.title = `Reporte Ejecutivo · Jorge Díaz · Recasur · ${mes}`;
+
+    // Actualizar KPIs de portada
+    const ckpis = document.querySelectorAll('.ckpi');
+
+    if (ckpis[0]) {
+      ckpis[0].querySelector('.ckpi-value').innerHTML =
+        `${fmtM(p.monto_ganado_clp || 0)}<span class="unit"> CLP</span>`;
+      ckpis[0].querySelector('.ckpi-ctx').innerHTML =
+        `<span class="up">Monto adjudicado real</span>`;
+    }
+
+    if (ckpis[1]) {
+      ckpis[1].querySelector('.ckpi-value').innerHTML =
+        `${p.tasa_exito_pct || 0}<span class="unit">%</span>`;
+      ckpis[1].querySelector('.ckpi-ctx').innerHTML =
+        `<span class="up">Tasa real de éxito</span>`;
+    }
+
+    if (ckpis[2]) {
+      ckpis[2].querySelector('.ckpi-value').innerHTML =
+        `${fmtM(k.pipeline_clp || 0)}<span class="unit"> CLP</span>`;
+      ckpis[2].querySelector('.ckpi-ctx').innerHTML =
+        `<span class="up">Pipeline activo</span>`;
+    }
+
+    if (ckpis[3]) {
+      ckpis[3].querySelector('.ckpi-value').innerHTML =
+        `${k.alertas_dimarsa || 0}`;
+      ckpis[3].querySelector('.ckpi-ctx').innerHTML =
+        `<span class="neutral">Alertas este mes</span>`;
+    }
+
+    // Actualizar KPI grid página 2
+    const kgrid = document.querySelectorAll('.kpi-cell');
+    if (kgrid.length >= 8) {
+      const vals = [
+        { v: fmt(k.activas_hoy || 0), c: 'Detectadas hoy' },
+        { v: fmt(k.hot_activas || 0), c: 'Hot activas' },
+        { v: fmt(p.postuladas || 0), c: 'Postuladas este mes' },
+        { v: fmt(p.ganadas || 0), c: `${p.tasa_exito_pct || 0}% tasa éxito` },
+        { v: fmtM(k.pipeline_clp || 0), c: 'Pipeline total' },
+        { v: fmtM(k.pipeline_clp || 0), c: 'Calce real' },
+        { v: fmtM(p.monto_ganado_clp || 0), c: 'Postulado' },
+        { v: fmtM(p.monto_ganado_clp || 0), c: '↑ Adjudicado real' },
+      ];
+      vals.forEach((item, i) => {
+        if (kgrid[i]) {
+          const vEl = kgrid[i].querySelector('.kpi-cell-value');
+          const cEl = kgrid[i].querySelector('.kpi-cell-ctx');
+          if (vEl) vEl.innerHTML = item.v;
+          if (cEl) cEl.innerHTML = `<span class="up">${item.c}</span>`;
+        }
+      });
+    }
+
+    // Banner de datos reales en la barra de impresión
+    const printBar = document.querySelector('.print-bar-info');
+    if (printBar) {
+      printBar.innerHTML = `
+        <strong>✅ DATOS REALES</strong> · Reporte ${mes} · Jorge Díaz · Recasur ·
+        <span style="color:var(--g600);font-weight:700;">${p.ganadas || 0} ganadas · ${fmtM(p.monto_ganado_clp || 0)} adjudicado</span>
+      `;
+    }
+  }
+
+  // Actualizar tabla de adjudicaciones con datos reales
+  if (ganadas && ganadas.length > 0) {
+    const tbody = document.querySelector('table tbody');
+    if (tbody) {
+      tbody.innerHTML = ganadas.map((g, i) => `
+        <tr>
+          <td><strong>${g.codigo_externo || '—'}</strong><br>
+            <span style="font-size:11px;color:var(--z400);">${(g.nombre || '').substring(0, 60)}${(g.nombre || '').length > 60 ? '…' : ''}</span>
+          </td>
+          <td>${g.organismo || '—'}</td>
+          <td>${g.rubro_principal || '—'}</td>
+          <td><span style="font-size:11px;color:var(--g600);font-weight:600;">Postular sí o sí</span></td>
+          <td class="right">${g.monto_ofertado ? `$${fmt(g.monto_ofertado)}` : 'Sin monto'}</td>
+          <td class="right"><span class="badge-td won">✓ Ganada</span></td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // Fecha dinámica en la firma
+  const sigDate = document.querySelector('.sig-date');
+  if (sigDate) {
+    const now = new Date();
+    const fechaFirma = now.toLocaleDateString('es-CL', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+    sigDate.textContent = `Punta Arenas · ${fechaFirma}`;
+  }
+
+  // Mes en portada
+  const metaVals = document.querySelectorAll('.meta-value');
+  if (metaVals[0]) {
+    const now = new Date();
+    metaVals[0].textContent = now.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+  }
+}
+
+// Ejecutar al cargar
+cargarReporte();
+</script>
 </body>
 </html>
