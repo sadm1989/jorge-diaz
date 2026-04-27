@@ -3,1377 +3,2320 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jorge Díaz · Inteligencia de Licitaciones</title>
+<title>Jorge Díaz · Copiloto Comercial · Recasur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════════════════
+   JORGE DÍAZ · COPILOTO COMERCIAL v5
+   Concepto: Asesor comercial experto, no dashboard bonito
+   Paleta: Blanco puro + Zinc + Verde decisión + Rojo alerta
+   Tipografía: Sora (UI ejecutivo) + Instrument Serif (display) + Geist Mono (data)
+   ═══════════════════════════════════════════════════════ */
 :root {
-  --ink: #0a1628;
-  --deep: #0f2540;
-  --steel: #1e3a5f;
-  --brass: #c8a870;
-  --brass-bright: #e8c885;
-  --foam: #f5f1e8;
-  --cream: #ebe4d2;
-  --coral: #e85a4f;
-  --algae: #5c8d70;
-  --rust: #a84a2f;
-  --mist: rgba(245, 241, 232, 0.08);
+  --white:       #ffffff;
+  --bg:          #f8f9fa;
+  --bg-2:        #f1f3f5;
+  --z50:         #f8fafc;
+  --z100:        #f1f5f9;
+  --z200:        #e2e8f0;
+  --z300:        #cbd5e1;
+  --z400:        #94a3b8;
+  --z500:        #64748b;
+  --z600:        #475569;
+  --z700:        #334155;
+  --z800:        #1e293b;
+  --z900:        #0f172a;
+  --z950:        #020617;
+
+  /* Verdes — decisión positiva */
+  --g400:        #4ade80;
+  --g500:        #22c55e;
+  --g600:        #16a34a;
+  --g50:         #f0fdf4;
+  --g100:        #dcfce7;
+
+  /* Rojos — alerta / riesgo */
+  --r400:        #f87171;
+  --r500:        #ef4444;
+  --r600:        #dc2626;
+  --r50:         #fef2f2;
+  --r100:        #fee2e2;
+
+  /* Ambar — precaución */
+  --a400:        #fbbf24;
+  --a500:        #f59e0b;
+  --a600:        #d97706;
+  --a50:         #fffbeb;
+  --a100:        #fef3c7;
+
+  /* Azul — información */
+  --b500:        #3b82f6;
+  --b50:         #eff6ff;
+  --b100:        #dbeafe;
+
+  /* Accent — dorado ejecutivo */
+  --gold:        #ca8a04;
+  --gold-lt:     #fef9c3;
+
+  --sh-sm:  0 1px 2px rgba(15,23,42,.06);
+  --sh-md:  0 4px 6px -1px rgba(15,23,42,.07), 0 2px 4px -2px rgba(15,23,42,.05);
+  --sh-lg:  0 10px 15px -3px rgba(15,23,42,.07), 0 4px 6px -4px rgba(15,23,42,.04);
+  --sh-xl:  0 20px 25px -5px rgba(15,23,42,.08), 0 8px 10px -6px rgba(15,23,42,.04);
+
+  --radius:    8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
 
 body {
-  font-family: 'Fraunces', Georgia, serif;
-  background: var(--ink);
-  color: var(--foam);
-  min-height: 100vh;
-  background-image:
-    radial-gradient(ellipse at top right, rgba(200, 168, 112, 0.08), transparent 50%),
-    radial-gradient(ellipse at bottom left, rgba(30, 58, 95, 0.4), transparent 60%),
-    linear-gradient(180deg, var(--ink) 0%, #060f1d 100%);
-  background-attachment: fixed;
+  font-family:'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--z900);
+  min-height:100vh;
+  line-height:1.5;
 }
 
-/* Grain overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 40px 32px;
-  position: relative;
-  z-index: 2;
-}
-
-/* ===== HEADER ===== */
-header {
+/* ─── LAYOUT SHELL ─── */
+.shell {
   display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: end;
-  gap: 40px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid rgba(200, 168, 112, 0.2);
-  margin-bottom: 48px;
+  grid-template-columns: 224px 1fr;
+  min-height: 100vh;
 }
 
-.brand {
+/* ─── SIDEBAR ─── */
+.sidebar {
+  background: var(--z900);
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 20;
 }
 
-.compass {
-  width: 72px;
-  height: 72px;
-  flex-shrink: 0;
-}
-
-.compass-outer {
-  stroke: var(--brass);
-  fill: none;
-  stroke-width: 1.5;
-}
-
-.compass-inner {
-  fill: var(--brass);
-  animation: rotate 40s linear infinite;
-  transform-origin: center;
-}
-
-@keyframes rotate {
-  to { transform: rotate(360deg); }
-}
-
-.title {
-  font-family: 'Fraunces', serif;
-  font-size: 42px;
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  color: var(--foam);
-}
-
-.title em {
-  color: var(--brass-bright);
-  font-style: normal;
-  font-weight: 500;
-}
-
-.subtitle {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-top: 8px;
-}
-
-.status-pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 10px 18px;
-  border: 1px solid var(--algae);
-  border-radius: 2px;
-  color: var(--algae);
-  background: rgba(92, 141, 112, 0.08);
-  display: inline-flex;
+.sidebar-brand {
+  padding: 20px 16px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.pulse {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--algae);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-/* ===== KPI STRIP ===== */
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  margin-bottom: 56px;
-  border-top: 1px solid rgba(200, 168, 112, 0.15);
-  border-bottom: 1px solid rgba(200, 168, 112, 0.15);
-}
-
-.kpi {
-  padding: 28px 24px;
-  border-right: 1px solid rgba(200, 168, 112, 0.15);
-  position: relative;
-}
-
-.kpi:last-child { border-right: none; }
-
-.kpi-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: 12px;
-}
-
-.kpi-value {
-  font-family: 'Fraunces', serif;
-  font-size: 44px;
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
-.kpi-unit {
-  font-size: 16px;
-  color: var(--brass);
-  font-style: italic;
-  margin-left: 4px;
-}
-
-.kpi-delta {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  margin-top: 10px;
-  color: var(--algae);
-}
-
-.kpi-delta.neg { color: var(--coral); }
-
-/* ===== SECTIONS ===== */
-.section-title {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(200, 168, 112, 0.2);
-}
-
-.section-title h2 {
-  font-family: 'Fraunces', serif;
-  font-size: 28px;
-  font-weight: 400;
-  font-style: italic;
-  color: var(--foam);
-}
-
-.section-title span {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--brass);
-}
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 32px;
-  margin-bottom: 56px;
-}
-
-/* ===== OPPORTUNITY CARDS ===== */
-.opportunities {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.opportunity {
-  background: linear-gradient(135deg, rgba(30, 58, 95, 0.4) 0%, rgba(15, 37, 64, 0.6) 100%);
-  border: 1px solid rgba(200, 168, 112, 0.15);
-  padding: 24px;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.opportunity::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--brass);
-  transition: width 0.3s ease;
-}
-
-.opportunity.hot::before { background: var(--coral); }
-.opportunity.warm::before { background: var(--brass); }
-.opportunity.cold::before { background: var(--steel); }
-
-.opportunity:hover {
-  border-color: var(--brass);
-  transform: translateX(4px);
-}
-
-.opportunity:hover::before { width: 6px; }
-
-.opp-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
-.opp-code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  color: var(--brass);
-  text-transform: uppercase;
-}
-
-.opp-title {
-  font-family: 'Fraunces', serif;
-  font-size: 19px;
-  font-weight: 500;
-  line-height: 1.3;
-  margin-top: 6px;
-  color: var(--foam);
-}
-
-.opp-score {
-  font-family: 'Fraunces', serif;
-  font-size: 32px;
-  font-weight: 300;
-  line-height: 1;
-  color: var(--brass-bright);
-  font-style: italic;
-}
-
-.opp-meta {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px dashed rgba(200, 168, 112, 0.2);
-}
-
-.opp-meta-item {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-}
-
-.opp-meta-item .lbl {
-  color: var(--brass);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 4px;
-  font-size: 9px;
-}
-
-.opp-meta-item .val {
-  color: var(--foam);
-  font-size: 13px;
-}
-
-.hot-tag {
-  display: inline-block;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  background: var(--coral);
-  color: var(--ink);
-  font-weight: 600;
-  margin-left: 8px;
-}
-
-/* ===== SIDEBAR CARDS ===== */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.card {
-  background: rgba(30, 58, 95, 0.25);
-  border: 1px solid rgba(200, 168, 112, 0.15);
-  padding: 24px;
-}
-
-.card-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(200, 168, 112, 0.15);
-}
-
-/* Client ranking */
-.client-row {
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  background: var(--gold);
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px dashed rgba(200, 168, 112, 0.1);
-}
-
-.client-row:last-child { border-bottom: none; }
-
-.client-rank {
-  font-family: 'Fraunces', serif;
-  font-size: 24px;
-  font-style: italic;
-  color: var(--brass);
-  width: 32px;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-.client-info { flex: 1; min-width: 0; }
+.brand-mark svg { width:18px; height:18px; stroke:#fff; fill:none; stroke-width:1.75; }
 
-.client-name {
-  font-family: 'Fraunces', serif;
-  font-size: 14px;
-  color: var(--foam);
-  line-height: 1.3;
-  margin-bottom: 4px;
+.brand-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.2;
 }
 
-.client-bar {
-  height: 3px;
-  background: rgba(200, 168, 112, 0.15);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-top: 6px;
-}
-
-.client-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--brass) 0%, var(--brass-bright) 100%);
-  transition: width 1s ease;
-}
-
-.client-amount {
-  font-family: 'JetBrains Mono', monospace;
+.brand-sub {
   font-size: 11px;
-  color: var(--brass);
-  margin-top: 4px;
+  color: rgba(255,255,255,.4);
+  margin-top: 1px;
+  font-family: 'Geist Mono', monospace;
 }
 
-/* Calendar heatmap */
-.heatmap {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 3px;
-  margin-top: 12px;
+.sidebar-nav {
+  padding: 12px 8px;
+  flex: 1;
 }
 
-.heat-cell {
-  aspect-ratio: 1;
-  background: rgba(200, 168, 112, 0.1);
-  border-radius: 1px;
-  position: relative;
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  padding: 14px 10px 6px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,.6);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all .15s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  margin-bottom: 1px;
 }
 
-.heat-cell:hover {
-  transform: scale(1.15);
+.nav-btn:hover { background: rgba(255,255,255,.07); color: var(--white); }
+.nav-btn.active { background: rgba(255,255,255,.12); color: var(--white); font-weight: 600; }
+.nav-btn svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.75; flex-shrink:0; }
+
+.nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  font-family: 'Geist Mono', monospace;
+  background: var(--r500);
+  color: white;
+}
+
+.nav-badge.gold { background: var(--gold); }
+.nav-badge.green { background: var(--g500); }
+
+.sidebar-footer {
+  padding: 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+}
+
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--g400);
+  flex-shrink: 0;
+  animation: breathe 2.5s ease-in-out infinite;
+}
+
+@keyframes breathe { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+.status-text { font-size:11px; color:rgba(255,255,255,.5); font-family:'Geist Mono',monospace; line-height:1.4; }
+.status-text strong { display:block; color:rgba(255,255,255,.8); font-size:11px; }
+
+/* ─── TOPBAR ─── */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--z200);
+  height: 54px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
   z-index: 10;
 }
 
-.heat-cell[data-level="1"] { background: rgba(200, 168, 112, 0.25); }
-.heat-cell[data-level="2"] { background: rgba(200, 168, 112, 0.5); }
-.heat-cell[data-level="3"] { background: rgba(200, 168, 112, 0.75); }
-.heat-cell[data-level="4"] { background: var(--brass-bright); }
+.topbar-left { display:flex; align-items:center; gap:12px; }
 
-.heat-labels {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 3px;
-  margin-top: 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--brass);
-  text-align: center;
-}
-
-/* ===== COMPETITIVE INTEL ===== */
-.intel-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32px;
-  margin-bottom: 56px;
-}
-
-.competitor-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 16px;
+.page-breadcrumb {
+  display: flex;
   align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px dashed rgba(200, 168, 112, 0.1);
-}
-
-.competitor-row:last-child { border-bottom: none; }
-
-.comp-name {
-  font-family: 'Fraunces', serif;
-  font-size: 14px;
-  color: var(--foam);
-}
-
-.comp-stats {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--brass);
-  letter-spacing: 0.05em;
-}
-
-.comp-threat {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  padding: 4px 8px;
-  border-radius: 2px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.threat-high { background: rgba(232, 90, 79, 0.15); color: var(--coral); border: 1px solid var(--coral); }
-.threat-med { background: rgba(200, 168, 112, 0.1); color: var(--brass); border: 1px solid var(--brass); }
-.threat-low { background: rgba(92, 141, 112, 0.1); color: var(--algae); border: 1px solid var(--algae); }
-
-/* Price intel */
-.price-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px dashed rgba(200, 168, 112, 0.1);
-}
-
-.price-row:last-child { border-bottom: none; }
-
-.price-product {
-  font-family: 'Fraunces', serif;
+  gap: 6px;
   font-size: 13px;
-  color: var(--foam);
-  line-height: 1.3;
+  color: var(--z500);
 }
 
-.price-range {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: var(--brass);
-  text-align: right;
+.page-breadcrumb span { color: var(--z900); font-weight: 600; }
+.page-breadcrumb svg { width:14px; height:14px; stroke:var(--z300); fill:none; stroke-width:1.5; }
+
+.topbar-right { display:flex; align-items:center; gap:8px; }
+
+.search-wrap { position:relative; }
+.search-ico { position:absolute; left:10px; top:50%; transform:translateY(-50%); width:14px; height:14px; stroke:var(--z400); fill:none; stroke-width:1.75; pointer-events:none; }
+.search-input { width:200px; padding:7px 10px 7px 30px; border:1px solid var(--z200); background:var(--bg); border-radius:var(--radius); font-family:'Sora',sans-serif; font-size:13px; color:var(--z900); outline:none; transition:all .15s; }
+.search-input::placeholder { color:var(--z400); }
+.search-input:focus { border-color:var(--z400); background:var(--white); box-shadow:0 0 0 3px rgba(100,116,139,.1); }
+
+.topbar-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 14px;
+  font-family:'Sora',sans-serif; font-size:13px; font-weight:500;
+  border-radius:var(--radius); cursor:pointer; transition:all .15s; border:none;
 }
 
-.price-suggested {
-  color: var(--algae);
-  font-weight: 600;
-  font-size: 11px;
-  margin-top: 3px;
-  display: block;
-}
+.topbar-btn.primary { background:var(--z900); color:var(--white); }
+.topbar-btn.primary:hover { background:var(--z700); }
+.topbar-btn.ghost { background:transparent; color:var(--z600); border:1px solid var(--z200); }
+.topbar-btn.ghost:hover { background:var(--bg); border-color:var(--z300); color:var(--z900); }
+.topbar-btn svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.75; }
 
-/* ===== FILTERS ===== */
-.filter-bar {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 16px;
-  margin-bottom: 28px;
-  align-items: center;
-}
+/* ─── MAIN CONTENT ─── */
+.main { display:flex; flex-direction:column; min-height:100vh; }
+.content { padding:24px 28px 40px; flex:1; }
 
-.search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-icon {
-  position: absolute;
-  left: 18px;
-  width: 16px;
-  height: 16px;
-  stroke: var(--brass);
-  fill: none;
-  stroke-width: 1.5;
-  pointer-events: none;
-}
-
-.search-input {
-  width: 100%;
-  padding: 16px 20px 16px 48px;
-  background: rgba(30, 58, 95, 0.35);
-  border: 1px solid rgba(200, 168, 112, 0.2);
-  color: var(--foam);
-  font-family: 'Fraunces', serif;
-  font-size: 15px;
-  font-style: italic;
-  letter-spacing: 0.01em;
-  transition: all 0.3s ease;
-  outline: none;
-}
-
-.search-input::placeholder {
-  color: rgba(200, 168, 112, 0.5);
-  font-style: italic;
-}
-
-.search-input:focus {
-  border-color: var(--brass-bright);
-  background: rgba(30, 58, 95, 0.55);
-  box-shadow: 0 0 0 3px rgba(200, 168, 112, 0.1);
-}
-
-.search-clear {
-  position: absolute;
-  right: 16px;
-  background: none;
-  border: none;
-  color: var(--brass);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  padding: 6px 10px;
-  border: 1px solid rgba(200, 168, 112, 0.25);
-  border-radius: 2px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  text-transform: uppercase;
-}
-
-.search-clear.visible {
-  opacity: 1;
-}
-
-.search-clear:hover {
-  border-color: var(--brass);
-  color: var(--foam);
-}
-
-.filter-chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.chip {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 10px 14px;
-  background: transparent;
-  border: 1px solid rgba(200, 168, 112, 0.25);
-  color: var(--brass);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-radius: 2px;
-  white-space: nowrap;
-}
-
-.chip:hover {
-  border-color: var(--brass-bright);
-  color: var(--foam);
-}
-
-.chip.active {
-  background: var(--brass);
-  color: var(--ink);
-  border-color: var(--brass);
-  font-weight: 600;
-}
-
-.chip.active.hot {
-  background: var(--coral);
-  border-color: var(--coral);
-}
-
-.chip.active.warm {
-  background: var(--brass);
-  border-color: var(--brass);
-}
-
-.chip.active.cold {
-  background: var(--steel);
-  color: var(--foam);
-  border-color: var(--steel);
-}
-
-.result-count {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px dashed rgba(200, 168, 112, 0.15);
-}
-
-.result-count strong {
-  color: var(--brass-bright);
-  font-weight: 500;
-}
-
-.no-results {
-  padding: 60px 24px;
-  text-align: center;
-  border: 1px dashed rgba(200, 168, 112, 0.2);
-  background: rgba(30, 58, 95, 0.15);
-  display: none;
-}
-
-.no-results.visible {
-  display: block;
-}
-
-.no-results-icon {
-  font-size: 40px;
-  color: var(--brass);
-  font-style: italic;
-  font-family: 'Fraunces', serif;
-  margin-bottom: 12px;
-  opacity: 0.5;
-}
-
-.no-results-text {
-  font-family: 'Fraunces', serif;
-  font-style: italic;
-  font-size: 16px;
-  color: var(--foam);
-  margin-bottom: 6px;
-}
-
-.no-results-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--brass);
-  letter-spacing: 0.1em;
-}
-
-.opportunity.hidden {
-  display: none;
-}
-
-/* Highlight matches */
-mark {
-  background: rgba(200, 168, 112, 0.3);
-  color: var(--brass-bright);
-  padding: 0 2px;
-  border-radius: 1px;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  margin-top: 80px;
-  padding-top: 32px;
-  border-top: 1px solid rgba(200, 168, 112, 0.15);
+/* ═══════════════════════════════════════
+   A. BLOQUE "TU DÍA DE HOY"
+   ═══════════════════════════════════════ */
+.day-block {
+  background: var(--z900);
+  border-radius: var(--radius-xl);
+  padding: 24px 28px;
+  margin-bottom: 24px;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 24px;
-  align-items: end;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--brass);
-  text-transform: uppercase;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
-footer em {
-  font-family: 'Fraunces', serif;
+.day-block::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 240px;
+  background: linear-gradient(135deg, transparent 0%, rgba(202,138,4,.1) 100%);
+  pointer-events: none;
+}
+
+.day-greeting {
+  font-family: 'Instrument Serif', serif;
+  font-size: 11px;
   font-style: italic;
-  font-size: 14px;
-  color: var(--foam);
-  text-transform: none;
-  letter-spacing: 0;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .05em;
+  margin-bottom: 6px;
+  text-transform: lowercase;
 }
 
-.wave-divider {
-  height: 1px;
-  margin: 40px 0;
-  background: linear-gradient(90deg, transparent 0%, var(--brass) 50%, transparent 100%);
+.day-headline {
+  font-family: 'Instrument Serif', serif;
+  font-size: 26px;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 16px;
+  font-weight: 400;
+}
+
+.day-headline strong { color: var(--gold); font-style: italic; }
+
+.day-stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.day-stat {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: rgba(255,255,255,.6);
+}
+
+.day-stat .ico {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.day-stat .ico svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; }
+.day-stat .ico.red { background:var(--r500); color:white; }
+.day-stat .ico.gold { background:var(--gold); color:white; }
+.day-stat .ico.green { background:var(--g500); color:white; }
+.day-stat .ico.neutral { background:rgba(255,255,255,.1); color:rgba(255,255,255,.5); }
+
+.day-stat strong { color: var(--white); font-weight: 600; }
+
+.day-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.day-deadline {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+  text-align: right;
+}
+
+.day-deadline strong { display:block; font-size:13px; color:var(--r400); margin-bottom:2px; }
+
+.day-cta {
+  padding: 10px 20px;
+  background: var(--gold);
+  color: var(--z950);
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+
+.day-cta:hover { background: #b45309; color: var(--white); }
+
+/* ═══════════════════════════════════════
+   MÉTRICAS
+   ═══════════════════════════════════════ */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.metric {
+  background: var(--white);
+  border: 1px solid var(--z200);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--sh-sm);
+  position: relative;
+  transition: all .2s ease;
+}
+
+.metric:hover { border-color:var(--z300); box-shadow:var(--sh-md); transform:translateY(-1px); }
+.metric.critical { border-color:var(--r100); background:linear-gradient(135deg,var(--r50) 0%,var(--white) 100%); }
+
+.metric-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.metric-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--z500);
+}
+
+.metric.critical .metric-lbl { color:var(--r500); }
+
+.metric-ico {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: var(--z100);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.metric-ico svg { width:14px; height:14px; stroke:var(--z500); fill:none; stroke-width:1.75; }
+.metric.critical .metric-ico { background:var(--r100); }
+.metric.critical .metric-ico svg { stroke:var(--r500); }
+
+.metric-val {
+  font-family: 'Instrument Serif', serif;
+  font-size: 38px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--z900);
+  margin-bottom: 6px;
+  letter-spacing: -.02em;
+}
+
+.metric.critical .metric-val { color:var(--r500); }
+.metric-val .unit { font-size:16px; color:var(--z400); margin-left:2px; }
+
+.metric-ctx {
+  font-size: 12px;
+  color: var(--z500);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metric-ctx .up { color:var(--g600); font-weight:600; }
+.metric-ctx .down { color:var(--r500); font-weight:600; }
+.metric-ctx .neutral { color:var(--a600); font-weight:600; }
+
+/* Tooltip genérico */
+.has-tooltip { position:relative; cursor:help; }
+.has-tooltip:hover .tt { opacity:1; pointer-events:auto; transform:translateY(0); }
+
+.tt {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  width: 220px;
+  background: var(--z900);
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .2s ease;
+  z-index: 200;
+  text-align: left;
+  box-shadow: var(--sh-xl);
+}
+
+.tt.right { left:auto; right:0; transform:translateY(-4px); }
+.tt::before { content:''; position:absolute; top:-5px; left:50%; transform:translateX(-50%); width:10px; height:5px; background:var(--z900); clip-path:polygon(50% 0%,0% 100%,100% 100%); }
+.tt.right::before { left:auto; right:16px; }
+.tt strong { color:var(--gold); }
+
+/* ═══════════════════════════════════════
+   FILTROS COMERCIALES
+   ═══════════════════════════════════════ */
+.filter-section { margin-bottom: 16px; }
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.filter-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--z400);
+  min-width: 56px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--z200);
+  background: var(--white);
+  color: var(--z600);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+
+.chip:hover { border-color:var(--z400); color:var(--z900); background:var(--z50); }
+.chip.active { background:var(--z900); color:var(--white); border-color:var(--z900); }
+.chip.active.red { background:var(--r500); border-color:var(--r500); }
+.chip.active.green { background:var(--g600); border-color:var(--g600); }
+.chip.active.gold { background:var(--gold); border-color:var(--gold); color:var(--z950); }
+
+.chip .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+.chip .cnt { font-family:'Geist Mono',monospace; font-size:10px; opacity:.7; }
+
+/* ═══════════════════════════════════════
+   LAYOUT PRINCIPAL
+   ═══════════════════════════════════════ */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+}
+
+.result-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--z400);
+  margin-bottom: 12px;
+  font-family: 'Geist Mono', monospace;
+}
+
+.result-bar strong { color:var(--z700); }
+
+/* ═══════════════════════════════════════
+   B. TARJETAS DE LICITACIÓN (copiloto)
+   ═══════════════════════════════════════ */
+.opp-list { display:flex; flex-direction:column; gap:12px; }
+
+.opp-card {
+  background: var(--white);
+  border: 1px solid var(--z200);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--sh-sm);
+  transition: all .2s ease;
+  cursor: pointer;
+}
+
+.opp-card:hover { border-color:var(--z300); box-shadow:var(--sh-lg); transform:translateY(-1px); }
+.opp-card.dimarsa { border-left:3px solid var(--r500); }
+.opp-card.dimarsa:hover { box-shadow:0 8px 24px rgba(239,68,68,.12); }
+.opp-card.hidden { display:none; }
+
+/* Decision header — lo más importante */
+.decision-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--z100);
+}
+
+.decision-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.decision-badge.go { background:var(--g500); color:white; }
+.decision-badge.go-stock { background:var(--g100); color:var(--g600); border:1px solid var(--g500); }
+.decision-badge.check { background:var(--a100); color:var(--a600); border:1px solid var(--a500); }
+.decision-badge.quote { background:var(--b100); color:var(--b500); border:1px solid var(--b500); }
+.decision-badge.risk { background:var(--r100); color:var(--r600); border:1px solid var(--r500); }
+.decision-badge.discard { background:var(--z100); color:var(--z600); border:1px solid var(--z300); }
+.decision-badge.future { background:var(--gold-lt); color:var(--gold); border:1px solid var(--gold); }
+
+.decision-badge svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2.5; }
+
+.decision-reason {
+  font-size: 13px;
+  color: var(--z600);
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+.decision-reason strong { color:var(--z900); font-weight:600; }
+
+.score-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.score-number {
+  font-family: 'Instrument Serif', serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--z900);
+  letter-spacing: -.02em;
+}
+
+.opp-card.dimarsa .score-number { color:var(--r500); }
+
+.score-label-sm {
+  font-size: 9px;
+  font-family: 'Geist Mono', monospace;
+  color: var(--z400);
+  letter-spacing: .05em;
+}
+
+.score-bar-sm {
+  width: 40px;
+  height: 3px;
+  background: var(--z100);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.score-fill-sm {
+  height: 100%;
+  background: var(--z700);
+  border-radius: 100px;
+  transition: width 1s cubic-bezier(.2,.8,.2,1);
+}
+
+.opp-card.dimarsa .score-fill-sm { background:var(--r500); }
+
+/* Card body */
+.card-body { padding: 16px 20px; }
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.card-code {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  color: var(--z400);
+}
+
+.card-code .org { color:var(--z600); font-weight:500; }
+
+.card-tags { display:flex; gap:5px; flex-wrap:wrap; }
+
+.tag {
+  display:inline-flex; align-items:center; gap:3px;
+  font-size:10px; font-weight:600;
+  padding:3px 8px; border-radius:100px;
+}
+
+.tag.red { background:var(--r100); color:var(--r600); }
+.tag.green { background:var(--g100); color:var(--g600); }
+.tag.gold { background:var(--gold-lt); color:var(--gold); }
+.tag.zinc { background:var(--z100); color:var(--z600); }
+.tag.blue { background:var(--b100); color:var(--b500); }
+
+.tag .blink {
+  width:5px; height:5px; border-radius:50%;
+  background:currentColor;
+  animation:breathe 1.3s ease-in-out infinite;
+}
+
+.card-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 18px;
+  color: var(--z900);
+  line-height: 1.35;
+  margin-bottom: 16px;
+  letter-spacing: -.01em;
+}
+
+/* G. SUB-SCORES 4D */
+.subscores {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 14px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--z100);
+}
+
+.subscore-item {
+  text-align: center;
   position: relative;
 }
 
-.wave-divider::before {
-  content: '✦';
+.subscore-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--z400);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.subscore-ring {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  margin: 0 auto 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--z900);
+}
+
+.subscore-ring svg {
   position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--brass);
-  background: var(--ink);
-  padding: 0 16px;
-  font-size: 14px;
+  top: 0; left: 0;
+  transform: rotate(-90deg);
 }
 
-/* Fade in animation on load */
-.fade-in {
-  animation: fadeIn 0.8s ease forwards;
-  opacity: 0;
+.subscore-ring .track { fill:none; stroke:var(--z200); stroke-width:3; }
+.subscore-ring .fill { fill:none; stroke-width:3; stroke-linecap:round; transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1); }
+
+.subscore-ring.high .fill { stroke:var(--g500); }
+.subscore-ring.mid .fill { stroke:var(--a500); }
+.subscore-ring.low .fill { stroke:var(--r500); }
+
+.subscore-text {
+  font-size: 10px;
+  color: var(--z500);
+  line-height: 1.2;
 }
 
-@keyframes fadeIn {
-  to { opacity: 1; }
+/* H. ANÁLISIS DEL COMPRADOR */
+.buyer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--z50);
+  border: 1px solid var(--z100);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
 }
 
-.fade-in:nth-child(1) { animation-delay: 0.1s; }
-.fade-in:nth-child(2) { animation-delay: 0.2s; }
-.fade-in:nth-child(3) { animation-delay: 0.3s; }
-.fade-in:nth-child(4) { animation-delay: 0.4s; }
+.buyer-avatar {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--z800);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-family: 'Geist Mono', monospace;
+}
 
-@media (max-width: 900px) {
-  .kpis { grid-template-columns: repeat(2, 1fr); }
-  .kpi { border-right: none; border-bottom: 1px solid rgba(200, 168, 112, 0.15); }
-  .grid-2 { grid-template-columns: 1fr; }
-  .intel-grid { grid-template-columns: 1fr; }
-  .title { font-size: 32px; }
+.buyer-info { flex:1; min-width:0; }
+
+.buyer-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--z900);
+  margin-bottom: 2px;
+}
+
+.buyer-desc {
+  font-size: 12px;
+  color: var(--z500);
+  line-height: 1.4;
+}
+
+.buyer-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.buyer-freq {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--g600);
+  font-family: 'Geist Mono', monospace;
+}
+
+.buyer-ticket {
+  font-size: 11px;
+  color: var(--z500);
+  font-family: 'Geist Mono', monospace;
+}
+
+/* Datos grid */
+.data-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.data-cell .dl {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--z400);
+  margin-bottom: 3px;
+}
+
+.data-cell .dv {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--z700);
+  font-family: 'Geist Mono', monospace;
+}
+
+.data-cell .dv.urgent { color:var(--r500); }
+.data-cell .dv.pos { color:var(--g600); }
+.data-cell .dv.warn { color:var(--a600); }
+
+/* F. ALERTA COMPETIDOR */
+.competitor-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--r50);
+  border: 1px solid var(--r100);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+}
+
+.comp-alert-ico {
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: var(--r500);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.comp-alert-ico svg { width:13px; height:13px; stroke:white; fill:none; stroke-width:2; }
+
+.comp-alert-body { flex:1; }
+
+.comp-alert-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--r600);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.comp-alert-text {
+  font-size: 13px;
+  color: var(--z700);
+  line-height: 1.5;
+}
+
+.comp-alert-text strong { color:var(--z900); font-weight:600; }
+
+/* Táctica */
+.tactic-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--z100);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+}
+
+.tactic-ico {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--z200);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top:1px;
+}
+
+.tactic-ico svg { width:12px; height:12px; stroke:var(--z600); fill:none; stroke-width:2; }
+.tactic-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--z500); margin-bottom:3px; }
+.tactic-text { font-size:13px; color:var(--z600); line-height:1.5; }
+.tactic-text strong { color:var(--z900); font-weight:600; }
+
+/* I. ARGUMENTO PARA EL JEFE */
+.boss-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--gold-lt);
+  border: 1px solid rgba(202,138,4,.3);
+  border-radius: var(--radius);
+}
+
+.boss-ico { font-size:16px; flex-shrink:0; margin-top:1px; }
+
+.boss-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.boss-text {
+  font-size: 13px;
+  color: var(--z700);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Pipeline status bar */
+.pipeline-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--z50);
+  border-top: 1px solid var(--z100);
+}
+
+.pipeline-status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.ps-new { background:var(--b100); color:var(--b500); }
+.ps-review { background:var(--a100); color:var(--a600); }
+.ps-quoting { background:var(--gold-lt); color:var(--gold); }
+.ps-ready { background:var(--g100); color:var(--g600); }
+.ps-posted { background:var(--z100); color:var(--z600); }
+.ps-won { background:var(--g500); color:white; }
+.ps-lost { background:var(--r100); color:var(--r600); }
+.ps-discard { background:var(--z100); color:var(--z400); }
+
+.pipeline-action {
+  font-size: 12px;
+  color: var(--z500);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pipeline-action svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; flex-shrink:0; }
+
+.pipeline-deadline {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: var(--z400);
+  font-weight: 500;
+}
+
+.pipeline-deadline.urgent { color:var(--r500); font-weight:700; }
+
+/* ═══════════════════════════════════════
+   SIDEBAR PANELS
+   ═══════════════════════════════════════ */
+.aside { display:flex; flex-direction:column; gap:14px; }
+
+.panel {
+  background: var(--white);
+  border: 1px solid var(--z200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-sm);
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--z100);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--z700);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.panel-title svg { width:13px; height:13px; stroke:var(--z400); fill:none; stroke-width:1.75; }
+.panel-title.red { color:var(--r600); }
+.panel-title.red svg { stroke:var(--r500); }
+.panel-title.gold { color:var(--gold); }
+.panel-title.gold svg { stroke:var(--gold); }
+
+.panel-body { padding:12px 16px; }
+
+/* E. DECISIONES INTELIGENTES */
+.smart-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--z50);
+}
+
+.smart-item:last-child { border-bottom:none; }
+
+.smart-ico {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top:1px;
+}
+
+.smart-ico svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; }
+.smart-ico.green { background:var(--g100); color:var(--g600); }
+.smart-ico.red { background:var(--r100); color:var(--r500); }
+.smart-ico.gold { background:var(--gold-lt); color:var(--gold); }
+.smart-ico.zinc { background:var(--z100); color:var(--z500); }
+
+.smart-text {
+  font-size: 12px;
+  color: var(--z600);
+  line-height: 1.5;
+}
+
+.smart-text strong { color:var(--z900); font-weight:600; }
+
+/* Rubro rows */
+.rubro-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--z50);
+}
+
+.rubro-row:last-child { border-bottom:none; }
+
+.rubro-ico {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--z100);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.rubro-ico svg { width:12px; height:12px; stroke:var(--z500); fill:none; stroke-width:1.75; }
+.rubro-ico.weak { background:var(--r50); }
+.rubro-ico.weak svg { stroke:var(--r500); }
+.rubro-ico.strong { background:var(--g50); }
+.rubro-ico.strong svg { stroke:var(--g600); }
+
+.rubro-info { flex:1; min-width:0; }
+
+.rubro-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--z700);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rubro-bar {
+  height: 3px; background:var(--z100); border-radius:100px; overflow:hidden;
+}
+
+.rubro-fill { height:100%; border-radius:100px; transition:width 1.2s cubic-bezier(.2,.8,.2,1); }
+.rubro-row.weak .rubro-fill { background:var(--r400); }
+.rubro-row.strong .rubro-fill { background:var(--g500); }
+.rubro-row .rubro-fill { background:var(--z300); }
+
+.rubro-count { font-size:12px; font-weight:700; color:var(--z500); font-family:'Geist Mono',monospace; }
+
+/* Client rows */
+.client-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--z50);
+}
+
+.client-row:last-child { border-bottom:none; }
+
+.client-n { font-size:11px; color:var(--z300); font-family:'Geist Mono',monospace; width:14px; }
+
+.client-av {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--z900);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.client-info { flex:1; min-width:0; }
+.client-name { font-size:12px; font-weight:500; color:var(--z700); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.client-sub { font-size:11px; color:var(--z400); margin-top:1px; }
+.client-sub .g { color:var(--g600); font-weight:600; }
+.client-amt { font-size:12px; font-weight:700; color:var(--z700); font-family:'Geist Mono',monospace; text-align:right; }
+
+/* Empty state */
+.empty-state { padding:48px 24px; text-align:center; background:var(--white); border:1px dashed var(--z200); border-radius:var(--radius-lg); display:none; }
+.empty-state.show { display:block; }
+.empty-state p { font-size:14px; color:var(--z500); }
+
+/* ─── ANIMATIONS ─── */
+.fade-up { opacity:0; transform:translateY(8px); animation:fadeUp .5s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+.fade-up:nth-child(1){animation-delay:.05s}
+.fade-up:nth-child(2){animation-delay:.1s}
+.fade-up:nth-child(3){animation-delay:.15s}
+.fade-up:nth-child(4){animation-delay:.2s}
+
+mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radius:2px; font-weight:500; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1100px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .main-grid{grid-template-columns:1fr}
+  .subscores{grid-template-columns:repeat(2,1fr)}
+  .data-row{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:640px){
+  .content{padding:14px}
+  .day-block{grid-template-columns:1fr}
+  .day-right{align-items:flex-start}
+  .topbar{padding:0 14px}
 }
 </style>
 </head>
 <body>
-<div class="container">
 
-<!-- HEADER -->
-<header>
-  <div class="brand">
-    <svg class="compass" viewBox="0 0 100 100">
-      <circle class="compass-outer" cx="50" cy="50" r="46"/>
-      <circle class="compass-outer" cx="50" cy="50" r="38"/>
-      <g class="compass-inner">
-        <path d="M 50 15 L 55 50 L 50 45 L 45 50 Z" fill="#c8a870"/>
-        <path d="M 50 85 L 55 50 L 50 55 L 45 50 Z" fill="#c8a870" opacity="0.4"/>
-        <circle cx="50" cy="50" r="3" fill="#c8a870"/>
-      </g>
-      <text x="50" y="12" text-anchor="middle" fill="#c8a870" font-family="serif" font-size="8" font-style="italic">N</text>
-    </svg>
+<div class="shell">
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="12,5 14,12 12,11 10,12" fill="#fff" stroke="none"/><polygon points="12,19 14,12 12,13 10,12" fill="#fff" stroke="none" opacity=".4"/></svg>
+    </div>
     <div>
-      <h1 class="title"><em>Jorge</em> Díaz</h1>
-      <div class="subtitle">Inteligencia de Licitaciones · ChileCompra</div>
+      <div class="brand-name">Jorge Díaz</div>
+      <div class="brand-sub">Recasur · Copiloto</div>
     </div>
   </div>
-  <div class="status-pill">
-    <span class="pulse"></span>
-    Sincronizado · 06:42 AM
-  </div>
-</header>
 
-<!-- KPIs -->
-<div class="kpis">
-  <div class="kpi fade-in">
-    <div class="kpi-label">Activas hoy</div>
-    <div class="kpi-value">14</div>
-    <div class="kpi-delta">▲ 3 nuevas vs ayer</div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Acción</div>
+    <button class="nav-btn active">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Hoy
+      <span class="nav-badge gold">4</span>
+    </button>
+    <button class="nav-btn">
+      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Alertas Dimarsa
+      <span class="nav-badge">2</span>
+    </button>
+    <button class="nav-btn">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Postular ahora
+      <span class="nav-badge green">3</span>
+    </button>
+    <button class="nav-btn">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Magallanes
+    </button>
+
+    <div class="nav-label">Pipeline</div>
+    <button class="nav-btn">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Todas las etapas
+    </button>
+    <button class="nav-btn">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Reporte mensual
+    </button>
+
+    <div class="nav-label">Sistema</div>
+    <button class="nav-btn" onclick="startTour()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Ver tutorial
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="system-status">
+      <div class="status-dot"></div>
+      <div class="status-text">
+        <strong>Sistema activo</strong>
+        08:15 AM · 142 revisadas
+      </div>
+    </div>
   </div>
-  <div class="kpi fade-in">
-    <div class="kpi-label">Monto pipeline</div>
-    <div class="kpi-value">$487<span class="kpi-unit">M CLP</span></div>
-    <div class="kpi-delta">▲ 18% MoM</div>
-  </div>
-  <div class="kpi fade-in">
-    <div class="kpi-label">Tasa adjudicación</div>
-    <div class="kpi-value">32<span class="kpi-unit">%</span></div>
-    <div class="kpi-delta">▲ vs 24% sector</div>
-  </div>
-  <div class="kpi fade-in">
-    <div class="kpi-label">Cierran esta semana</div>
-    <div class="kpi-value">6</div>
-    <div class="kpi-delta neg">▼ 2 urgentes</div>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="page-breadcrumb">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Oportunidades de hoy</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <svg class="search-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Buscar…" autocomplete="off">
+      </div>
+      <button class="topbar-btn ghost" onclick="startTour()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/></svg>
+        Tutorial
+      </button>
+      <button class="topbar-btn primary" onclick="window.location.href='reporte/'">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Reporte para el jefe
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- A. TU DÍA DE HOY -->
+    <div class="day-block">
+      <div>
+        <div class="day-greeting">lunes 27 de abril, 2026 · buenos días</div>
+        <div class="day-headline">
+          Jorge, tienes <strong>4 oportunidades</strong><br>que requieren acción hoy
+        </div>
+        <div class="day-stats">
+          <div class="day-stat">
+            <div class="ico red">
+              <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            </div>
+            <div><strong>2</strong> con Dimarsa — acción urgente</div>
+          </div>
+          <div class="day-stat">
+            <div class="ico gold">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div><strong>3</strong> para postular ya</div>
+          </div>
+          <div class="day-stat">
+            <div class="ico green">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div><strong>9</strong> en Magallanes — ventaja tuya</div>
+          </div>
+          <div class="day-stat">
+            <div class="ico neutral">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </div>
+            <div>Pipeline total <strong>$784M CLP</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="day-right">
+        <div class="day-deadline">
+          <strong>⏰ INDESPA cierra en 8 días</strong>
+          Tu oportunidad más grande del mes
+        </div>
+        <button class="day-cta" onclick="filterAction('hot')">Ver mis 4 prioridades →</button>
+      </div>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="metrics">
+      <div class="metric fade-up has-tooltip">
+        <div class="metric-top">
+          <span class="metric-lbl">Oportunidades hoy</span>
+          <div class="metric-ico"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+        </div>
+        <div class="metric-val">23</div>
+        <div class="metric-ctx"><span class="up">↑ 5 nuevas</span> vs ayer</div>
+        <div class="tt">De 142 licitaciones del día, el sistema filtró <strong>23 para Recasur</strong>. Las otras no aplican.</div>
+      </div>
+      <div class="metric fade-up has-tooltip">
+        <div class="metric-top">
+          <span class="metric-lbl">Pipeline activo</span>
+          <div class="metric-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        </div>
+        <div class="metric-val">$784<span class="unit">M</span></div>
+        <div class="metric-ctx"><span class="up">↑ 22%</span> vs mes pasado</div>
+        <div class="tt">Suma de todos los montos estimados. <strong>No lo ganarás todo</strong>, pero más pipeline = más oportunidades.</div>
+      </div>
+      <div class="metric fade-up has-tooltip">
+        <div class="metric-top">
+          <span class="metric-lbl">En Magallanes</span>
+          <div class="metric-ico"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        </div>
+        <div class="metric-val">9</div>
+        <div class="metric-ctx"><span class="neutral">Ventaja logística tuya</span></div>
+        <div class="tt">Dimarsa está en Puerto Montt. <strong>Tú puedes entregar en 24-48h desde Punta Arenas.</strong> Eso es lo que gana.</div>
+      </div>
+      <div class="metric critical fade-up has-tooltip">
+        <div class="metric-top">
+          <span class="metric-lbl">Alertas Dimarsa</span>
+          <div class="metric-ico"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+        </div>
+        <div class="metric-val">2</div>
+        <div class="metric-ctx"><span class="down">No competir por precio</span></div>
+        <div class="tt right"><strong>Dimarsa fabrica embarcaciones propias</strong> — bajar precio no funciona. Ganas con: entrega rápida, stock en Magallanes, postventa local.</div>
+      </div>
+    </div>
+
+    <!-- FILTROS COMERCIALES -->
+    <div class="filter-section">
+      <div class="filter-row">
+        <span class="filter-lbl">Decisión</span>
+        <button class="chip active" data-f-type="decision" data-f="all">Todas <span class="cnt">6</span></button>
+        <button class="chip" data-f-type="decision" data-f="go"><span class="dot" style="background:var(--g500)"></span> Postular ya <span class="cnt">3</span></button>
+        <button class="chip" data-f-type="decision" data-f="check">Revisar margen <span class="cnt">1</span></button>
+        <button class="chip" data-f-type="decision" data-f="risk">Alto riesgo <span class="cnt">1</span></button>
+        <button class="chip" data-f-type="decision" data-f="discard">Descartar <span class="cnt">1</span></button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-lbl">Ver por</span>
+        <button class="chip" data-f-type="estado" data-f="all2">Todas</button>
+        <button class="chip" data-f-type="estado" data-f="dimarsa"><span class="dot" style="background:var(--r500)"></span> Dimarsa</button>
+        <button class="chip" data-f-type="estado" data-f="magallanes"><span class="dot" style="background:var(--g500)"></span> Magallanes</button>
+        <button class="chip" data-f-type="estado" data-f="closing">Cierran esta semana</button>
+        <button class="chip" data-f-type="estado" data-f="buyer">Comprador frecuente</button>
+      </div>
+    </div>
+
+    <!-- GRID PRINCIPAL -->
+    <div class="main-grid">
+
+      <!-- LISTA DE OPORTUNIDADES -->
+      <div>
+        <div class="result-bar">
+          <span>Mostrando <strong id="resultCount">6</strong> de <strong>6</strong> oportunidades</span>
+          <span>Ordenado por prioridad</span>
+        </div>
+
+        <div class="opp-list" id="oppList">
+
+          <!-- ══ 1 · INDESPA · POSTULAR SÍ O SÍ ══ -->
+          <div class="opp-card dimarsa fade-up"
+               data-decision="go" data-dimarsa="true" data-magallanes="true"
+               data-buyer="frecuente" data-days="8" data-amount="185"
+               data-search="indespa pesca embarcacion buceo magallanes hdpe">
+
+            <div class="decision-header">
+              <div class="decision-badge go">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Postular sí o sí
+              </div>
+              <div class="decision-reason">
+                <strong>Magallanes + rubro fuerte + comprador muy frecuente.</strong> Alta probabilidad. Dimarsa compite pero pierde en logística.
+              </div>
+              <div class="score-compact">
+                <div class="score-number">96</div>
+                <div class="score-label-sm">SCORE</div>
+                <div class="score-bar-sm"><div class="score-fill-sm" style="width:96%"></div></div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="card-meta">
+                <span class="card-code"><span class="org">INDESPA Magallanes</span> · 4521-89-LE25</span>
+                <div class="card-tags">
+                  <span class="tag red"><span class="blink"></span> Dimarsa</span>
+                  <span class="tag green">Magallanes</span>
+                  <span class="tag gold">Comprador frecuente</span>
+                </div>
+              </div>
+
+              <div class="card-title">Compra de embarcaciones HDPE y equipos de buceo para pescadores artesanales — Región de Magallanes</div>
+
+              <!-- G. Sub-scores 4D -->
+              <div class="subscores">
+                <div class="subscore-item has-tooltip">
+                  <span class="subscore-label">Fit comercial</span>
+                  <div class="subscore-ring high">
+                    <svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="10.68"/></svg>
+                    90
+                  </div>
+                  <div class="subscore-text">Rubro fuerte, stock disponible</div>
+                  <div class="tt">Náutico/HDPE es el rubro más fuerte de Recasur. Tienes experiencia y stock.</div>
+                </div>
+                <div class="subscore-item has-tooltip">
+                  <span class="subscore-label">Prob. ganar</span>
+                  <div class="subscore-ring high">
+                    <svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="21.36"/></svg>
+                    80
+                  </div>
+                  <div class="subscore-text">INDESPA te conoce</div>
+                  <div class="tt">INDESPA es tu cliente #1. Tienes historial ganador y ventaja logística en Magallanes.</div>
+                </div>
+                <div class="subscore-item has-tooltip">
+                  <span class="subscore-label">Valor econ.</span>
+                  <div class="subscore-ring high">
+                    <svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="16.02"/></svg>
+                    85
+                  </div>
+                  <div class="subscore-text">$185M · margen alto</div>
+                  <div class="tt">Monto alto en el sweet spot de Recasur. Margen estimado alto en este rubro.</div>
+                </div>
+                <div class="subscore-item has-tooltip">
+                  <span class="subscore-label">Riesgo oper.</span>
+                  <div class="subscore-ring high">
+                    <svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="26.70"/></svg>
+                    75
+                  </div>
+                  <div class="subscore-text">Riesgo bajo</div>
+                  <div class="tt">Bases conocidas. Plazo adecuado (8 días). Verificar garantía de seriedad de oferta.</div>
+                </div>
+              </div>
+
+              <!-- Datos -->
+              <div class="data-row">
+                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$185M CLP</div></div>
+                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv urgent">8 días</div></div>
+                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv pos">Alta</div></div>
+                <div class="data-cell"><div class="dl">Riesgo</div><div class="dv pos">Bajo</div></div>
+              </div>
+
+              <!-- H. Análisis del comprador -->
+              <div class="buyer-row">
+                <div class="buyer-avatar">IN</div>
+                <div class="buyer-info">
+                  <div class="buyer-name">INDESPA — Instituto de Pesca Artesanal</div>
+                  <div class="buyer-desc">Comprador recurrente. Históricamente prioriza equipamiento marítimo y pesca artesanal. Alta afinidad con Recasur. Evalúa calidad, plazo y soporte técnico — no solo precio.</div>
+                </div>
+                <div class="buyer-meta">
+                  <div class="buyer-freq">MUY FRECUENTE</div>
+                  <div class="buyer-ticket">Ticket prom. $185M</div>
+                </div>
+              </div>
+
+              <!-- F. Alerta competidor -->
+              <div class="competitor-alert">
+                <div class="comp-alert-ico"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+                <div class="comp-alert-body">
+                  <div class="comp-alert-title">Dimarsa detectado · náutico/HDPE</div>
+                  <div class="comp-alert-text"><strong>Dimarsa fabrica sus propias embarcaciones HDPE y baja precios agresivamente.</strong> No compitas por precio — defiende con: entrega 48h desde Punta Arenas, técnico local disponible, postventa en Magallanes sin traslados.</div>
+                </div>
+              </div>
+
+              <!-- Táctica -->
+              <div class="tactic-box">
+                <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <div>
+                  <div class="tactic-title">Siguiente acción concreta</div>
+                  <div class="tactic-text"><strong>Confirmar stock de embarcaciones HDPE y equipos de buceo antes del miércoles.</strong> Preparar propuesta destacando entrega express desde Punta Arenas + técnico en terreno incluido. No bajar precio.</div>
+                </div>
+              </div>
+
+              <!-- I. Argumento para el jefe -->
+              <div class="boss-box">
+                <div class="boss-ico">🎯</div>
+                <div>
+                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
+                  <div class="boss-text">"Esta oportunidad defiende el territorio Magallanes frente a Dimarsa en el rubro principal de Recasur. Si se adjudica, representa $185M CLP en pipeline de alta probabilidad — nuestro mayor ticket del mes."</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pipeline status -->
+            <div class="pipeline-bar">
+              <span class="pipeline-status-badge ps-review">Revisando bases</span>
+              <div class="pipeline-action">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Confirmar stock y preparar oferta
+              </div>
+              <div class="pipeline-deadline urgent">Límite interno: miérc 29/04</div>
+            </div>
+          </div>
+
+          <!-- ══ 2 · GOBERNACIÓN MARÍTIMA · POSTULAR SÍ ══ -->
+          <div class="opp-card fade-up"
+               data-decision="go" data-dimarsa="false" data-magallanes="true"
+               data-buyer="frecuente" data-days="12" data-amount="78"
+               data-search="gobernacion maritima punta arenas compresor regulador buceo">
+
+            <div class="decision-header">
+              <div class="decision-badge go">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Postular sí o sí
+              </div>
+              <div class="decision-reason">
+                <strong>Magallanes + náutico fuerte + sin competidores identificados.</strong> La tuya. Prepara y postula.
+              </div>
+              <div class="score-compact">
+                <div class="score-number">89</div>
+                <div class="score-label-sm">SCORE</div>
+                <div class="score-bar-sm"><div class="score-fill-sm" style="width:89%"></div></div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="card-meta">
+                <span class="card-code"><span class="org">Gobernación Marítima Punta Arenas</span> · 3342-45-LE25</span>
+                <div class="card-tags">
+                  <span class="tag green">Magallanes</span>
+                  <span class="tag blue">Sin competencia detectada</span>
+                </div>
+              </div>
+
+              <div class="card-title">Compresores de alta presión y reguladores de buceo para unidades navales</div>
+
+              <div class="subscores">
+                <div class="subscore-item">
+                  <span class="subscore-label">Fit comercial</span>
+                  <div class="subscore-ring high"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="10.68"/></svg>90</div>
+                  <div class="subscore-text">Rubro fuerte</div>
+                </div>
+                <div class="subscore-item">
+                  <span class="subscore-label">Prob. ganar</span>
+                  <div class="subscore-ring high"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="16.02"/></svg>85</div>
+                  <div class="subscore-text">Alta en Magallanes</div>
+                </div>
+                <div class="subscore-item">
+                  <span class="subscore-label">Valor econ.</span>
+                  <div class="subscore-ring mid"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="37.38"/></svg>65</div>
+                  <div class="subscore-text">$78M · bueno</div>
+                </div>
+                <div class="subscore-item">
+                  <span class="subscore-label">Riesgo oper.</span>
+                  <div class="subscore-ring high"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="21.36"/></svg>80</div>
+                  <div class="subscore-text">Riesgo bajo</div>
+                </div>
+              </div>
+
+              <div class="data-row">
+                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$78M CLP</div></div>
+                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv">12 días</div></div>
+                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv pos">Alta</div></div>
+                <div class="data-cell"><div class="dl">Margen est.</div><div class="dv pos">Alto</div></div>
+              </div>
+
+              <div class="buyer-row">
+                <div class="buyer-avatar">GM</div>
+                <div class="buyer-info">
+                  <div class="buyer-name">Gobernación Marítima Punta Arenas</div>
+                  <div class="buyer-desc">Organismo local. Alta afinidad con Recasur por cercanía y capacidad de soporte. Prioriza disponibilidad inmediata y soporte técnico en terreno.</div>
+                </div>
+                <div class="buyer-meta">
+                  <div class="buyer-freq">FRECUENTE</div>
+                  <div class="buyer-ticket">Historial positivo</div>
+                </div>
+              </div>
+
+              <div class="tactic-box">
+                <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                <div>
+                  <div class="tactic-title">Esta es tuya — prepara y postula</div>
+                  <div class="tactic-text"><strong>Confirmar stock disponible y plazo de entrega exacto.</strong> Propuesta estándar destacando soporte técnico local. No se detectan competidores — actúa antes que aparezcan.</div>
+                </div>
+              </div>
+
+              <div class="boss-box">
+                <div class="boss-ico">📊</div>
+                <div>
+                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
+                  <div class="boss-text">"Licitación de organismo local en rubro fuerte, sin competidores. Gestión proactiva detectó esta oportunidad a tiempo. Pipeline defendible de $78M en territorio Magallanes."</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pipeline-bar">
+              <span class="pipeline-status-badge ps-new">Nueva hoy</span>
+              <div class="pipeline-action">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Revisar bases y confirmar stock
+              </div>
+              <div class="pipeline-deadline">Límite interno: vier 01/05</div>
+            </div>
+          </div>
+
+          <!-- ══ 3 · ARMADA VHF · REVISAR MARGEN ══ -->
+          <div class="opp-card dimarsa fade-up"
+               data-decision="check" data-dimarsa="true" data-magallanes="false"
+               data-buyer="" data-days="14" data-amount="112"
+               data-search="armada chile vhf uhf hf radio maritima comunicaciones">
+
+            <div class="decision-header">
+              <div class="decision-badge check">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Revisar margen antes de avanzar
+              </div>
+              <div class="decision-reason">
+                Rubro débil históricamente + Dimarsa compite + monto alto. <strong>No descartar, pero verificar margen y stock antes de comprometerse.</strong>
+              </div>
+              <div class="score-compact">
+                <div class="score-number">81</div>
+                <div class="score-label-sm">SCORE</div>
+                <div class="score-bar-sm"><div class="score-fill-sm" style="width:81%"></div></div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="card-meta">
+                <span class="card-code"><span class="org">Armada de Chile · III Zona Naval</span> · 8821-12-LP25</span>
+                <div class="card-tags">
+                  <span class="tag red"><span class="blink"></span> Dimarsa</span>
+                  <span class="tag zinc">Comunic. · rubro débil</span>
+                </div>
+              </div>
+
+              <div class="card-title">Equipos de comunicación VHF, UHF y HF para unidades navales de la zona austral</div>
+
+              <div class="subscores">
+                <div class="subscore-item">
+                  <span class="subscore-label">Fit comercial</span>
+                  <div class="subscore-ring mid"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="42.72"/></svg>60</div>
+                  <div class="subscore-text">Rubro débil</div>
+                </div>
+                <div class="subscore-item">
+                  <span class="subscore-label">Prob. ganar</span>
+                  <div class="subscore-ring mid"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="53.40"/></svg>50</div>
+                  <div class="subscore-text">Dimarsa compite</div>
+                </div>
+                <div class="subscore-item">
+                  <span class="subscore-label">Valor econ.</span>
+                  <div class="subscore-ring high"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="16.02"/></svg>85</div>
+                  <div class="subscore-text">$112M · atractivo</div>
+                </div>
+                <div class="subscore-item">
+                  <span class="subscore-label">Riesgo oper.</span>
+                  <div class="subscore-ring low"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="74.76"/></svg>30</div>
+                  <div class="subscore-text">Riesgo alto</div>
+                </div>
+              </div>
+
+              <div class="data-row">
+                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$112M CLP</div></div>
+                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv">14 días</div></div>
+                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv warn">Media</div></div>
+                <div class="data-cell"><div class="dl">Riesgo</div><div class="dv urgent">Alto</div></div>
+              </div>
+
+              <div class="competitor-alert">
+                <div class="comp-alert-ico"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+                <div class="comp-alert-body">
+                  <div class="comp-alert-title">Dimarsa · Kauffman detectados · comunicaciones</div>
+                  <div class="comp-alert-text">Rubro donde Recasur perdió más licitaciones el año pasado. Monto atractivo pero <strong>revisar si se tienen los equipos exactos que piden en bases técnicas</strong> antes de comprometer recursos en la propuesta.</div>
+                </div>
+              </div>
+
+              <div class="tactic-box">
+                <div class="tactic-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div>
+                <div>
+                  <div class="tactic-title">Revisar antes de postular</div>
+                  <div class="tactic-text"><strong>Verificar: ¿tiene Recasur el equipo exacto que especifican las bases técnicas?</strong> Si sí → postular destacando capacitación incluida y soporte técnico. Si no → pedir cotización a proveedor antes del jueves.</div>
+                </div>
+              </div>
+
+              <div class="boss-box">
+                <div class="boss-ico">⚠️</div>
+                <div>
+                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
+                  <div class="boss-text">"Oportunidad de $112M en comunicaciones — el sistema identificó que es rubro de riesgo alto. Se está evaluando técnicamente antes de postular para proteger el margen de Recasur."</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pipeline-bar">
+              <span class="pipeline-status-badge ps-review">Revisando bases técnicas</span>
+              <div class="pipeline-action">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Verificar stock de equipos VHF/UHF
+              </div>
+              <div class="pipeline-deadline urgent">Decisión antes: juev 30/04</div>
+            </div>
+          </div>
+
+          <!-- ══ 4 · MUNICIPALIDAD · POSTULAR SÍ ══ -->
+          <div class="opp-card fade-up"
+               data-decision="go" data-dimarsa="false" data-magallanes="true"
+               data-buyer="frecuente" data-days="22" data-amount="54"
+               data-search="municipalidad punta arenas chalecos salvavidas balsa ropa termica">
+
+            <div class="decision-header">
+              <div class="decision-badge go-stock">
+                <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Postular si hay stock
+              </div>
+              <div class="decision-reason">
+                Cliente muy frecuente en Magallanes + rubro fuerte. <strong>Confirmar stock de chalecos y balsas antes de comprometerse.</strong>
+              </div>
+              <div class="score-compact">
+                <div class="score-number">72</div>
+                <div class="score-label-sm">SCORE</div>
+                <div class="score-bar-sm"><div class="score-fill-sm" style="width:72%"></div></div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="card-meta">
+                <span class="card-code"><span class="org">I. Municipalidad de Punta Arenas</span> · 2134-67-LQ25</span>
+                <div class="card-tags">
+                  <span class="tag green">Magallanes</span>
+                  <span class="tag gold">Cliente frecuente</span>
+                </div>
+              </div>
+
+              <div class="card-title">Reposición anual de chalecos salvavidas, balsas y ropa térmica para emergencias costeras</div>
+
+              <div class="data-row">
+                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$54M CLP</div></div>
+                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv">22 días</div></div>
+                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv pos">Alta</div></div>
+                <div class="data-cell"><div class="dl">Tiempo prep.</div><div class="dv pos">Suficiente</div></div>
+              </div>
+
+              <div class="buyer-row">
+                <div class="buyer-avatar">PA</div>
+                <div class="buyer-info">
+                  <div class="buyer-name">Municipalidad de Punta Arenas</div>
+                  <div class="buyer-desc">Comprador muy recurrente. Evalúa principalmente disponibilidad inmediata y precio competitivo. Historial de compra repetida a Recasur.</div>
+                </div>
+                <div class="buyer-meta">
+                  <div class="buyer-freq">MUY FRECUENTE</div>
+                  <div class="buyer-ticket">Compra recurrente</div>
+                </div>
+              </div>
+
+              <div class="tactic-box">
+                <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                <div>
+                  <div class="tactic-title">Confirmar stock y postular</div>
+                  <div class="tactic-text"><strong>Verificar unidades de chalecos y balsas en bodega.</strong> Si hay stock → postular esta semana con propuesta estándar. 22 días es tiempo suficiente para preparar bien la oferta.</div>
+                </div>
+              </div>
+
+              <div class="boss-box">
+                <div class="boss-ico">🔄</div>
+                <div>
+                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
+                  <div class="boss-text">"Cliente recurrente de Magallanes en rubro fuerte. Gestión detectó la renovación anual a tiempo. Oportunidad de $54M con alta probabilidad de adjudicación."</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pipeline-bar">
+              <span class="pipeline-status-badge ps-new">Nueva hoy</span>
+              <div class="pipeline-action">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Verificar stock en bodega
+              </div>
+              <div class="pipeline-deadline">Límite interno: lun 04/05</div>
+            </div>
+          </div>
+
+          <!-- ══ 5 · GOPE · PEDIR COTIZACIÓN ══ -->
+          <div class="opp-card fade-up"
+               data-decision="check" data-dimarsa="false" data-magallanes="false"
+               data-buyer="" data-days="16" data-amount="42"
+               data-search="carabineros gope gps marino radar navegacion electronico">
+
+            <div class="decision-header">
+              <div class="decision-badge quote">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Pedir cotización a proveedor
+              </div>
+              <div class="decision-reason">
+                Electrónicos marítimos no es rubro fuerte. <strong>Antes de postular, confirmar que hay proveedor con precio competitivo.</strong>
+              </div>
+              <div class="score-compact">
+                <div class="score-number">64</div>
+                <div class="score-label-sm">SCORE</div>
+                <div class="score-bar-sm"><div class="score-fill-sm" style="width:64%"></div></div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="card-meta">
+                <span class="card-code"><span class="org">GOPE Carabineros</span> · 5671-34-LE25</span>
+                <div class="card-tags">
+                  <span class="tag zinc">Electrónicos · rubro difícil</span>
+                  <span class="tag blue">Carabineros · frecuente</span>
+                </div>
+              </div>
+
+              <div class="card-title">GPS marino y radares de navegación para unidades de la OS-7</div>
+
+              <div class="data-row">
+                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$42M CLP</div></div>
+                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv">16 días</div></div>
+                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv warn">Media</div></div>
+                <div class="data-cell"><div class="dl">Margen est.</div><div class="dv warn">Desconocido</div></div>
+              </div>
+
+              <div class="tactic-box">
+                <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+                <div>
+                  <div class="tactic-title">Pedir cotización hoy</div>
+                  <div class="tactic-text"><strong>Contactar proveedor de GPS/radares marítimos hoy mismo.</strong> Si la cotización llega con margen suficiente antes del jueves → postular. Si no → descartar sin perder tiempo.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pipeline-bar">
+              <span class="pipeline-status-badge ps-quoting">Cotizando proveedor</span>
+              <div class="pipeline-action">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Esperar cotización para decidir
+              </div>
+              <div class="pipeline-deadline urgent">Decisión antes: juev 30/04</div>
+            </div>
+          </div>
+
+          <!-- ══ 6 · VIALIDAD · DESCARTAR ══ -->
+          <div class="opp-card fade-up"
+               data-decision="discard" data-dimarsa="false" data-magallanes="false"
+               data-buyer="" data-days="28" data-amount="18"
+               data-search="vialidad valparaiso neumaticos lubricantes filtros">
+
+            <div class="decision-header">
+              <div class="decision-badge discard">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                No pierdas tiempo aquí
+              </div>
+              <div class="decision-reason">
+                Fuera de Magallanes + monto bajo + rubro mixto + cliente no frecuente. <strong>No vale la pena preparar propuesta.</strong>
+              </div>
+              <div class="score-compact">
+                <div class="score-number">41</div>
+                <div class="score-label-sm">SCORE</div>
+                <div class="score-bar-sm"><div class="score-fill-sm" style="width:41%"></div></div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="card-meta">
+                <span class="card-code"><span class="org">Dirección de Vialidad Valparaíso</span> · 9912-78-LE25</span>
+                <div class="card-tags">
+                  <span class="tag zinc">Fuera de Magallanes</span>
+                  <span class="tag zinc">Monto bajo · $18M</span>
+                </div>
+              </div>
+
+              <div class="card-title">Suministro de neumáticos, filtros y lubricantes para maquinaria vial</div>
+
+              <div class="tactic-box">
+                <div class="tactic-ico"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                <div>
+                  <div class="tactic-title">Descartar y enfocarse en las prioritarias</div>
+                  <div class="tactic-text">Ticket bajo ($18M), fuera de región, rubro mixto. <strong>El tiempo que tomaría preparar esta propuesta es mejor invertirlo en INDESPA ($185M) o Gobernación Marítima ($78M).</strong></div>
+                </div>
+              </div>
+
+              <div class="boss-box">
+                <div class="boss-ico">🧠</div>
+                <div>
+                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
+                  <div class="boss-text">"El sistema identificó esta licitación como de bajo valor estratégico para Recasur. Se descartó proactivamente para concentrar recursos en oportunidades de mayor retorno en Magallanes."</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pipeline-bar">
+              <span class="pipeline-status-badge ps-discard">Descartada</span>
+              <div class="pipeline-action">Sin acción requerida</div>
+              <div class="pipeline-deadline">—</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="empty-state" id="emptyState"><p>Sin resultados con este filtro. Intenta con otro.</p></div>
+      </div>
+
+      <!-- ═══ ASIDE ═══ -->
+      <aside class="aside">
+
+        <!-- E. DECISIONES INTELIGENTES -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title gold">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              El sistema recomienda
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="smart-item">
+              <div class="smart-ico green"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="smart-text"><strong>INDESPA Magallanes debe ser prioridad #1.</strong> Comprador frecuente, monto alto, rubro fuerte. Actuar antes del miércoles.</div>
+            </div>
+            <div class="smart-item">
+              <div class="smart-ico red"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+              <div class="smart-text"><strong>No bajar precio contra Dimarsa en náutico.</strong> Defiende con entrega 48h y postventa local en Punta Arenas.</div>
+            </div>
+            <div class="smart-item">
+              <div class="smart-ico gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+              <div class="smart-text"><strong>Comunicaciones VHF/HF es de alto riesgo.</strong> Revisar bases técnicas antes de comprometer recursos en la propuesta.</div>
+            </div>
+            <div class="smart-item">
+              <div class="smart-ico zinc"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+              <div class="smart-text"><strong>Vialidad Valparaíso descartada.</strong> El tiempo vale más invertirlo en las 3 oportunidades de Magallanes.</div>
+            </div>
+            <div class="smart-item">
+              <div class="smart-ico green"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div class="smart-text"><strong>9 licitaciones en Magallanes activas.</strong> Tu ventaja logística es insuperable — ningún competidor tiene base en Punta Arenas.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rubros fuertes y débiles -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title red">
+              <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              Donde pierdes más
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="rubro-row weak">
+              <div class="rubro-ico weak"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4 12H2M22 12h-2"/><circle cx="12" cy="12" r="4"/></svg></div>
+              <div class="rubro-info">
+                <div class="rubro-name">Comunicaciones VHF/UHF/HF</div>
+                <div class="rubro-bar"><div class="rubro-fill" style="width:78%"></div></div>
+              </div>
+              <div class="rubro-count">3</div>
+            </div>
+            <div class="rubro-row weak">
+              <div class="rubro-ico weak"><svg viewBox="0 0 24 24"><path d="M8 3h8M12 3v5M6 8h12l-2 13H8L6 8z"/></svg></div>
+              <div class="rubro-info">
+                <div class="rubro-name">Lubricantes (vs Mobil)</div>
+                <div class="rubro-bar"><div class="rubro-fill" style="width:65%"></div></div>
+              </div>
+              <div class="rubro-count">2</div>
+            </div>
+            <div class="rubro-row weak">
+              <div class="rubro-ico weak"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="1"/></svg></div>
+              <div class="rubro-info">
+                <div class="rubro-name">Electrónicos marítimos</div>
+                <div class="rubro-bar"><div class="rubro-fill" style="width:52%"></div></div>
+              </div>
+              <div class="rubro-count">2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Donde más ganas
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="rubro-row strong">
+              <div class="rubro-ico strong"><svg viewBox="0 0 24 24"><path d="M3 18s3-3 9-3 9 3 9 3M3 14s3-3 9-3 9 3 9 3"/></svg></div>
+              <div class="rubro-info">
+                <div class="rubro-name">Náutico y buceo</div>
+                <div class="rubro-bar"><div class="rubro-fill" style="width:92%"></div></div>
+              </div>
+              <div class="rubro-count">8</div>
+            </div>
+            <div class="rubro-row strong">
+              <div class="rubro-ico strong"><svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/></svg></div>
+              <div class="rubro-info">
+                <div class="rubro-name">Salvamento marítimo</div>
+                <div class="rubro-bar"><div class="rubro-fill" style="width:78%"></div></div>
+              </div>
+              <div class="rubro-count">4</div>
+            </div>
+            <div class="rubro-row strong">
+              <div class="rubro-ico strong"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/></svg></div>
+              <div class="rubro-info">
+                <div class="rubro-name">Maquinarias</div>
+                <div class="rubro-bar"><div class="rubro-fill" style="width:70%"></div></div>
+              </div>
+              <div class="rubro-count">3</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top clientes -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              Tus mejores clientes
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="client-row">
+              <div class="client-n">1</div>
+              <div class="client-av">IN</div>
+              <div class="client-info">
+                <div class="client-name">INDESPA</div>
+                <div class="client-sub"><span class="g">Compra muy seguido</span></div>
+              </div>
+              <div class="client-amt">$512M</div>
+            </div>
+            <div class="client-row">
+              <div class="client-n">2</div>
+              <div class="client-av">GR</div>
+              <div class="client-info">
+                <div class="client-name">Gobierno Regional</div>
+                <div class="client-sub"><span class="g">Compra muy seguido</span></div>
+              </div>
+              <div class="client-amt">$398M</div>
+            </div>
+            <div class="client-row">
+              <div class="client-n">3</div>
+              <div class="client-av">MP</div>
+              <div class="client-info">
+                <div class="client-name">Municipalidades</div>
+                <div class="client-sub"><span class="g">Compra muy seguido</span></div>
+              </div>
+              <div class="client-amt">$287M</div>
+            </div>
+            <div class="client-row">
+              <div class="client-n">4</div>
+              <div class="client-av">HS</div>
+              <div class="client-info">
+                <div class="client-name">Hospitales</div>
+                <div class="client-sub"><span class="g">Compra muy seguido</span></div>
+              </div>
+              <div class="client-amt">$198M</div>
+            </div>
+            <div class="client-row">
+              <div class="client-n">5</div>
+              <div class="client-av">FF</div>
+              <div class="client-info">
+                <div class="client-name">Fuerzas Armadas</div>
+                <div class="client-sub">Compra seguido</div>
+              </div>
+              <div class="client-amt">$156M</div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
   </div>
 </div>
-
-<!-- SECTION 1: OPORTUNIDADES -->
-<div class="section-title">
-  <h2>Oportunidades del día</h2>
-  <span>Priorizadas por match score</span>
 </div>
 
-<!-- FILTER BAR -->
-<div class="filter-bar">
-  <div class="search-wrapper">
-    <svg class="search-icon" viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="7"/>
-      <line x1="16" y1="16" x2="21" y2="21"/>
-    </svg>
-    <input
-      type="text"
-      class="search-input"
-      id="searchInput"
-      placeholder="Buscar por producto, organismo, código o palabra clave…"
-      autocomplete="off"
-    >
-    <button class="search-clear" id="searchClear">Limpiar</button>
-  </div>
-  <div class="filter-chips">
-    <button class="chip active" data-filter="all">Todas</button>
-    <button class="chip" data-filter="hot">Hot</button>
-    <button class="chip" data-filter="warm">Warm</button>
-    <button class="chip" data-filter="cold">Cold</button>
-    <button class="chip" data-filter="closing">Cierran ≤7 días</button>
-    <button class="chip" data-filter="high">Monto &gt; $80M</button>
-  </div>
-</div>
-
-<div class="grid-2">
-  <div>
-    <div class="result-count" id="resultCount">
-      Mostrando <strong>5</strong> de <strong>5</strong> oportunidades
+<!-- ═══════════════ TOUR OVERLAY ═══════════════ -->
+<div id="tourOverlay" style="position:fixed;inset:0;background:rgba(2,6,23,.85);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div id="tourCard" style="background:white;border-radius:20px;padding:36px;max-width:460px;width:100%;box-shadow:0 25px 50px rgba(0,0,0,.25);animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) forwards;">
+    <div style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--z400);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;" id="tourStep">Paso 1 de 5</div>
+    <div style="width:52px;height:52px;background:var(--z900);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;" id="tourIcon">
+      <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
     </div>
-
-    <div class="opportunities" id="opportunitiesList">
-
-    <div class="opportunity hot" data-state="hot" data-days="9" data-amount="118" data-search="DIRISNAV buceo rebreather circuito cerrado tecnico equipos 1234-56-LP25">
-      <div class="opp-header">
-        <div>
-          <span class="opp-code">1234-56-LP25 · DIRISNAV</span>
-          <span class="hot-tag">Hot</span>
-          <h3 class="opp-title">Adquisición equipos de buceo técnico y rebreathers circuito cerrado</h3>
-        </div>
-        <div class="opp-score">94</div>
+    <h2 style="font-family:'Instrument Serif',serif;font-size:26px;color:var(--z900);margin-bottom:12px;font-weight:400;line-height:1.2;" id="tourTitle">Bienvenido, Jorge</h2>
+    <p style="font-size:15px;color:var(--z500);line-height:1.65;margin-bottom:28px;" id="tourDesc">Este es tu <strong style="color:var(--z900)">Copiloto de Licitaciones</strong>. Cada mañana a las <strong style="color:var(--gold)">8:00 AM</strong> el sistema revisa todas las licitaciones del Estado y te dice exactamente qué postular, qué revisar y qué descartar. <strong style="color:var(--z900)">No tienes que interpretar datos — el sistema ya lo hace por ti.</strong></p>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;gap:5px;" id="tourDots">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--z900);" id="d0"></div>
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--z200);" id="d1"></div>
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--z200);" id="d2"></div>
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--z200);" id="d3"></div>
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--z200);" id="d4"></div>
       </div>
-      <div class="opp-meta">
-        <div class="opp-meta-item">
-          <span class="lbl">Monto estimado</span>
-          <span class="val">$118M CLP</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Cierre</span>
-          <span class="val">En 9 días</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Histórico cliente</span>
-          <span class="val">3 adjudicadas</span>
-        </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="closeTour()" style="padding:9px 16px;border:1px solid var(--z200);background:transparent;border-radius:7px;font-family:'Sora',sans-serif;font-size:13px;color:var(--z500);cursor:pointer;">Saltar</button>
+        <button onclick="nextStep()" id="tourNext" style="padding:9px 20px;background:var(--z900);border:none;border-radius:7px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:white;cursor:pointer;">Siguiente →</button>
       </div>
-    </div>
-
-    <div class="opportunity hot" data-state="hot" data-days="5" data-amount="64" data-search="DIRECTEMAR ferreteria naval amarre estacion maritima valparaiso 2341-78-LE25">
-      <div class="opp-header">
-        <div>
-          <span class="opp-code">2341-78-LE25 · DIRECTEMAR</span>
-          <span class="hot-tag">Hot</span>
-          <h3 class="opp-title">Reposición ferretería naval y elementos de amarre — estación marítima Valparaíso</h3>
-        </div>
-        <div class="opp-score">91</div>
-      </div>
-      <div class="opp-meta">
-        <div class="opp-meta-item">
-          <span class="lbl">Monto estimado</span>
-          <span class="val">$64M CLP</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Cierre</span>
-          <span class="val">En 5 días</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Competidores probables</span>
-          <span class="val">2-3</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="opportunity warm" data-state="warm" data-days="14" data-amount="42" data-search="GOPE carabineros trajes secos buceo reguladores emergencia tactica 5621-112-L125">
-      <div class="opp-header">
-        <div>
-          <span class="opp-code">5621-112-L125 · GOPE Carabineros</span>
-          <h3 class="opp-title">Trajes secos de buceo + reguladores de emergencia para unidad táctica</h3>
-        </div>
-        <div class="opp-score">78</div>
-      </div>
-      <div class="opp-meta">
-        <div class="opp-meta-item">
-          <span class="lbl">Monto estimado</span>
-          <span class="val">$42M CLP</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Cierre</span>
-          <span class="val">En 14 días</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Histórico cliente</span>
-          <span class="val">1 adjudicada</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="opportunity warm" data-state="warm" data-days="18" data-amount="89" data-search="empresa portuaria compresor aire HP repuestos mantencion servicio integral 0934-45-LQ25">
-      <div class="opp-header">
-        <div>
-          <span class="opp-code">0934-45-LQ25 · Empresa Portuaria</span>
-          <h3 class="opp-title">Servicio integral de mantención y provisión de repuestos para compresores de aire HP</h3>
-        </div>
-        <div class="opp-score">72</div>
-      </div>
-      <div class="opp-meta">
-        <div class="opp-meta-item">
-          <span class="lbl">Monto estimado</span>
-          <span class="val">$89M CLP</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Cierre</span>
-          <span class="val">En 18 días</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Alerta</span>
-          <span class="val">Pagó tarde ×2</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="opportunity cold" data-state="cold" data-days="21" data-amount="28" data-search="INH instituto nacional hidraulica instrumentacion subacuatica mediciones costeras 3847-09-LE25">
-      <div class="opp-header">
-        <div>
-          <span class="opp-code">3847-09-LE25 · INH</span>
-          <h3 class="opp-title">Instrumentación subacuática para mediciones costeras</h3>
-        </div>
-        <div class="opp-score">45</div>
-      </div>
-      <div class="opp-meta">
-        <div class="opp-meta-item">
-          <span class="lbl">Monto estimado</span>
-          <span class="val">$28M CLP</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Cierre</span>
-          <span class="val">En 21 días</span>
-        </div>
-        <div class="opp-meta-item">
-          <span class="lbl">Fit técnico</span>
-          <span class="val">Parcial</span>
-        </div>
-      </div>
-    </div>
-
-    </div>
-
-    <div class="no-results" id="noResults">
-      <div class="no-results-icon">⌀</div>
-      <div class="no-results-text">Sin coincidencias en este filtro</div>
-      <div class="no-results-hint">Intenta con otra palabra clave o limpia los filtros</div>
     </div>
   </div>
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-
-    <div class="card">
-      <div class="card-title">Top 5 clientes · últimos 12M</div>
-
-      <div class="client-row">
-        <div class="client-rank">I</div>
-        <div class="client-info">
-          <div class="client-name">Dirección Ingeniería Sistemas Navales</div>
-          <div class="client-bar"><div class="client-bar-fill" style="width: 100%"></div></div>
-          <div class="client-amount">$412M CLP · 8 adjudicadas</div>
-        </div>
-      </div>
-
-      <div class="client-row">
-        <div class="client-rank">II</div>
-        <div class="client-info">
-          <div class="client-name">DIRECTEMAR · Armada de Chile</div>
-          <div class="client-bar"><div class="client-bar-fill" style="width: 72%"></div></div>
-          <div class="client-amount">$298M CLP · 6 adjudicadas</div>
-        </div>
-      </div>
-
-      <div class="client-row">
-        <div class="client-rank">III</div>
-        <div class="client-info">
-          <div class="client-name">Empresa Portuaria Valparaíso</div>
-          <div class="client-bar"><div class="client-bar-fill" style="width: 54%"></div></div>
-          <div class="client-amount">$221M CLP · 4 adjudicadas</div>
-        </div>
-      </div>
-
-      <div class="client-row">
-        <div class="client-rank">IV</div>
-        <div class="client-info">
-          <div class="client-name">GOPE · Carabineros de Chile</div>
-          <div class="client-bar"><div class="client-bar-fill" style="width: 38%"></div></div>
-          <div class="client-amount">$156M CLP · 3 adjudicadas</div>
-        </div>
-      </div>
-
-      <div class="client-row">
-        <div class="client-rank">V</div>
-        <div class="client-info">
-          <div class="client-name">Instituto Nacional de Hidráulica</div>
-          <div class="client-bar"><div class="client-bar-fill" style="width: 22%"></div></div>
-          <div class="client-amount">$89M CLP · 2 adjudicadas</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Estacionalidad · últimos 3 años</div>
-      <div class="heatmap" id="heatmap"></div>
-      <div class="heat-labels">
-        <span>E</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span>
-        <span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span>
-      </div>
-      <div style="margin-top: 14px; font-family: 'Fraunces', serif; font-size: 12px; font-style: italic; color: var(--brass-bright); line-height: 1.4;">
-        → Marzo, septiembre y noviembre concentran el 58% del volumen anual. Preparar stock y propuestas tipo desde febrero.
-      </div>
-    </div>
-
-  </aside>
-</div>
-
-<!-- SECTION 2: INTELIGENCIA COMPETITIVA -->
-<div class="wave-divider"></div>
-
-<div class="section-title">
-  <h2>Inteligencia competitiva</h2>
-  <span>últimos 18 meses · 47 licitaciones del rubro</span>
-</div>
-
-<div class="intel-grid">
-
-  <div class="card">
-    <div class="card-title">Competidores identificados</div>
-
-    <div class="competitor-row">
-      <div class="comp-name">Comercial Náutica Austral Ltda.</div>
-      <div class="comp-stats">14 ganadas · 42%</div>
-      <div class="comp-threat threat-high">Alto</div>
-    </div>
-
-    <div class="competitor-row">
-      <div class="comp-name">Buceo & Seguridad SpA</div>
-      <div class="comp-stats">9 ganadas · 28%</div>
-      <div class="comp-threat threat-high">Alto</div>
-    </div>
-
-    <div class="competitor-row">
-      <div class="comp-name">ImporNaval Chile</div>
-      <div class="comp-stats">5 ganadas · 16%</div>
-      <div class="comp-threat threat-med">Medio</div>
-    </div>
-
-    <div class="competitor-row">
-      <div class="comp-name">Ferretería Marina Pacífico</div>
-      <div class="comp-stats">3 ganadas · 9%</div>
-      <div class="comp-threat threat-med">Medio</div>
-    </div>
-
-    <div class="competitor-row">
-      <div class="comp-name">DiveTech Importadora</div>
-      <div class="comp-stats">2 ganadas · 6%</div>
-      <div class="comp-threat threat-low">Bajo</div>
-    </div>
-
-    <div style="margin-top: 20px; padding: 14px; background: rgba(232, 90, 79, 0.08); border-left: 2px solid var(--coral); font-family: 'Fraunces', serif; font-size: 12px; font-style: italic; line-height: 1.5;">
-      <strong style="font-style: normal; color: var(--coral); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;">Alerta patrón</strong><br>
-      Náutica Austral siempre baja precio 8-12% en últimos 48h antes del cierre. Presentar con margen.
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Precios históricos · ofertas ganadoras</div>
-
-    <div class="price-row">
-      <div class="price-product">Regulador de buceo técnico · equilibrado, balanced 1st stage</div>
-      <div class="price-range">
-        $420K – $580K
-        <span class="price-suggested">→ Ofertar $465K</span>
-      </div>
-    </div>
-
-    <div class="price-row">
-      <div class="price-product">Rebreather circuito cerrado · uso militar/táctico</div>
-      <div class="price-range">
-        $8.2M – $11.4M
-        <span class="price-suggested">→ Ofertar $9.1M</span>
-      </div>
-    </div>
-
-    <div class="price-row">
-      <div class="price-product">Traje seco de buceo · aguas contaminadas</div>
-      <div class="price-range">
-        $1.1M – $1.8M
-        <span class="price-suggested">→ Ofertar $1.35M</span>
-      </div>
-    </div>
-
-    <div class="price-row">
-      <div class="price-product">Compresor HP · banco de aire 6 cilindros</div>
-      <div class="price-range">
-        $14M – $19M
-        <span class="price-suggested">→ Ofertar $15.8M</span>
-      </div>
-    </div>
-
-    <div class="price-row">
-      <div class="price-product">Umbilical buceo asistido · 3 elementos</div>
-      <div class="price-range">
-        $2.1M – $3.4M
-        <span class="price-suggested">→ Ofertar $2.6M</span>
-      </div>
-    </div>
-
-    <div style="margin-top: 20px; padding: 14px; background: rgba(92, 141, 112, 0.08); border-left: 2px solid var(--algae); font-family: 'Fraunces', serif; font-size: 12px; font-style: italic; line-height: 1.5;">
-      <strong style="font-style: normal; color: var(--algae); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;">Sweet spot</strong><br>
-      El valor sugerido maximiza probabilidad ganadora × margen según 47 adjudicaciones similares.
-    </div>
-  </div>
-
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div>
-    <em>Jorge Díaz</em> · MVP conectado a <code>api.mercadopublico.cl</code><br>
-    Datos mostrados son demo · Producción requiere ticket ChileCompra
-  </div>
-  <div>v0.1 · Abril 2026</div>
-</footer>
-
 </div>
 
 <script>
-// ===== SISTEMA DE FILTROS Y BÚSQUEDA =====
-const searchInput = document.getElementById('searchInput');
-const searchClear = document.getElementById('searchClear');
-const chips = document.querySelectorAll('.chip');
-const opportunities = document.querySelectorAll('.opportunity');
-const resultCount = document.getElementById('resultCount');
-const noResults = document.getElementById('noResults');
+// ════════════════════════════════════════
+// DATA MOCK — ESTRUCTURA PARA SUPABASE
+// ════════════════════════════════════════
+const MOCK_DATA = {
+  licitaciones: [
+    {
+      id: "4521-89-LE25",
+      decision: "go",
+      decisionLabel: "Postular sí o sí",
+      winProbability: "alta",
+      riskLevel: "bajo",
+      marginLevel: "alto",
+      nextAction: "Confirmar stock y pedir cotización final antes del miércoles",
+      internalDeadline: "2026-04-29",
+      pipelineStatus: "Revisando bases",
+      bossArgument: "Defiende territorio Magallanes frente a Dimarsa. $185M de alta probabilidad.",
+      scoreBreakdown: { fit: 90, winProb: 80, econValue: 85, operRisk: 75 },
+      competitorThreat: { name: "Dimarsa", rubro: "náutico/HDPE", strategy: "No competir por precio — defender con logística local" },
+      buyerHistory: { name: "INDESPA", frequency: "muy alta", avgTicket: 185000000, confidence: "alta" },
+      documentsPending: ["Garantía de seriedad de oferta", "Ficha empresa actualizada"],
+      dimarsa: true, magallanes: true, days: 8, amount: 185000000
+    }
+    // ... resto de licitaciones estructuradas igual
+  ]
+};
 
-let currentFilter = 'all';
-let currentSearch = '';
+// ════════════════════════════════════════
+// TOUR
+// ════════════════════════════════════════
+const STEPS = [
+  {
+    icon: `<svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,
+    title: "Bienvenido, Jorge",
+    desc: `Este es tu <strong style="color:var(--z900)">Copiloto de Licitaciones</strong>. Cada mañana a las <strong style="color:var(--gold)">8:00 AM</strong> el sistema revisa todas las licitaciones del Estado y te dice qué postular, qué revisar y qué descartar. <strong style="color:var(--z900)">No tienes que interpretar nada — el sistema lo hace por ti.</strong>`
+  },
+  {
+    icon: `<svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+    title: "Lo primero que ves es lo más urgente",
+    desc: `El bloque negro de arriba te dice <strong style="color:var(--z900)">exactamente qué requiere tu atención hoy</strong>. Cuántas oportunidades hay, cuántas con Dimarsa y cuál es el deadline más cercano. Empieza siempre por ahí.`
+  },
+  {
+    icon: `<svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5;"><polyline points="20 6 9 17 4 12"/></svg>`,
+    title: "Cada licitación ya tiene una decisión",
+    desc: `No tienes que interpretar el score. El sistema ya te dice: <strong style="color:var(--g600)">"Postular sí o sí"</strong>, <strong style="color:var(--a600)">"Revisar margen"</strong> o <strong style="color:var(--z600)">"No pierdas tiempo aquí"</strong>. Sigue esas instrucciones.`
+  },
+  {
+    icon: `<svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`,
+    title: "La alerta roja es Dimarsa",
+    desc: `Cuando ves una alerta roja, <strong style="color:var(--z900)">Dimarsa está compitiendo</strong>. Ellos fabrican y bajan precio — no pelees ahí. La táctica es siempre la misma: <strong style="color:var(--z900)">entrega rápida desde Punta Arenas, técnico local, postventa sin traslados.</strong>`
+  },
+  {
+    icon: `<svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>`,
+    title: "El reporte es tu herramienta con el jefe",
+    desc: `Cada mes el sistema genera un <strong style="color:var(--z900)">reporte ejecutivo para presentarle a Jorge Guic</strong>. Muestra cuánto dinero gestionaste, qué ganaste, cómo le ganaste a Dimarsa y por qué tu trabajo genera valor real para Recasur.`
+  }
+];
 
-// Remover resaltados previos antes de aplicar nuevos
-function clearHighlights() {
-  opportunities.forEach(opp => {
-    const title = opp.querySelector('.opp-title');
-    const code = opp.querySelector('.opp-code');
-    if (title.dataset.original) title.innerHTML = title.dataset.original;
-    if (code.dataset.original) code.innerHTML = code.dataset.original;
-  });
+let step = 0;
+const tourDone = localStorage.getItem('jd_v5_tour');
+if (tourDone) document.getElementById('tourOverlay').style.display = 'none';
+
+function nextStep() {
+  step++;
+  if (step >= STEPS.length) { closeTour(); return; }
+  const s = STEPS[step];
+  document.getElementById('tourStep').textContent = `Paso ${step+1} de ${STEPS.length}`;
+  document.getElementById('tourIcon').innerHTML = s.icon;
+  document.getElementById('tourTitle').textContent = s.title;
+  document.getElementById('tourDesc').innerHTML = s.desc;
+  if (step === STEPS.length - 1) document.getElementById('tourNext').textContent = 'Empezar ✓';
+  for (let i = 0; i < STEPS.length; i++) {
+    const d = document.getElementById(`d${i}`);
+    d.style.background = i === step ? 'var(--z900)' : 'var(--z200)';
+    d.style.width = i === step ? '16px' : '6px';
+    d.style.borderRadius = '100px';
+    d.style.transition = 'all .2s ease';
+  }
 }
 
-// Resaltar coincidencias en título y código
-function highlightMatches(query) {
-  if (!query) return;
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-  opportunities.forEach(opp => {
-    if (opp.classList.contains('hidden')) return;
-    const title = opp.querySelector('.opp-title');
-    const code = opp.querySelector('.opp-code');
-    if (!title.dataset.original) title.dataset.original = title.innerHTML;
-    if (!code.dataset.original) code.dataset.original = code.innerHTML;
-    title.innerHTML = title.dataset.original.replace(regex, '<mark>$1</mark>');
-    code.innerHTML = code.dataset.original.replace(regex, '<mark>$1</mark>');
-  });
+function closeTour() {
+  localStorage.setItem('jd_v5_tour', '1');
+  const o = document.getElementById('tourOverlay');
+  o.style.opacity = '0';
+  o.style.transition = 'opacity .3s ease';
+  setTimeout(() => o.style.display = 'none', 300);
 }
 
-// Aplicar filtros combinados (búsqueda + chip activo)
+function startTour() {
+  step = 0;
+  const s = STEPS[0];
+  document.getElementById('tourStep').textContent = `Paso 1 de ${STEPS.length}`;
+  document.getElementById('tourIcon').innerHTML = s.icon;
+  document.getElementById('tourTitle').textContent = s.title;
+  document.getElementById('tourDesc').innerHTML = s.desc;
+  document.getElementById('tourNext').textContent = 'Siguiente →';
+  for (let i = 0; i < STEPS.length; i++) {
+    const d = document.getElementById(`d${i}`);
+    d.style.background = i === 0 ? 'var(--z900)' : 'var(--z200)';
+    d.style.width = i === 0 ? '16px' : '6px';
+    d.style.borderRadius = '100px';
+  }
+  const o = document.getElementById('tourOverlay');
+  o.style.display = 'flex';
+  o.style.opacity = '0';
+  setTimeout(() => { o.style.opacity = '1'; o.style.transition = 'opacity .3s ease'; }, 10);
+}
+
+// ════════════════════════════════════════
+// FILTROS
+// ════════════════════════════════════════
+const cards = document.querySelectorAll('.opp-card');
+const resultCountEl = document.getElementById('resultCount');
+const emptyState = document.getElementById('emptyState');
+
+let activeFilters = { decision: 'all', estado: 'all' };
+
 function applyFilters() {
-  const query = currentSearch.toLowerCase().trim();
-  let visibleCount = 0;
+  const query = (document.getElementById('searchInput').value || '').toLowerCase();
+  let visible = 0;
 
-  clearHighlights();
+  cards.forEach(card => {
+    const dec = card.dataset.decision;
+    const dimarsa = card.dataset.dimarsa === 'true';
+    const magallanes = card.dataset.magallanes === 'true';
+    const buyer = card.dataset.buyer;
+    const days = parseInt(card.dataset.days);
+    const search = (card.dataset.search || '') + ' ' + card.querySelector('.card-title').textContent.toLowerCase();
 
-  opportunities.forEach(opp => {
-    const state = opp.dataset.state;
-    const days = parseInt(opp.dataset.days);
-    const amount = parseInt(opp.dataset.amount);
-    const searchText = (opp.dataset.search || '').toLowerCase() + ' ' +
-                       opp.querySelector('.opp-title').textContent.toLowerCase();
+    let dMatch = true;
+    const df = activeFilters.decision;
+    if (df === 'go') dMatch = dec === 'go' || dec === 'go-stock';
+    else if (df === 'check') dMatch = dec === 'check' || dec === 'quote';
+    else if (df === 'risk') dMatch = dec === 'risk';
+    else if (df === 'discard') dMatch = dec === 'discard';
 
-    // Filtro por chip
-    let chipMatch = true;
-    if (currentFilter === 'hot') chipMatch = state === 'hot';
-    else if (currentFilter === 'warm') chipMatch = state === 'warm';
-    else if (currentFilter === 'cold') chipMatch = state === 'cold';
-    else if (currentFilter === 'closing') chipMatch = days <= 7;
-    else if (currentFilter === 'high') chipMatch = amount > 80;
+    let eMatch = true;
+    const ef = activeFilters.estado;
+    if (ef === 'dimarsa') eMatch = dimarsa;
+    else if (ef === 'magallanes') eMatch = magallanes;
+    else if (ef === 'closing') eMatch = days <= 10;
+    else if (ef === 'buyer') eMatch = buyer === 'frecuente';
 
-    // Filtro por búsqueda
-    const searchMatch = !query || searchText.includes(query);
+    const sMatch = !query || search.includes(query);
 
-    if (chipMatch && searchMatch) {
-      opp.classList.remove('hidden');
-      visibleCount++;
+    if (dMatch && eMatch && sMatch) {
+      card.classList.remove('hidden');
+      visible++;
     } else {
-      opp.classList.add('hidden');
+      card.classList.add('hidden');
     }
   });
 
-  // Actualizar contador
-  const total = opportunities.length;
-  resultCount.innerHTML = `Mostrando <strong>${visibleCount}</strong> de <strong>${total}</strong> oportunidades`;
-
-  // Mostrar/ocultar estado vacío
-  if (visibleCount === 0) {
-    noResults.classList.add('visible');
-  } else {
-    noResults.classList.remove('visible');
-  }
-
-  // Aplicar highlights
-  if (query) highlightMatches(query);
-
-  // Mostrar/ocultar botón de limpiar
-  if (query) {
-    searchClear.classList.add('visible');
-  } else {
-    searchClear.classList.remove('visible');
-  }
+  resultCountEl.textContent = visible;
+  emptyState.classList.toggle('show', visible === 0);
 }
 
-// Event listener búsqueda (con debounce suave)
-let searchTimeout;
-searchInput.addEventListener('input', (e) => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    currentSearch = e.target.value;
-    applyFilters();
-  }, 120);
-});
-
-// Event listener botón limpiar
-searchClear.addEventListener('click', () => {
-  searchInput.value = '';
-  currentSearch = '';
-  searchInput.focus();
-  applyFilters();
-});
-
-// Event listener chips
-chips.forEach(chip => {
+document.querySelectorAll('.chip').forEach(chip => {
   chip.addEventListener('click', () => {
-    chips.forEach(c => {
-      c.classList.remove('active', 'hot', 'warm', 'cold');
-    });
+    const type = chip.dataset.fType;
+    const val = chip.dataset.f;
+    document.querySelectorAll(`.chip[data-f-type="${type}"]`).forEach(c => c.classList.remove('active','red','green','gold'));
     chip.classList.add('active');
-    const filter = chip.dataset.filter;
-    if (['hot', 'warm', 'cold'].includes(filter)) {
-      chip.classList.add(filter);
-    }
-    currentFilter = filter;
+    if (val === 'dimarsa') chip.classList.add('red');
+    if (val === 'magallanes') chip.classList.add('green');
+    if (val === 'go') chip.classList.add('green');
+    activeFilters[type === 'decision' ? 'decision' : 'estado'] = val;
     applyFilters();
   });
 });
 
-// Atajo de teclado: "/" para enfocar búsqueda
-document.addEventListener('keydown', (e) => {
-  if (e.key === '/' && document.activeElement !== searchInput) {
+let searchT;
+document.getElementById('searchInput').addEventListener('input', () => {
+  clearTimeout(searchT);
+  searchT = setTimeout(applyFilters, 130);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
     e.preventDefault();
-    searchInput.focus();
+    document.getElementById('searchInput').focus();
   }
-  if (e.key === 'Escape' && document.activeElement === searchInput) {
-    searchInput.blur();
-    if (currentSearch) {
-      searchInput.value = '';
-      currentSearch = '';
-      applyFilters();
-    }
+  if (e.key === 'Escape') {
+    document.getElementById('searchInput').value = '';
+    applyFilters();
   }
 });
 
-// ===== HEATMAP Y ANIMACIONES ORIGINALES =====
-// Generar heatmap de estacionalidad (3 años × 12 meses)
-const heatmap = document.getElementById('heatmap');
-// Patrón: marzo, septiembre y noviembre altos; enero y julio bajos
-const seasonalPattern = [1, 0, 4, 2, 1, 0, 0, 2, 4, 2, 3, 1]; // base
-const years = 3;
-
-for (let y = 0; y < years; y++) {
-  for (let m = 0; m < 12; m++) {
-    const cell = document.createElement('div');
-    cell.className = 'heat-cell';
-    // Variación aleatoria sobre el patrón base
-    const variation = Math.floor(Math.random() * 2);
-    let level = Math.max(0, Math.min(4, seasonalPattern[m] + (variation - 1)));
-    if (y === years - 1 && [2, 8, 10].includes(m)) level = 4; // año actual
-    cell.dataset.level = level;
-    cell.title = `${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m]} 202${3+y} · nivel ${level}`;
-    heatmap.appendChild(cell);
-  }
+function filterAction(f) {
+  document.querySelector(`[data-f="go"]`)?.click();
+  document.getElementById('oppList').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
-// Animación de barras al cargar
+// Animar barras y rings al cargar
 setTimeout(() => {
-  document.querySelectorAll('.client-bar-fill').forEach(bar => {
-    const width = bar.style.width;
-    bar.style.width = '0';
-    setTimeout(() => { bar.style.width = width; }, 50);
+  document.querySelectorAll('.rubro-fill').forEach(b => {
+    const w = b.style.width; b.style.width = '0';
+    setTimeout(() => b.style.width = w, 60);
   });
-}, 300);
-
-// Click en oportunidades
-document.querySelectorAll('.opportunity').forEach(opp => {
-  opp.addEventListener('click', () => {
-    const code = opp.querySelector('.opp-code').textContent.split('·')[0].trim();
-    alert(`Abriendo ficha completa de licitación ${code}\n\n(En producción: fetch a api.mercadopublico.cl/servicios/v1/publico/licitaciones.json?codigo=${code}&ticket=XXX)`);
+  document.querySelectorAll('.score-fill-sm').forEach(b => {
+    const w = b.style.width; b.style.width = '0';
+    setTimeout(() => b.style.width = w, 60);
   });
-});
+  document.querySelectorAll('.subscore-ring .fill').forEach(c => {
+    const offset = c.getAttribute('stroke-dashoffset');
+    c.setAttribute('stroke-dashoffset', '106.81');
+    setTimeout(() => { c.style.transition = 'stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1)'; c.setAttribute('stroke-dashoffset', offset); }, 100);
+  });
+}, 400);
 </script>
 </body>
 </html>
