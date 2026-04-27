@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Guía de términos · Jorge Díaz · Recasur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:   #ffffff;
+  --bg:      #f8f9fa;
+  --z100:    #f1f5f9;
+  --z200:    #e2e8f0;
+  --z300:    #cbd5e1;
+  --z400:    #94a3b8;
+  --z500:    #64748b;
+  --z600:    #475569;
+  --z700:    #334155;
+  --z800:    #1e293b;
+  --z900:    #0f172a;
+  --g50:     #f0fdf4;
+  --g100:    #dcfce7;
+  --g500:    #22c55e;
+  --g600:    #16a34a;
+  --r50:     #fef2f2;
+  --r100:    #fee2e2;
+  --r500:    #ef4444;
+  --r600:    #dc2626;
+  --a50:     #fffbeb;
+  --a100:    #fef3c7;
+  --a500:    #f59e0b;
+  --a600:    #d97706;
+  --gold:    #ca8a04;
+  --gold-lt: #fef9c3;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--z900);
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  background: var(--z900);
+  padding: 0 20px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 30px; height: 30px;
+  background: var(--gold);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.brand-mark svg { width:16px; height:16px; stroke:#fff; fill:none; stroke-width:1.75; }
+
+.brand-name { font-size:14px; font-weight:600; color:var(--white); }
+.brand-sub { font-size:10px; color:rgba(255,255,255,.4); font-family:'Geist Mono',monospace; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 7px;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,.8);
+  text-decoration: none;
+  transition: all .15s;
+}
+
+.back-btn:hover { background: rgba(255,255,255,.18); color: var(--white); }
+.back-btn svg { width:13px; height:13px; stroke:currentColor; fill:none; stroke-width:2; }
+
+/* ─── HERO ─── */
+.hero {
+  background: var(--z900);
+  padding: 32px 20px 36px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.hero-eyebrow {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.hero-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--white);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  margin-bottom: 10px;
+}
+
+.hero-title .italic { font-style: italic; color: var(--gold); }
+
+.hero-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,.5);
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ─── SEARCH ─── */
+.search-wrap {
+  padding: 16px 20px;
+  background: var(--white);
+  border-bottom: 1px solid var(--z200);
+  position: sticky;
+  top: 54px;
+  z-index: 40;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-ico {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; stroke: var(--z400); fill: none; stroke-width: 1.75;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 11px 12px 11px 36px;
+  background: var(--bg);
+  border: 1px solid var(--z200);
+  border-radius: 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  color: var(--z900);
+  outline: none;
+  transition: all .15s;
+}
+
+.search-input::placeholder { color: var(--z400); }
+.search-input:focus { border-color: var(--z400); background: var(--white); }
+
+/* ─── CONTENIDO ─── */
+.wrap { padding: 20px 20px 80px; max-width: 680px; margin: 0 auto; }
+
+/* ─── CATEGORÍA ─── */
+.cat-section { margin-bottom: 32px; }
+
+.cat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--z900);
+}
+
+.cat-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.cat-icon svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.75; }
+.cat-icon.dark { background:var(--z900); color:var(--gold); }
+.cat-icon.green { background:var(--g100); color:var(--g600); }
+.cat-icon.red { background:var(--r100); color:var(--r600); }
+.cat-icon.gold { background:var(--gold-lt); color:var(--gold); }
+.cat-icon.blue { background:#dbeafe; color:#1d4ed8; }
+
+.cat-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--z900);
+}
+
+/* ─── TÉRMINO ─── */
+.term-card {
+  background: var(--white);
+  border: 1px solid var(--z200);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  transition: all .15s;
+}
+
+.term-card:hover { border-color: var(--z300); }
+.term-card.hidden { display: none; }
+
+.term-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  cursor: pointer;
+  gap: 12px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.term-header:active { background: var(--z100); }
+
+.term-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+
+.term-badge {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.term-badge.dark { background: var(--z900); color: var(--white); }
+.term-badge.green { background: var(--g100); color: var(--g600); border: 1px solid var(--g500); }
+.term-badge.red { background: var(--r100); color: var(--r600); border: 1px solid var(--r500); }
+.term-badge.gold { background: var(--gold-lt); color: var(--gold); border: 1px solid var(--gold); }
+.term-badge.blue { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
+.term-badge.zinc { background: var(--z100); color: var(--z600); border: 1px solid var(--z300); }
+
+.term-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--z900);
+  min-width: 0;
+}
+
+.term-preview {
+  font-size: 12px;
+  color: var(--z400);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.term-cta {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--z400);
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border: 1px solid var(--z200);
+  border-radius: 100px;
+  background: var(--z100);
+  transition: all .15s;
+  letter-spacing: .02em;
+}
+
+.term-header:hover .term-cta {
+  background: var(--z900);
+  color: var(--white);
+  border-color: var(--z900);
+}
+
+.term-card.open .term-cta {
+  background: var(--z900);
+  color: var(--white);
+  border-color: var(--z900);
+  content: 'Cerrar';
+}
+
+.term-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--z100);
+}
+
+.term-card.open .term-body { display: block; }
+
+.term-explain {
+  padding-top: 14px;
+  font-size: 14px;
+  color: var(--z600);
+  line-height: 1.65;
+}
+
+.term-explain strong { color: var(--z900); font-weight: 600; }
+.term-explain .highlight { color: var(--gold); font-weight: 600; font-style: italic; }
+.term-explain .green { color: var(--g600); font-weight: 600; }
+.term-explain .red { color: var(--r600); font-weight: 600; }
+
+.term-example {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: var(--z100);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--z600);
+  line-height: 1.5;
+}
+
+.term-example::before {
+  content: '📌 Ejemplo: ';
+  font-weight: 600;
+  color: var(--z700);
+}
+
+.term-important {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--gold-lt);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: var(--z700);
+  line-height: 1.5;
+}
+
+.term-important::before {
+  content: '💡 ';
+}
+
+/* ─── EMPTY ─── */
+.empty {
+  text-align: center;
+  padding: 48px 20px;
+  display: none;
+}
+
+.empty.show { display: block; }
+.empty-title { font-family: 'Instrument Serif', serif; font-size: 22px; color: var(--z700); margin-bottom: 8px; }
+.empty-desc { font-size: 13px; color: var(--z400); }
+
+/* ─── BOTTOM NAV ─── */
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--white);
+  border-top: 1px solid var(--z200);
+  padding: 10px 20px env(safe-area-inset-bottom, 10px);
+  display: flex;
+  gap: 10px;
+  z-index: 50;
+}
+
+.btn-back {
+  flex: 1;
+  padding: 12px;
+  background: var(--z900);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all .15s;
+}
+
+.btn-back:hover { background: var(--z700); }
+.btn-back svg { width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="12,5 14,12 12,11 10,12" fill="#fff" stroke="none"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">Jorge Díaz · Recasur</div>
+      <div class="brand-sub">Guía de términos</div>
+    </div>
+  </div>
+  <a href="../" class="back-btn">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver
+  </a>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Copiloto Comercial · Recasur</div>
+  <h1 class="hero-title">¿Qué significa<br><span class="italic">cada cosa</span>?</h1>
+  <p class="hero-desc">Explicaciones simples de los 29 términos que aparecen en el sistema. Toca cualquiera para ver qué significa.</p>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-box">
+    <svg class="search-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
+    <input type="text" class="search-input" id="searchInput" placeholder="Buscar un término…" autocomplete="off">
+  </div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="wrap">
+
+  <!-- ═══ CATEGORÍA 1 · EL DASHBOARD ═══ -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon dark"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+      <div class="cat-title">El Dashboard (la pantalla principal)</div>
+    </div>
+
+    <div class="term-card" data-terms="pipeline activo">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge gold">Pipeline activo</span>
+          <span class="term-preview">La plata total que podrías ganar</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          <strong>Pipeline activo</strong> es la suma de todos los montos de las licitaciones que el sistema detectó para Recasur y que aún están abiertas. Es <span class="highlight">el máximo que podrías ganar si ganaras todas</span> — en la práctica ganarás una parte de eso.
+        </div>
+        <div class="term-example">Si el pipeline dice $784M CLP, significa que hay licitaciones abiertas por ese total. No es plata en el bolsillo todavía — es plata posible.</div>
+        <div class="term-important">No te frustres si el número baja — significa que algunas licitaciones cerraron o se ganaron. Lo importante es que siempre haya licitaciones entrando.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="score puntaje calce">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge dark">Score (0–100)</span>
+          <span class="term-preview">Qué tan buena es la licitación para Recasur</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El <strong>score</strong> es el número que el sistema le da a cada licitación del 0 al 100. Mide qué tan buena es esa licitación específicamente para Recasur considerando: el rubro, el cliente, la región y el monto. <span class="green">Más alto = más conveniente postular.</span>
+        </div>
+        <div class="term-example">Score 96 = excelente (postular sí o sí). Score 41 = malo (no vale la pena). Score 65 = revisar antes de decidir.</div>
+        <div class="term-important">El score lo calcula el sistema automáticamente. Tú solo debes seguir la decisión recomendada que aparece en verde o rojo.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="oportunidades hoy activas">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge dark">Oportunidades hoy</span>
+          <span class="term-preview">Las licitaciones filtradas para Recasur</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Cada mañana el sistema revisa <strong>todas</strong> las licitaciones publicadas en Chile ese día (pueden ser cientos). Filtra solo las que tienen productos o clientes que Recasur vende. El número que ves es cuántas pasaron ese filtro.
+        </div>
+        <div class="term-example">Si dice "23 oportunidades hoy" — de 370 licitaciones publicadas en Chile hoy, 23 son para Recasur.</div>
+        <div class="term-important">Las que no aparecen no son para Recasur — el sistema ya las descartó para no hacerte perder tiempo.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="tasa adjudicacion exito ganar">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge green">Tasa de éxito</span>
+          <span class="term-preview">De cada 10 que postulas, cuántas ganas</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          La <strong>tasa de éxito</strong> (o tasa de adjudicación) es el porcentaje de licitaciones que Recasur gana de las que postula. Si dice 43% significa que de cada 10 licitaciones en que se postula, se ganan aproximadamente 4.
+        </div>
+        <div class="term-example">El promedio del mercado chileno es 24%. Si Recasur tiene 43% significa que Jorge está trabajando mejor que la mayoría de los vendedores.</div>
+        <div class="term-important">Esta es la estadística más importante para mostrarle a Jorge Guic — demuestra que la gestión de Jorge Díaz genera resultados reales.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ CATEGORÍA 2 · LAS TARJETAS ═══ -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon green"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="cat-title">Las tarjetas de licitación</div>
+    </div>
+
+    <div class="term-card" data-terms="postular si o si decision">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge green">Postular sí o sí</span>
+          <span class="term-preview">Licitación de alta prioridad, acción inmediata</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El sistema detectó que esta licitación tiene <strong>score alto, rubro fuerte y cliente conocido</strong>. La probabilidad de ganar es alta. No hay razón para no postular — solo hay que confirmar stock y preparar la propuesta.
+        </div>
+        <div class="term-example">Una licitación de INDESPA en Magallanes para equipos de buceo = "Postular sí o sí". Es el rubro más fuerte de Recasur, el cliente más frecuente y está en tu territorio.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="postular si hay stock">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge green">Postular si hay stock</span>
+          <span class="term-preview">Buena licitación, pero verificar primero</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          La licitación es buena, pero antes de comprometerse hay que <strong>revisar si Recasur tiene el producto en bodega</strong>. Si hay stock → postular. Si no hay stock → pedir cotización a proveedor antes del cierre.
+        </div>
+        <div class="term-example">Una licitación de chalecos salvavidas para la Municipalidad. Conviene, pero primero verificar cuántos chalecos hay disponibles en bodega.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="revisar margen">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge gold">Revisar margen</span>
+          <span class="term-preview">Antes de postular, calcular si vale la pena</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El sistema detectó que esta licitación tiene algo que hay que revisar antes de postular — puede ser que el rubro sea difícil, que Dimarsa compita, o que el margen de ganancia sea incierto. <span class="highlight">No descartar, pero tampoco postular a ciegas.</span>
+        </div>
+        <div class="term-example">Una licitación de radios VHF/UHF. Recasur tiene poca experiencia en comunicaciones. Antes de postular: ¿tenemos los equipos exactos? ¿cuánto nos cuesta conseguirlos? ¿hay margen de ganancia?</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="pedir cotizacion proveedor">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge blue">Pedir cotización</span>
+          <span class="term-preview">Consultar precio al proveedor antes de decidir</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Recasur no fabrica los productos — los compra a proveedores y los revende al Estado con un margen de ganancia. <strong>Pedir cotización</strong> significa contactar al proveedor para saber cuánto le cuesta el producto, y así calcular si hay ganancia real en la licitación.
+        </div>
+        <div class="term-example">Una licitación pide GPS marinos. Recasur llama a su distribuidor de Garmin, pide precio, calcula: "Si el Estado paga $42M y el proveedor me cobra $35M, gano $7M." ¿Vale el trabajo? Sí → postular.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="no pierdas tiempo descartar">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge zinc">No pierdas tiempo aquí</span>
+          <span class="term-preview">Esta licitación no conviene</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El sistema detectó que esta licitación tiene score bajo — puede ser porque está fuera de Magallanes, el monto es pequeño, el rubro es difícil, o el cliente nunca ha comprado a Recasur. <strong>El tiempo que tomaría preparar la propuesta es mejor invertirlo en las licitaciones con score alto.</strong>
+        </div>
+        <div class="term-example">Una licitación de lubricantes en Valparaíso por $18M. Fuera de región + rubro débil + monto pequeño = el sistema dice "no pierdas tiempo". Ese tiempo es mejor dedicarlo a la licitación de INDESPA por $185M.</div>
+        <div class="term-important">Descartar licitaciones malas es tan valioso como ganar licitaciones buenas. Protege tu tiempo y el margen de Recasur.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="dias al cierre deadline plazo">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge dark">Días al cierre</span>
+          <span class="term-preview">Cuánto tiempo queda para postular</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Cada licitación tiene una <strong>fecha de cierre</strong> — el día en que el organismo público deja de recibir propuestas. Si dice "8 días", tienes 8 días para preparar y enviar tu propuesta. Después de esa fecha no puedes postular aunque quieras.
+        </div>
+        <div class="term-example">Cierra en 3 días → acción urgente hoy mismo. Cierra en 20 días → tiempo suficiente para preparar bien la propuesta.</div>
+        <div class="term-important">El sistema te avisa con anticipación para que nunca pierdas una licitación por llegar tarde.</div>
+      </div>
+    </div>
+
+
+    <div class="term-card" data-terms="riesgo alto medio bajo operativo">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge red">Riesgo alto / medio / bajo</span>
+          <span class="term-preview">Cuántos problemas puede tener esta licitación</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El <strong>riesgo operativo</strong> mide qué tan complicado puede ser cumplir con lo que pide la licitación. Incluye: si las bases son muy exigentes, si hay garantías que depositar, si el plazo de entrega es muy corto, o si el rubro es uno donde Recasur ha perdido antes.
+        </div>
+        <div class="term-example"><strong>Riesgo bajo:</strong> licitación de chalecos salvavidas para la Municipalidad de Punta Arenas. Recasur tiene el producto, el cliente es conocido, el plazo es razonable. <br><br><strong>Riesgo alto:</strong> licitación de radios VHF para la Armada. Rubro difícil, bases técnicas complejas, competidores fuertes, Recasur tiene poca experiencia ahí.</div>
+        <div class="term-important">Riesgo alto no significa descartar automáticamente — significa revisar con mucho cuidado antes de comprometer recursos.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="margen alto medio bajo ganancia">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge gold">Margen alto / medio / bajo</span>
+          <span class="term-preview">Cuánto gana Recasur si adjudica</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El <strong>margen</strong> es la diferencia entre lo que el Estado paga y lo que le cuesta el producto a Recasur. Es la ganancia real del negocio.
+        </div>
+        <div class="term-example">El Estado paga 2M por GPS marinos. Recasur los consigue del proveedor en 5M. El margen es M (16%). ¿Es bueno? Depende del trabajo que implica. <br><br><strong>Margen alto:</strong> más del 20%. <strong>Margen medio:</strong> 10–20%. <strong>Margen bajo:</strong> menos del 10% — ojo, puede que no valga el esfuerzo.</div>
+        <div class="term-important">Si el margen es desconocido — el sistema dice "pedir cotización" primero para calcularlo antes de comprometerse.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="probabilidad ganar alta media baja">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge green">Probabilidad de ganar</span>
+          <span class="term-preview">Qué tan probable es que Recasur adjudique</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El sistema estima la probabilidad de ganar basándose en: <strong>historial con ese cliente</strong> (¿Recasur le ha vendido antes?), <strong>región</strong> (¿es Magallanes donde hay ventaja logística?), <strong>competidores detectados</strong> y <strong>rubro</strong> (¿fuerte o débil?).
+        </div>
+        <div class="term-example"><strong>Alta:</strong> INDESPA Magallanes en náutico — cliente frecuente, región con ventaja, rubro fuerte. <br><strong>Media:</strong> Carabineros en GPS marinos — cliente conocido pero rubro difícil. <br><strong>Baja:</strong> organismo nuevo fuera de región en rubro débil.</div>
+        <div class="term-important">Probabilidad alta + margen alto = postular sí o sí. Probabilidad baja + margen bajo = no pierdas tiempo.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="fit comercial calce rubro">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge blue">Fit comercial</span>
+          <span class="term-preview">Qué tan bien calza la licitación con Recasur</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El <strong>fit comercial</strong> mide qué tan bien encajan los productos que pide la licitación con lo que Recasur vende normalmente. Si es rubro fuerte (náutico, salvamento) el fit es alto. Si es rubro débil (lubricantes, comunicaciones) el fit es bajo.
+        </div>
+        <div class="term-example">Licitación de equipos de buceo = fit comercial 90/100. Recasur vende esto hace años, tiene proveedores, conoce el producto. <br><br>Licitación de software informático = fit comercial 0/100. Recasur no vende software.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="valor economico monto ticket">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge gold">Valor económico</span>
+          <span class="term-preview">Qué tan atractivo es el monto de la licitación</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Mide si el monto de la licitación justifica el tiempo de preparar la propuesta. Una licitación de M requiere casi el mismo trabajo que una de 00M — pero la ganancia es muy diferente. El sistema da más valor a montos que están en el <span class="highlight">"sweet spot" de Recasur</span>: entre 0M y 00M CLP.
+        </div>
+        <div class="term-example">Licitación de 85M = valor económico alto. Licitación de M = valor económico bajo (¿vale la pena el trabajo?).</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="orden de compra oc pago">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge dark">Orden de Compra (OC)</span>
+          <span class="term-preview">El documento con el que el Estado paga</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Cuando Recasur gana una licitación, el organismo público emite una <strong>Orden de Compra</strong>. Es el documento oficial que autoriza el pago. Una vez que Recasur recibe la OC, entrega el producto y puede cobrar.
+        </div>
+        <div class="term-example">INDESPA adjudica la licitación a Recasur → emite OC por 8.200.000 → Recasur entrega los equipos de buceo → INDESPA paga dentro del plazo estipulado (generalmente 30 días).</div>
+        <div class="term-important">El sistema monitorea las órdenes de compra de organismos frecuentes para detectar patrones de compra recurrente.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="bases administrativas tecnicas documentos">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge zinc">Bases administrativas / técnicas</span>
+          <span class="term-preview">Las reglas del juego de cada licitación</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Cada licitación viene con documentos que explican todo: qué producto exactamente se necesita, qué requisitos debe cumplir la empresa, qué documentos hay que presentar, cómo se evalúan las propuestas y qué pasa si no se cumple lo prometido.
+          <br><br>
+          <strong>Bases administrativas:</strong> los requisitos legales y de la empresa (RUT, documentos, garantías).
+          <br>
+          <strong>Bases técnicas:</strong> las especificaciones exactas del producto (modelo, tamaño, certificaciones).
+        </div>
+        <div class="term-example">Las bases técnicas dicen "chaleco clase V homologado DIRECTEMAR". Si el chaleco de Recasur no tiene esa certificación, la propuesta queda inadmisible (descartada aunque sea la más barata).</div>
+        <div class="term-important">SIEMPRE leer las bases antes de postular. Una propuesta que no cumple los requisitos se descarta automáticamente — da igual el precio que ofrezca.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="inadmisible descartada propuesta">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge red">Inadmisible</span>
+          <span class="term-preview">La propuesta fue rechazada por incumplir requisitos</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Una propuesta <strong>inadmisible</strong> es aquella que el organismo rechazó porque no cumplió algún requisito de las bases — puede ser que faltó un documento, que el producto no tenía la certificación correcta, o que la garantía fue insuficiente. <span class="red">La propuesta se descarta sin importar el precio.</span>
+        </div>
+        <div class="term-example">Recasur postula una licitación pero olvida adjuntar el certificado de la Cámara de Comercio. Aunque ofrezca el precio más bajo, queda inadmisible. No gana nada y pierde el tiempo de preparación.</div>
+        <div class="term-important">Por eso el sistema incluye "documentos pendientes" en cada tarjeta — para recordar qué hay que adjuntar antes de postular.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="garantia seriedad oferta poliza">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge zinc">Garantía de seriedad</span>
+          <span class="term-preview">Un depósito que se hace al postular licitaciones grandes</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          En licitaciones grandes, el organismo exige que las empresas depositen una <strong>garantía de seriedad de oferta</strong> — puede ser un boleto de garantía del banco o una póliza de seguro. Es para asegurar que si Recasur gana, cumple con entregar.
+        </div>
+        <div class="term-example">Una licitación por 85M puede exigir una garantía de .850.000 (1% del monto). Si Recasur gana y no entrega, pierde esa garantía. Si no gana, se le devuelve.</div>
+        <div class="term-important">Verificar siempre si la licitación exige garantía. Si sí, hay que tramitarla en el banco antes de la fecha de cierre.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ CATEGORÍA 3 · COMPETIDORES ═══ -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon red"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+      <div class="cat-title">Competidores y alertas</div>
+    </div>
+
+    <div class="term-card" data-terms="dimarsa alerta roja competidor">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge red">Alerta Dimarsa</span>
+          <span class="term-preview">El competidor más peligroso está participando</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          <strong>Dimarsa</strong> es el competidor más agresivo de Recasur en el rubro náutico. Fabrican sus propias embarcaciones HDPE, tienen precios muy bajos y son distribuidores oficiales de marcas importantes. La alerta roja significa que Dimarsa <strong>detectado participando en esa licitación específica.</strong>
+        </div>
+        <div class="term-example">Si Dimarsa participa en una licitación de botes HDPE, probablemente va a ofrecer el precio más bajo porque los fabrica ellos mismos. Recasur no puede ganar compitiendo por precio ahí.</div>
+        <div class="term-important">Estrategia contra Dimarsa: no competir por precio. Ganar con: entrega en 48h desde Punta Arenas, técnico disponible en Magallanes, garantía con servicio local. Dimarsa opera desde Puerto Montt — no tiene nadie en Punta Arenas.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="ventaja magallanes logistica">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge green">Ventaja Magallanes</span>
+          <span class="term-preview">Por qué estar en Punta Arenas es una ventaja enorme</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Recasur tiene sede en Punta Arenas. Todos los competidores importantes (Dimarsa, Salfa, Kauffman) tienen sede en Puerto Montt o Santiago — a más de 2.000 km. Eso significa que <strong>Recasur puede entregar productos en 24-48 horas, mientras la competencia tarda días o semanas y tiene costos de flete enormes.</strong>
+        </div>
+        <div class="term-example">El Gobierno Regional de Magallanes necesita chalecos salvavidas urgente. Recasur entrega mañana desde su bodega en Punta Arenas. Dimarsa tarda 5-7 días desde Puerto Montt con flete a la Patagonia.</div>
+        <div class="term-important">En licitaciones de Magallanes, siempre mencionar en la propuesta: stock disponible en Punta Arenas + entrega inmediata + técnico local. Eso vale más que el precio más bajo.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ CATEGORÍA 4 · PIPELINE ═══ -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon gold"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+      <div class="cat-title">Estados del pipeline</div>
+    </div>
+
+    <div class="term-card" data-terms="nueva hoy pipeline estado">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge blue">Nueva hoy</span>
+          <span class="term-preview">Licitación detectada hoy por primera vez</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El sistema la acaba de detectar esta mañana. Todavía no se ha tomado ninguna acción — es la primera vez que aparece en el radar de Recasur.
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="revisando bases pipeline">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge gold">Revisando bases</span>
+          <span class="term-preview">Leyendo los documentos de la licitación</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Las <strong>bases</strong> son los documentos oficiales que publica el organismo público con todas las reglas de la licitación: qué productos exactos necesitan, qué requisitos debe cumplir la empresa, qué documentos hay que presentar, cómo se evalúan las propuestas. <strong>Hay que leerlas antes de postular.</strong>
+        </div>
+        <div class="term-example">Las bases dicen "chaleco salvavidas clase V homologado por la Marina". Si Recasur no tiene ese modelo específico, no puede postular aunque tenga chalecos.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="cotizando proveedor pipeline">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge gold">Cotizando proveedor</span>
+          <span class="term-preview">Pidiendo precio al proveedor antes de postular</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Se está esperando que el proveedor informe cuánto cuesta el producto. Con ese precio se puede calcular cuánto ganará Recasur si adjudica la licitación.
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="postulada enviada pipeline">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge zinc">Postulada</span>
+          <span class="term-preview">La propuesta ya fue enviada, esperando resultado</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          La propuesta de Recasur fue enviada al organismo público. Ahora hay que esperar que el organismo evalúe todas las propuestas recibidas y adjudique a alguna empresa.
+        </div>
+        <div class="term-example">El tiempo de evaluación puede ser desde 3 días hasta 2 meses dependiendo de la licitación. El sistema te avisa cuando hay un resultado.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="adjudicada ganada pipeline">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge green">Adjudicada ✓</span>
+          <span class="term-preview">¡Recasur ganó la licitación!</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          <strong>Adjudicar</strong> significa ganar una licitación. El organismo público eligió la propuesta de Recasur y ahora debe emitir una Orden de Compra. Una vez recibida la OC, Recasur entrega el producto y cobra.
+        </div>
+        <div class="term-important">La adjudicación aparece publicada en mercadopublico.cl. El sistema la detecta automáticamente y actualiza el reporte mensual.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ CATEGORÍA 5 · EL REPORTE ═══ -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon blue"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="cat-title">El Reporte Ejecutivo</div>
+    </div>
+
+    <div class="term-card" data-terms="reporte ejecutivo mensual jefe">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge dark">Reporte ejecutivo</span>
+          <span class="term-preview">El documento mensual para mostrarle al jefe</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          El reporte ejecutivo es un documento de 4 páginas que resume <strong>todo lo que Jorge Díaz gestionó durante el mes</strong>: cuántas licitaciones detectó, cuántas ganó, cuánto dinero representa, cómo actuó frente a Dimarsa. Está diseñado para presentárselo a Jorge Guic (el dueño de Recasur).
+        </div>
+        <div class="term-important">El reporte está pensado para que Jorge Díaz pueda demostrar su valor dentro de la empresa y justificar mejores condiciones laborales o comisiones.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="monto adjudicado ganado">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge green">Monto adjudicado</span>
+          <span class="term-preview">La plata real que Recasur ganó este mes</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          Es la suma de todas las licitaciones que Recasur ganó durante el mes. <strong>Esta sí es plata real</strong> — no potencial. El Estado ya adjudicó y Recasur debe entregar los productos para cobrar.
+        </div>
+        <div class="term-example">Si el reporte dice "$168M adjudicados en abril", significa que el Estado le compró $168 millones en productos a Recasur ese mes.</div>
+      </div>
+    </div>
+
+    <div class="term-card" data-terms="decisiones inteligentes descartadas">
+      <div class="term-header" onclick="toggle(this)">
+        <div class="term-left">
+          <span class="term-badge gold">Decisiones inteligentes</span>
+          <span class="term-preview">Las licitaciones que se descartaron a propósito</span>
+        </div>
+        <span class="term-cta">Ver →</span>
+      </div>
+      <div class="term-body">
+        <div class="term-explain">
+          No solo importa lo que se ganó — también importa <strong>lo que se descartó con criterio</strong>. Cada licitación mala que se descarta es tiempo y recursos que se pueden invertir en las buenas. El reporte muestra esto porque es parte del valor que Jorge Díaz aporta a Recasur.
+        </div>
+        <div class="term-example">"Se descartó Vialidad Valparaíso ($18M, fuera de región) para invertir ese tiempo en INDESPA Magallanes ($185M). Resultado: se ganó INDESPA." Eso es gestión inteligente.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="empty" id="emptyState">
+    <div class="empty-title">Sin resultados</div>
+    <div class="empty-desc">Intenta con otro término</div>
+  </div>
+
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <a href="../" class="btn-back">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al dashboard
+  </a>
+</div>
+
+<script>
+// Toggle acordeón
+function toggle(header) {
+  const card = header.closest('.term-card');
+  const isOpen = card.classList.contains('open');
+  // Cerrar todos
+  document.querySelectorAll('.term-card.open').forEach(c => c.classList.remove('open'));
+  // Abrir este si estaba cerrado
+  if (!isOpen) {
+    card.classList.add('open');
+    // Scroll suave para que se vea completo
+    setTimeout(() => {
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 150);
+  }
+}
+
+// Búsqueda
+const searchInput = document.getElementById('searchInput');
+const emptyState = document.getElementById('emptyState');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  let visible = 0;
+
+  document.querySelectorAll('.term-card').forEach(card => {
+    const terms = card.dataset.terms || '';
+    const text = card.querySelector('.term-name')?.textContent.toLowerCase() || '';
+    const badge = card.querySelector('.term-badge')?.textContent.toLowerCase() || '';
+    const preview = card.querySelector('.term-preview')?.textContent.toLowerCase() || '';
+    const body = card.querySelector('.term-explain')?.textContent.toLowerCase() || '';
+
+    const match = !q || terms.includes(q) || text.includes(q) || badge.includes(q) || preview.includes(q) || body.includes(q);
+
+    card.classList.toggle('hidden', !match);
+    if (match) visible++;
+  });
+
+  // Ocultar categorías vacías
+  document.querySelectorAll('.cat-section').forEach(section => {
+    const hasVisible = section.querySelectorAll('.term-card:not(.hidden)').length > 0;
+    section.style.display = hasVisible ? 'block' : 'none';
+  });
+
+  emptyState.classList.toggle('show', visible === 0);
+});
+</script>
+</body>
+</html>
