@@ -2317,6 +2317,303 @@ setTimeout(() => {
     setTimeout(() => { c.style.transition = 'stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1)'; c.setAttribute('stroke-dashoffset', offset); }, 100);
   });
 }, 400);
+
+// ════════════════════════════════════════
+// SUPABASE · CONEXIÓN REAL
+// ════════════════════════════════════════
+const SUPABASE_URL = 'https://ivpgkqmxjuepvkcelzlh.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_mXRxs6l1_VsRNF9qutdWbQ_xGYfK_9k';
+
+async function fetchSupabase(endpoint, params = '') {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}${params}`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn('Supabase fetch error:', e.message);
+    return null;
+  }
+}
+
+async function cargarDatosReales() {
+  // Mostrar indicador de carga
+  const topbar = document.querySelector('.topbar-badge');
+  if (topbar) topbar.textContent = 'Cargando datos reales…';
+
+  // 1. Cargar KPIs desde vista
+  const kpis = await fetchSupabase('vw_kpis', '?select=*&limit=1');
+  if (kpis && kpis.length > 0) {
+    const k = kpis[0];
+    actualizarKPIs(k);
+    actualizarDayBlock(k);
+    if (topbar) {
+      const now = new Date();
+      topbar.textContent = `Datos reales · ${now.toLocaleDateString('es-CL')} · ${k.activas_hoy || 0} licitaciones para Recasur`;
+    }
+  }
+
+  // 2. Cargar licitaciones del dashboard (activas, ordenadas por score)
+  const lics = await fetchSupabase('vw_dashboard_hoy',
+    '?select=*&order=score.desc&limit=50');
+  if (lics && lics.length > 0) {
+    renderLicitaciones(lics);
+  }
+}
+
+function actualizarKPIs(k) {
+  // Oportunidades hoy
+  const mvals = document.querySelectorAll('.metric-val');
+  if (mvals[0]) mvals[0].innerHTML = k.activas_hoy || 0;
+
+  // Pipeline en millones
+  const pipeline = k.pipeline_clp ? Math.round(k.pipeline_clp / 1000000) : 0;
+  if (mvals[1]) mvals[1].innerHTML = `$${pipeline}<span class="unit">M</span>`;
+
+  // Magallanes
+  if (mvals[2]) mvals[2].innerHTML = k.oportunidades_magallanes || 0;
+
+  // Dimarsa
+  if (mvals[3]) mvals[3].innerHTML = k.alertas_dimarsa || 0;
+}
+
+function actualizarDayBlock(k) {
+  const activas = k.activas_hoy || 0;
+  const dimarsa = k.alertas_dimarsa || 0;
+  const hot = k.hot_activas || 0;
+  const mag = k.oportunidades_magallanes || 0;
+  const pipeline = k.pipeline_clp ? Math.round(k.pipeline_clp / 1000000) : 0;
+
+  // Headline
+  const headline = document.querySelector('.day-headline');
+  if (headline) {
+    headline.innerHTML = `Jorge, tienes <strong>${activas} oportunidades</strong><br>activas en este momento`;
+  }
+
+  // Stats
+  const stats = document.querySelectorAll('.day-stat div:last-child');
+  if (stats[0]) stats[0].innerHTML = `<strong>${dimarsa}</strong> con Dimarsa — acción urgente`;
+  if (stats[1]) stats[1].innerHTML = `<strong>${hot}</strong> para postular ya`;
+  if (stats[2]) stats[2].innerHTML = `<strong>${mag}</strong> en Magallanes — ventaja tuya`;
+  if (stats[3]) stats[3].innerHTML = `Pipeline total <strong>$${pipeline}M CLP</strong>`;
+
+  // CTA
+  const cta = document.querySelector('.day-cta');
+  if (cta) cta.textContent = `Ver mis ${hot} prioridades →`;
+}
+
+function getDecisionBadge(score, dimarsa, dias) {
+  if (score >= 85) return { cls: 'go', label: 'Postular sí o sí' };
+  if (score >= 70) return { cls: 'go-stock', label: 'Postular si hay stock' };
+  if (score >= 55) return { cls: 'check', label: 'Revisar margen' };
+  if (score >= 40) return { cls: 'quote', label: 'Pedir cotización' };
+  if (score >= 25) return { cls: 'risk', label: 'Alto riesgo' };
+  return { cls: 'discard', label: 'No pierdas tiempo aquí' };
+}
+
+function getPipelineStatus(score) {
+  if (score >= 85) return { cls: 'ps-review', label: 'Revisar bases' };
+  if (score >= 70) return { cls: 'ps-quoting', label: 'Evaluar stock' };
+  if (score >= 40) return { cls: 'ps-new', label: 'Nueva hoy' };
+  return { cls: 'ps-discard', label: 'Descartada' };
+}
+
+function formatMonto(monto) {
+  if (!monto) return 'Sin monto';
+  const m = parseFloat(monto);
+  if (m >= 1000000000) return `$${(m/1000000000).toFixed(1)}B`;
+  if (m >= 1000000) return `$${Math.round(m/1000000)}M`;
+  if (m >= 1000) return `$${Math.round(m/1000)}K`;
+  return `$${m}`;
+}
+
+function formatDias(dias) {
+  if (!dias || dias <= 0) return 'Cerrada';
+  if (dias === 1) return '1 día';
+  return `${dias} días`;
+}
+
+function renderLicitaciones(lics) {
+  const lista = document.getElementById('oppList');
+  if (!lista) return;
+
+  // Agregar banner de datos reales
+  const banner = document.createElement('div');
+  banner.style.cssText = `
+    padding:10px 16px;background:var(--g50);border:1px solid var(--g100);
+    border-radius:var(--radius);margin-bottom:14px;
+    font-size:12px;color:var(--g600);font-weight:600;
+    display:flex;align-items:center;gap:8px;font-family:'Geist Mono',monospace;
+  `;
+  banner.innerHTML = `
+    <span style="width:8px;height:8px;border-radius:50%;background:var(--g500);display:inline-block;animation:breathe 2s infinite;"></span>
+    DATOS REALES · ${lics.length} licitaciones de Mercado Público Chile · Última actualización: hoy
+  `;
+  lista.insertBefore(banner, lista.firstChild);
+
+  // Renderizar cada licitación real
+  lics.forEach((lic, i) => {
+    const score = lic.score || 0;
+    const dias = lic.dias_al_cierre || 0;
+    const dimarsa = lic.alerta_dimarsa || false;
+    const magallanes = (lic.region_detectada || '').toUpperCase().includes('MAGALLANES');
+    const decision = getDecisionBadge(score, dimarsa, dias);
+    const pipeline = getPipelineStatus(score);
+
+    const card = document.createElement('div');
+    card.className = `opp-card fade-up${dimarsa ? ' dimarsa' : ''}`;
+    card.dataset.decision = decision.cls === 'go' || decision.cls === 'go-stock' ? 'go' : decision.cls;
+    card.dataset.dimarsa = dimarsa;
+    card.dataset.magallanes = magallanes;
+    card.dataset.buyer = lic.cliente_detectado ? 'frecuente' : '';
+    card.dataset.days = dias;
+    card.dataset.amount = Math.round((lic.monto_estimado || 0) / 1000000);
+    card.dataset.search = `${lic.nombre || ''} ${lic.organismo || ''} ${lic.rubro_principal || ''}`.toLowerCase();
+    card.style.animationDelay = `${i * 0.05}s`;
+
+    const tags = [
+      dimarsa ? `<span class="tag red"><span class="blink"></span> Dimarsa</span>` : '',
+      magallanes ? `<span class="tag green">Magallanes</span>` : '',
+      lic.rubro_principal ? `<span class="tag zinc">${lic.rubro_principal}</span>` : '',
+      dias <= 7 && dias > 0 ? `<span class="tag red">Cierra en ${dias} días</span>` : '',
+    ].filter(Boolean).join('');
+
+    const competidorAlert = dimarsa ? `
+      <div class="competitor-alert">
+        <div class="comp-alert-ico"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+        <div class="comp-alert-body">
+          <div class="comp-alert-title">Dimarsa detectado</div>
+          <div class="comp-alert-text"><strong>No competir por precio.</strong> Defender con entrega 48h desde Punta Arenas, técnico local y postventa en Magallanes.</div>
+        </div>
+      </div>` : '';
+
+    const tactica = lic.sugerencia_tactica || (
+      score >= 80 ? 'Rubro fuerte y cliente conocido. Confirmar stock y postular.' :
+      score >= 60 ? 'Revisar bases técnicas antes de comprometer recursos.' :
+      'Evaluar si el margen justifica el tiempo de preparación.'
+    );
+
+    card.innerHTML = `
+      <div class="decision-header">
+        <div class="decision-badge ${decision.cls}">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          ${decision.label}
+        </div>
+        <div class="decision-reason">
+          <strong>${lic.matches || lic.rubro_principal || 'Licitación detectada'}</strong>
+          ${magallanes ? ' · Magallanes — ventaja logística.' : ''}
+          ${dimarsa ? ' · Dimarsa participa — estrategia diferenciada.' : ''}
+        </div>
+        <div class="score-compact">
+          <div class="score-number">${score}</div>
+          <div class="score-label-sm">SCORE</div>
+          <div class="score-bar-sm"><div class="score-fill-sm" style="width:${score}%"></div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-code"><span class="org">${lic.organismo || 'Organismo público'}</span> · ${lic.codigo_externo || ''}</span>
+          <div class="card-tags">${tags}</div>
+        </div>
+        <div class="card-title">${lic.nombre || 'Sin título'}</div>
+        <div class="data-row">
+          <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">${formatMonto(lic.monto_estimado)}</div></div>
+          <div class="data-cell"><div class="dl">Cierra en</div><div class="dv ${dias <= 7 ? 'urgent' : ''}">${formatDias(dias)}</div></div>
+          <div class="data-cell"><div class="dl">Región</div><div class="dv ${magallanes ? 'pos' : ''}">${lic.region || lic.region_detectada || '—'}</div></div>
+          <div class="data-cell"><div class="dl">Rubro</div><div class="dv">${lic.rubro_principal || '—'}</div></div>
+        </div>
+        ${competidorAlert}
+        <div class="tactic-box">
+          <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <div>
+            <div class="tactic-title">Táctica recomendada</div>
+            <div class="tactic-text">${tactica}</div>
+          </div>
+        </div>
+        ${score >= 70 ? `
+        <div class="boss-box">
+          <div class="boss-ico">🎯</div>
+          <div>
+            <div class="boss-label">Qué mostrarle a Jorge Guic</div>
+            <div class="boss-text">"Oportunidad detectada automáticamente — ${formatMonto(lic.monto_estimado)} en ${lic.organismo || 'organismo público'}. Score ${score}/100${magallanes ? '. Magallanes — sin competencia local.' : '.'}"</div>
+          </div>
+        </div>` : ''}
+      </div>
+      <div class="pipeline-bar">
+        <span class="pipeline-status-badge ${pipeline.cls}">${pipeline.label}</span>
+        <div class="pipeline-action">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          ${lic.next_action || 'Revisar bases y evaluar postulación'}
+        </div>
+        <div class="pipeline-deadline ${dias <= 5 ? 'urgent' : ''}">Cierra: ${formatDias(dias)}</div>
+      </div>
+    `;
+
+    lista.appendChild(card);
+  });
+
+  // Actualizar contador
+  const total = lista.querySelectorAll('.opp-card').length;
+  const rcEl = document.getElementById('resultCount');
+  if (rcEl) rcEl.textContent = total;
+
+  // Re-inicializar filtros con las nuevas cards
+  initFiltros();
+}
+
+function initFiltros() {
+  // Re-cachear cards incluyendo las nuevas de Supabase
+  const allCards = document.querySelectorAll('.opp-card');
+
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const type = chip.dataset.fType;
+      const val = chip.dataset.f;
+      document.querySelectorAll(`.chip[data-f-type="${type}"]`).forEach(c => c.classList.remove('active','red','green','gold'));
+      chip.classList.add('active');
+      if (val === 'dimarsa') chip.classList.add('red');
+      if (val === 'magallanes') chip.classList.add('green');
+      if (val === 'go') chip.classList.add('green');
+      activeFilters[type === 'decision' ? 'decision' : 'estado'] = val;
+
+      const query = (document.getElementById('searchInput').value || '').toLowerCase();
+      let visible = 0;
+      allCards.forEach(card => {
+        const dec = card.dataset.decision;
+        const dim = card.dataset.dimarsa === 'true';
+        const mag = card.dataset.magallanes === 'true';
+        const buyer = card.dataset.buyer;
+        const days = parseInt(card.dataset.days);
+        const search = (card.dataset.search || '') + ' ' + (card.querySelector('.card-title')?.textContent || '').toLowerCase();
+
+        let dMatch = activeFilters.decision === 'all' || dec === activeFilters.decision ||
+          (activeFilters.decision === 'go' && (dec === 'go' || dec === 'go-stock'));
+        let eMatch = true;
+        const ef = activeFilters.estado;
+        if (ef === 'dimarsa') eMatch = dim;
+        else if (ef === 'magallanes') eMatch = mag;
+        else if (ef === 'closing') eMatch = days <= 10 && days > 0;
+        else if (ef === 'buyer') eMatch = buyer === 'frecuente';
+
+        const sMatch = !query || search.includes(query);
+
+        if (dMatch && eMatch && sMatch) { card.classList.remove('hidden'); visible++; }
+        else { card.classList.add('hidden'); }
+      });
+
+      document.getElementById('resultCount').textContent = visible;
+      document.getElementById('emptyState').classList.toggle('show', visible === 0);
+    });
+  });
+}
+
+// Iniciar carga de datos reales
+cargarDatosReales();
 </script>
 </body>
 </html>
