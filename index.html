@@ -1342,34 +1342,35 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
 
   <nav class="sidebar-nav">
     <div class="nav-label">Acción</div>
-    <button class="nav-btn active">
+    <button class="nav-btn active" onclick="activarFiltro('all', this)">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      Hoy
-      <span class="nav-badge gold" id="badge-hoy">—</span>
+      Todas las oportunidades
+      <span class="nav-badge gold" id="badge-hoy" style="display:none">0</span>
     </button>
-    <button class="nav-btn">
+    <button class="nav-btn" id="nav-dimarsa" onclick="activarFiltro('dimarsa', this)" style="display:none">
       <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
       Alertas Dimarsa
-      <span class="nav-badge">2</span>
+      <span class="nav-badge" id="badge-dimarsa">0</span>
     </button>
-    <button class="nav-btn">
+    <button class="nav-btn" id="nav-hot" onclick="activarFiltro('go', this)" style="display:none">
       <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Postular ahora
-      <span class="nav-badge green">3</span>
+      <span class="nav-badge green" id="badge-hot">0</span>
     </button>
-    <button class="nav-btn">
+    <button class="nav-btn" id="nav-mag" onclick="activarFiltro('magallanes', this)" style="display:none">
       <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
       Magallanes
+      <span class="nav-badge green" id="badge-mag" style="background:var(--g500);display:none">0</span>
     </button>
 
-    <div class="nav-label">Pipeline</div>
-    <button class="nav-btn">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Todas las etapas
-    </button>
-    <button class="nav-btn">
+    <div class="nav-label">Acceso rápido</div>
+    <button class="nav-btn" onclick="window.location.href='reporte/'">
       <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Reporte mensual
+    </button>
+    <button class="nav-btn" onclick="window.location.href='glosario/'">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      Glosario de términos
     </button>
 
     <div class="nav-label">Sistema</div>
@@ -2387,6 +2388,44 @@ document.querySelectorAll('.opp-card[data-search]').forEach(card => {
     }
   }
 });
+
+// ── Función para activar filtro desde sidebar ──
+function activarFiltro(tipo, btn) {
+  // Marcar botón activo en sidebar
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  // Mapear a chip correspondiente
+  let chip = null;
+  if (tipo === 'all') chip = document.querySelector('.chip[data-f="all"]');
+  else if (tipo === 'dimarsa') chip = document.querySelector('.chip[data-f-type="estado"][data-f="dimarsa"]');
+  else if (tipo === 'go') chip = document.querySelector('.chip[data-f-type="decision"][data-f="go"]');
+  else if (tipo === 'magallanes') chip = document.querySelector('.chip[data-f-type="estado"][data-f="magallanes"]');
+
+  if (chip) chip.click();
+
+  // Scroll a lista
+  const lista = document.getElementById('oppList');
+  if (lista) lista.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Mostrar botones sidebar cuando hay datos reales ──
+function actualizarSidebar(dimarsa, hot, mag, total) {
+  const badgeHoy = document.getElementById('badge-hoy');
+  if (badgeHoy) { badgeHoy.textContent = total; if (total > 0) badgeHoy.style.display = 'inline-flex'; }
+
+  const navDim = document.getElementById('nav-dimarsa');
+  const badgeDim = document.getElementById('badge-dimarsa');
+  if (navDim && dimarsa > 0) { navDim.style.display = 'flex'; if (badgeDim) badgeDim.textContent = dimarsa; }
+
+  const navHot = document.getElementById('nav-hot');
+  const badgeHot = document.getElementById('badge-hot');
+  if (navHot && hot > 0) { navHot.style.display = 'flex'; if (badgeHot) badgeHot.textContent = hot; }
+
+  const navMag = document.getElementById('nav-mag');
+  const badgeMag = document.getElementById('badge-mag');
+  if (navMag && mag > 0) { navMag.style.display = 'flex'; if (badgeMag) { badgeMag.textContent = mag; badgeMag.style.display = 'inline-flex'; } }
+}
 
 // Iniciar carga de datos reales
 cargarDatosReales();
