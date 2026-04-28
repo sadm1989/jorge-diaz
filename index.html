@@ -1158,11 +1158,38 @@ body {
 
 /* ─── ANIMATIONS ─── */
 .fade-up { opacity:0; transform:translateY(8px); animation:fadeUp .5s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
 .fade-up:nth-child(1){animation-delay:.05s}
 .fade-up:nth-child(2){animation-delay:.1s}
 .fade-up:nth-child(3){animation-delay:.15s}
 .fade-up:nth-child(4){animation-delay:.2s}
+
+/* Botón ver en mercado público */
+.btn-mp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--z900);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s;
+  margin-top: 12px;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-mp:hover { background: var(--z700); }
+.btn-mp svg { width:13px; height:13px; stroke:currentColor; fill:none; stroke-width:2; }
+.opp-card.dimarsa .btn-mp { background: var(--r500); }
+.opp-card.dimarsa .btn-mp:hover { background: var(--r600); }
 
 mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radius:2px; font-weight:500; }
 
@@ -1399,43 +1426,43 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
     <!-- A. TU DÍA DE HOY -->
     <div class="day-block">
       <div>
-        <div class="day-greeting">lunes 27 de abril, 2026 · buenos días</div>
-        <div class="day-headline">
-          Jorge, tienes <strong>4 oportunidades</strong><br>que requieren acción hoy
+        <div class="day-greeting" id="dayGreeting">cargando...</div>
+        <div class="day-headline" id="dayHeadline">
+          Cargando oportunidades<br>de hoy...
         </div>
         <div class="day-stats">
           <div class="day-stat">
             <div class="ico red">
               <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
             </div>
-            <div><strong>2</strong> con Dimarsa — acción urgente</div>
+            <div id="statDimarsa"><strong>—</strong> con Dimarsa</div>
           </div>
           <div class="day-stat">
             <div class="ico gold">
               <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             </div>
-            <div><strong>3</strong> para postular ya</div>
+            <div id="statHot"><strong>—</strong> para postular ya</div>
           </div>
           <div class="day-stat">
             <div class="ico green">
               <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </div>
-            <div><strong>9</strong> en Magallanes — ventaja tuya</div>
+            <div id="statMag"><strong>—</strong> en Magallanes</div>
           </div>
           <div class="day-stat">
             <div class="ico neutral">
               <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
             </div>
-            <div>Pipeline total <strong>$784M CLP</strong></div>
+            <div>Pipeline <strong id="statPipeline">cargando...</strong></div>
           </div>
         </div>
       </div>
       <div class="day-right">
-        <div class="day-deadline">
-          <strong>⏰ INDESPA cierra en 8 días</strong>
-          Tu oportunidad más grande del mes
+        <div class="day-deadline" id="dayDeadline">
+          <strong id="dayDeadlineText">⏳ Cargando...</strong>
+          Actualizando datos de hoy
         </div>
-        <button class="day-cta" onclick="filterAction('hot')">Ver mis 4 prioridades →</button>
+        <button class="day-cta" id="dayCta" onclick="filterAction('hot')">Ver prioridades →</button>
       </div>
     </div>
 
@@ -1446,8 +1473,8 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
           <span class="metric-lbl">Oportunidades hoy</span>
           <div class="metric-ico"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
         </div>
-        <div class="metric-val">23</div>
-        <div class="metric-ctx"><span class="up">↑ 5 nuevas</span> vs ayer</div>
+        <div class="metric-val" id="kpi-activas">—</div>
+        <div class="metric-ctx" id="kpi-activas-ctx">Cargando...</div>
         <div class="tt">De 142 licitaciones del día, el sistema filtró <strong>23 para Recasur</strong>. Las otras no aplican.</div>
       </div>
       <div class="metric fade-up has-tooltip">
@@ -1455,8 +1482,8 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
           <span class="metric-lbl">Pipeline activo</span>
           <div class="metric-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
         </div>
-        <div class="metric-val">$784<span class="unit">M</span></div>
-        <div class="metric-ctx"><span class="up">↑ 22%</span> vs mes pasado</div>
+        <div class="metric-val" id="kpi-pipeline">—</div>
+        <div class="metric-ctx" id="kpi-pipeline-ctx">Cargando...</div>
         <div class="tt">Suma de todos los montos estimados. <strong>No lo ganarás todo</strong>, pero más pipeline = más oportunidades.</div>
       </div>
       <div class="metric fade-up has-tooltip">
@@ -1464,8 +1491,8 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
           <span class="metric-lbl">En Magallanes</span>
           <div class="metric-ico"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         </div>
-        <div class="metric-val">9</div>
-        <div class="metric-ctx"><span class="neutral">Ventaja logística tuya</span></div>
+        <div class="metric-val" id="kpi-magallanes">—</div>
+        <div class="metric-ctx">Ventaja logística tuya</div>
         <div class="tt">Dimarsa está en Puerto Montt. <strong>Tú puedes entregar en 24-48h desde Punta Arenas.</strong> Eso es lo que gana.</div>
       </div>
       <div class="metric critical fade-up has-tooltip">
@@ -1473,7 +1500,7 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
           <span class="metric-lbl">Alertas Dimarsa</span>
           <div class="metric-ico"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
         </div>
-        <div class="metric-val">2</div>
+        <div class="metric-val" id="kpi-dimarsa">—</div>
         <div class="metric-ctx"><span class="down">No competir por precio</span></div>
         <div class="tt right"><strong>Dimarsa fabrica embarcaciones propias</strong> — bajar precio no funciona. Ganas con: entrega rápida, stock en Magallanes, postventa local.</div>
       </div>
@@ -1511,531 +1538,31 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
 
         <div class="opp-list" id="oppList">
 
-          <!-- ══ 1 · INDESPA · POSTULAR SÍ O SÍ ══ -->
-          <div class="opp-card dimarsa fade-up"
-               data-decision="go" data-dimarsa="true" data-magallanes="true"
-               data-buyer="frecuente" data-days="8" data-amount="185"
-               data-search="indespa pesca embarcacion buceo magallanes hdpe">
-
-            <div class="decision-header">
-              <div class="decision-badge go">
-                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                Postular sí o sí
-              </div>
-              <div class="decision-reason">
-                <strong>Magallanes + rubro fuerte + comprador muy frecuente.</strong> Alta probabilidad. Dimarsa compite pero pierde en logística.
-              </div>
-              <div class="score-compact">
-                <div class="score-number">96</div>
-                <div class="score-label-sm">SCORE</div>
-                <div class="score-bar-sm"><div class="score-fill-sm" style="width:96%"></div></div>
-              </div>
+          <!-- Loading state — se reemplaza con datos reales de Supabase -->
+          <div id="loadingState" style="
+            padding:48px 24px;
+            text-align:center;
+            background:var(--white);
+            border:1px solid var(--z200);
+            border-radius:var(--radius-lg);
+          ">
+            <div style="
+              width:36px;height:36px;
+              border:3px solid var(--z200);
+              border-top-color:var(--z900);
+              border-radius:50%;
+              animation:spin 0.8s linear infinite;
+              margin:0 auto 16px;
+            "></div>
+            <div style="font-size:14px;font-weight:600;color:var(--z700);margin-bottom:6px;">
+              Cargando licitaciones reales...
             </div>
-
-            <div class="card-body">
-              <div class="card-meta">
-                <span class="card-code"><span class="org">INDESPA Magallanes</span> · 4521-89-LE25</span>
-                <div class="card-tags">
-                  <span class="tag red"><span class="blink"></span> Dimarsa</span>
-                  <span class="tag green">Magallanes</span>
-                  <span class="tag gold">Comprador frecuente</span>
-                </div>
-              </div>
-
-              <div class="card-title">Compra de embarcaciones HDPE y equipos de buceo para pescadores artesanales — Región de Magallanes</div>
-
-              <!-- G. Sub-scores 4D -->
-              <div class="subscores">
-                <div class="subscore-item has-tooltip">
-                  <span class="subscore-label">Fit comercial</span>
-                  <div class="subscore-ring high">
-                    <svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="10.68"/></svg>
-                    90
-                  </div>
-                  <div class="subscore-text">Rubro fuerte, stock disponible</div>
-                  <div class="tt">Náutico/HDPE es el rubro más fuerte de Recasur. Tienes experiencia y stock.</div>
-                </div>
-                <div class="subscore-item has-tooltip">
-                  <span class="subscore-label">Prob. ganar</span>
-                  <div class="subscore-ring high">
-                    <svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="21.36"/></svg>
-                    80
-                  </div>
-                  <div class="subscore-text">INDESPA te conoce</div>
-                  <div class="tt">INDESPA es tu cliente #1. Tienes historial ganador y ventaja logística en Magallanes.</div>
-                </div>
-                <div class="subscore-item has-tooltip">
-                  <span class="subscore-label">Valor econ.</span>
-                  <div class="subscore-ring high">
-                    <svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="16.02"/></svg>
-                    85
-                  </div>
-                  <div class="subscore-text">$185M · margen alto</div>
-                  <div class="tt">Monto alto en el sweet spot de Recasur. Margen estimado alto en este rubro.</div>
-                </div>
-                <div class="subscore-item has-tooltip">
-                  <span class="subscore-label">Riesgo oper.</span>
-                  <div class="subscore-ring high">
-                    <svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="26.70"/></svg>
-                    75
-                  </div>
-                  <div class="subscore-text">Riesgo bajo</div>
-                  <div class="tt">Bases conocidas. Plazo adecuado (8 días). Verificar garantía de seriedad de oferta.</div>
-                </div>
-              </div>
-
-              <!-- Datos -->
-              <div class="data-row">
-                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$185M CLP</div></div>
-                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv urgent">8 días</div></div>
-                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv pos">Alta</div></div>
-                <div class="data-cell"><div class="dl">Riesgo</div><div class="dv pos">Bajo</div></div>
-              </div>
-
-              <!-- H. Análisis del comprador -->
-              <div class="buyer-row">
-                <div class="buyer-avatar">IN</div>
-                <div class="buyer-info">
-                  <div class="buyer-name">INDESPA — Instituto de Pesca Artesanal</div>
-                  <div class="buyer-desc">Comprador recurrente. Históricamente prioriza equipamiento marítimo y pesca artesanal. Alta afinidad con Recasur. Evalúa calidad, plazo y soporte técnico — no solo precio.</div>
-                </div>
-                <div class="buyer-meta">
-                  <div class="buyer-freq">MUY FRECUENTE</div>
-                  <div class="buyer-ticket">Ticket prom. $185M</div>
-                </div>
-              </div>
-
-              <!-- F. Alerta competidor -->
-              <div class="competitor-alert">
-                <div class="comp-alert-ico"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
-                <div class="comp-alert-body">
-                  <div class="comp-alert-title">Dimarsa detectado · náutico/HDPE</div>
-                  <div class="comp-alert-text"><strong>Dimarsa fabrica sus propias embarcaciones HDPE y baja precios agresivamente.</strong> No compitas por precio — defiende con: entrega 48h desde Punta Arenas, técnico local disponible, postventa en Magallanes sin traslados.</div>
-                </div>
-              </div>
-
-              <!-- Táctica -->
-              <div class="tactic-box">
-                <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-                <div>
-                  <div class="tactic-title">Siguiente acción concreta</div>
-                  <div class="tactic-text"><strong>Confirmar stock de embarcaciones HDPE y equipos de buceo antes del miércoles.</strong> Preparar propuesta destacando entrega express desde Punta Arenas + técnico en terreno incluido. No bajar precio.</div>
-                </div>
-              </div>
-
-              <!-- I. Argumento para el jefe -->
-              <div class="boss-box">
-                <div class="boss-ico">🎯</div>
-                <div>
-                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
-                  <div class="boss-text">"Esta oportunidad defiende el territorio Magallanes frente a Dimarsa en el rubro principal de Recasur. Si se adjudica, representa $185M CLP en pipeline de alta probabilidad — nuestro mayor ticket del mes."</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Pipeline status -->
-            <div class="pipeline-bar">
-              <span class="pipeline-status-badge ps-review">Revisando bases</span>
-              <div class="pipeline-action">
-                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                Confirmar stock y preparar oferta
-              </div>
-              <div class="pipeline-deadline urgent">Límite interno: miérc 29/04</div>
+            <div style="font-size:12px;color:var(--z400);font-family:'Geist Mono',monospace;">
+              Conectando con Mercado Público Chile
             </div>
           </div>
 
-          <!-- ══ 2 · GOBERNACIÓN MARÍTIMA · POSTULAR SÍ ══ -->
-          <div class="opp-card fade-up"
-               data-decision="go" data-dimarsa="false" data-magallanes="true"
-               data-buyer="frecuente" data-days="12" data-amount="78"
-               data-search="gobernacion maritima punta arenas compresor regulador buceo">
-
-            <div class="decision-header">
-              <div class="decision-badge go">
-                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                Postular sí o sí
-              </div>
-              <div class="decision-reason">
-                <strong>Magallanes + náutico fuerte + sin competidores identificados.</strong> La tuya. Prepara y postula.
-              </div>
-              <div class="score-compact">
-                <div class="score-number">89</div>
-                <div class="score-label-sm">SCORE</div>
-                <div class="score-bar-sm"><div class="score-fill-sm" style="width:89%"></div></div>
-              </div>
-            </div>
-
-            <div class="card-body">
-              <div class="card-meta">
-                <span class="card-code"><span class="org">Gobernación Marítima Punta Arenas</span> · 3342-45-LE25</span>
-                <div class="card-tags">
-                  <span class="tag green">Magallanes</span>
-                  <span class="tag blue">Sin competencia detectada</span>
-                </div>
-              </div>
-
-              <div class="card-title">Compresores de alta presión y reguladores de buceo para unidades navales</div>
-
-              <div class="subscores">
-                <div class="subscore-item">
-                  <span class="subscore-label">Fit comercial</span>
-                  <div class="subscore-ring high"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="10.68"/></svg>90</div>
-                  <div class="subscore-text">Rubro fuerte</div>
-                </div>
-                <div class="subscore-item">
-                  <span class="subscore-label">Prob. ganar</span>
-                  <div class="subscore-ring high"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="16.02"/></svg>85</div>
-                  <div class="subscore-text">Alta en Magallanes</div>
-                </div>
-                <div class="subscore-item">
-                  <span class="subscore-label">Valor econ.</span>
-                  <div class="subscore-ring mid"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="37.38"/></svg>65</div>
-                  <div class="subscore-text">$78M · bueno</div>
-                </div>
-                <div class="subscore-item">
-                  <span class="subscore-label">Riesgo oper.</span>
-                  <div class="subscore-ring high"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="21.36"/></svg>80</div>
-                  <div class="subscore-text">Riesgo bajo</div>
-                </div>
-              </div>
-
-              <div class="data-row">
-                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$78M CLP</div></div>
-                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv">12 días</div></div>
-                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv pos">Alta</div></div>
-                <div class="data-cell"><div class="dl">Margen est.</div><div class="dv pos">Alto</div></div>
-              </div>
-
-              <div class="buyer-row">
-                <div class="buyer-avatar">GM</div>
-                <div class="buyer-info">
-                  <div class="buyer-name">Gobernación Marítima Punta Arenas</div>
-                  <div class="buyer-desc">Organismo local. Alta afinidad con Recasur por cercanía y capacidad de soporte. Prioriza disponibilidad inmediata y soporte técnico en terreno.</div>
-                </div>
-                <div class="buyer-meta">
-                  <div class="buyer-freq">FRECUENTE</div>
-                  <div class="buyer-ticket">Historial positivo</div>
-                </div>
-              </div>
-
-              <div class="tactic-box">
-                <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-                <div>
-                  <div class="tactic-title">Esta es tuya — prepara y postula</div>
-                  <div class="tactic-text"><strong>Confirmar stock disponible y plazo de entrega exacto.</strong> Propuesta estándar destacando soporte técnico local. No se detectan competidores — actúa antes que aparezcan.</div>
-                </div>
-              </div>
-
-              <div class="boss-box">
-                <div class="boss-ico">📊</div>
-                <div>
-                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
-                  <div class="boss-text">"Licitación de organismo local en rubro fuerte, sin competidores. Gestión proactiva detectó esta oportunidad a tiempo. Pipeline defendible de $78M en territorio Magallanes."</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pipeline-bar">
-              <span class="pipeline-status-badge ps-new">Nueva hoy</span>
-              <div class="pipeline-action">
-                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                Revisar bases y confirmar stock
-              </div>
-              <div class="pipeline-deadline">Límite interno: vier 01/05</div>
-            </div>
-          </div>
-
-          <!-- ══ 3 · ARMADA VHF · REVISAR MARGEN ══ -->
-          <div class="opp-card dimarsa fade-up"
-               data-decision="check" data-dimarsa="true" data-magallanes="false"
-               data-buyer="" data-days="14" data-amount="112"
-               data-search="armada chile vhf uhf hf radio maritima comunicaciones">
-
-            <div class="decision-header">
-              <div class="decision-badge check">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                Revisar margen antes de avanzar
-              </div>
-              <div class="decision-reason">
-                Rubro débil históricamente + Dimarsa compite + monto alto. <strong>No descartar, pero verificar margen y stock antes de comprometerse.</strong>
-              </div>
-              <div class="score-compact">
-                <div class="score-number">81</div>
-                <div class="score-label-sm">SCORE</div>
-                <div class="score-bar-sm"><div class="score-fill-sm" style="width:81%"></div></div>
-              </div>
-            </div>
-
-            <div class="card-body">
-              <div class="card-meta">
-                <span class="card-code"><span class="org">Armada de Chile · III Zona Naval</span> · 8821-12-LP25</span>
-                <div class="card-tags">
-                  <span class="tag red"><span class="blink"></span> Dimarsa</span>
-                  <span class="tag zinc">Comunic. · rubro débil</span>
-                </div>
-              </div>
-
-              <div class="card-title">Equipos de comunicación VHF, UHF y HF para unidades navales de la zona austral</div>
-
-              <div class="subscores">
-                <div class="subscore-item">
-                  <span class="subscore-label">Fit comercial</span>
-                  <div class="subscore-ring mid"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="42.72"/></svg>60</div>
-                  <div class="subscore-text">Rubro débil</div>
-                </div>
-                <div class="subscore-item">
-                  <span class="subscore-label">Prob. ganar</span>
-                  <div class="subscore-ring mid"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="53.40"/></svg>50</div>
-                  <div class="subscore-text">Dimarsa compite</div>
-                </div>
-                <div class="subscore-item">
-                  <span class="subscore-label">Valor econ.</span>
-                  <div class="subscore-ring high"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="16.02"/></svg>85</div>
-                  <div class="subscore-text">$112M · atractivo</div>
-                </div>
-                <div class="subscore-item">
-                  <span class="subscore-label">Riesgo oper.</span>
-                  <div class="subscore-ring low"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="17"/><circle class="fill" cx="22" cy="22" r="17" stroke-dasharray="106.81" stroke-dashoffset="74.76"/></svg>30</div>
-                  <div class="subscore-text">Riesgo alto</div>
-                </div>
-              </div>
-
-              <div class="data-row">
-                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$112M CLP</div></div>
-                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv">14 días</div></div>
-                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv warn">Media</div></div>
-                <div class="data-cell"><div class="dl">Riesgo</div><div class="dv urgent">Alto</div></div>
-              </div>
-
-              <div class="competitor-alert">
-                <div class="comp-alert-ico"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
-                <div class="comp-alert-body">
-                  <div class="comp-alert-title">Dimarsa · Kauffman detectados · comunicaciones</div>
-                  <div class="comp-alert-text">Rubro donde Recasur perdió más licitaciones el año pasado. Monto atractivo pero <strong>revisar si se tienen los equipos exactos que piden en bases técnicas</strong> antes de comprometer recursos en la propuesta.</div>
-                </div>
-              </div>
-
-              <div class="tactic-box">
-                <div class="tactic-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div>
-                <div>
-                  <div class="tactic-title">Revisar antes de postular</div>
-                  <div class="tactic-text"><strong>Verificar: ¿tiene Recasur el equipo exacto que especifican las bases técnicas?</strong> Si sí → postular destacando capacitación incluida y soporte técnico. Si no → pedir cotización a proveedor antes del jueves.</div>
-                </div>
-              </div>
-
-              <div class="boss-box">
-                <div class="boss-ico">⚠️</div>
-                <div>
-                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
-                  <div class="boss-text">"Oportunidad de $112M en comunicaciones — el sistema identificó que es rubro de riesgo alto. Se está evaluando técnicamente antes de postular para proteger el margen de Recasur."</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pipeline-bar">
-              <span class="pipeline-status-badge ps-review">Revisando bases técnicas</span>
-              <div class="pipeline-action">
-                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                Verificar stock de equipos VHF/UHF
-              </div>
-              <div class="pipeline-deadline urgent">Decisión antes: juev 30/04</div>
-            </div>
-          </div>
-
-          <!-- ══ 4 · MUNICIPALIDAD · POSTULAR SÍ ══ -->
-          <div class="opp-card fade-up"
-               data-decision="go" data-dimarsa="false" data-magallanes="true"
-               data-buyer="frecuente" data-days="22" data-amount="54"
-               data-search="municipalidad punta arenas chalecos salvavidas balsa ropa termica">
-
-            <div class="decision-header">
-              <div class="decision-badge go-stock">
-                <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Postular si hay stock
-              </div>
-              <div class="decision-reason">
-                Cliente muy frecuente en Magallanes + rubro fuerte. <strong>Confirmar stock de chalecos y balsas antes de comprometerse.</strong>
-              </div>
-              <div class="score-compact">
-                <div class="score-number">72</div>
-                <div class="score-label-sm">SCORE</div>
-                <div class="score-bar-sm"><div class="score-fill-sm" style="width:72%"></div></div>
-              </div>
-            </div>
-
-            <div class="card-body">
-              <div class="card-meta">
-                <span class="card-code"><span class="org">I. Municipalidad de Punta Arenas</span> · 2134-67-LQ25</span>
-                <div class="card-tags">
-                  <span class="tag green">Magallanes</span>
-                  <span class="tag gold">Cliente frecuente</span>
-                </div>
-              </div>
-
-              <div class="card-title">Reposición anual de chalecos salvavidas, balsas y ropa térmica para emergencias costeras</div>
-
-              <div class="data-row">
-                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$54M CLP</div></div>
-                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv">22 días</div></div>
-                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv pos">Alta</div></div>
-                <div class="data-cell"><div class="dl">Tiempo prep.</div><div class="dv pos">Suficiente</div></div>
-              </div>
-
-              <div class="buyer-row">
-                <div class="buyer-avatar">PA</div>
-                <div class="buyer-info">
-                  <div class="buyer-name">Municipalidad de Punta Arenas</div>
-                  <div class="buyer-desc">Comprador muy recurrente. Evalúa principalmente disponibilidad inmediata y precio competitivo. Historial de compra repetida a Recasur.</div>
-                </div>
-                <div class="buyer-meta">
-                  <div class="buyer-freq">MUY FRECUENTE</div>
-                  <div class="buyer-ticket">Compra recurrente</div>
-                </div>
-              </div>
-
-              <div class="tactic-box">
-                <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-                <div>
-                  <div class="tactic-title">Confirmar stock y postular</div>
-                  <div class="tactic-text"><strong>Verificar unidades de chalecos y balsas en bodega.</strong> Si hay stock → postular esta semana con propuesta estándar. 22 días es tiempo suficiente para preparar bien la oferta.</div>
-                </div>
-              </div>
-
-              <div class="boss-box">
-                <div class="boss-ico">🔄</div>
-                <div>
-                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
-                  <div class="boss-text">"Cliente recurrente de Magallanes en rubro fuerte. Gestión detectó la renovación anual a tiempo. Oportunidad de $54M con alta probabilidad de adjudicación."</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pipeline-bar">
-              <span class="pipeline-status-badge ps-new">Nueva hoy</span>
-              <div class="pipeline-action">
-                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                Verificar stock en bodega
-              </div>
-              <div class="pipeline-deadline">Límite interno: lun 04/05</div>
-            </div>
-          </div>
-
-          <!-- ══ 5 · GOPE · PEDIR COTIZACIÓN ══ -->
-          <div class="opp-card fade-up"
-               data-decision="check" data-dimarsa="false" data-magallanes="false"
-               data-buyer="" data-days="16" data-amount="42"
-               data-search="carabineros gope gps marino radar navegacion electronico">
-
-            <div class="decision-header">
-              <div class="decision-badge quote">
-                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                Pedir cotización a proveedor
-              </div>
-              <div class="decision-reason">
-                Electrónicos marítimos no es rubro fuerte. <strong>Antes de postular, confirmar que hay proveedor con precio competitivo.</strong>
-              </div>
-              <div class="score-compact">
-                <div class="score-number">64</div>
-                <div class="score-label-sm">SCORE</div>
-                <div class="score-bar-sm"><div class="score-fill-sm" style="width:64%"></div></div>
-              </div>
-            </div>
-
-            <div class="card-body">
-              <div class="card-meta">
-                <span class="card-code"><span class="org">GOPE Carabineros</span> · 5671-34-LE25</span>
-                <div class="card-tags">
-                  <span class="tag zinc">Electrónicos · rubro difícil</span>
-                  <span class="tag blue">Carabineros · frecuente</span>
-                </div>
-              </div>
-
-              <div class="card-title">GPS marino y radares de navegación para unidades de la OS-7</div>
-
-              <div class="data-row">
-                <div class="data-cell"><div class="dl">Monto estimado</div><div class="dv">$42M CLP</div></div>
-                <div class="data-cell"><div class="dl">Cierra en</div><div class="dv">16 días</div></div>
-                <div class="data-cell"><div class="dl">Prob. ganar</div><div class="dv warn">Media</div></div>
-                <div class="data-cell"><div class="dl">Margen est.</div><div class="dv warn">Desconocido</div></div>
-              </div>
-
-              <div class="tactic-box">
-                <div class="tactic-ico"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
-                <div>
-                  <div class="tactic-title">Pedir cotización hoy</div>
-                  <div class="tactic-text"><strong>Contactar proveedor de GPS/radares marítimos hoy mismo.</strong> Si la cotización llega con margen suficiente antes del jueves → postular. Si no → descartar sin perder tiempo.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pipeline-bar">
-              <span class="pipeline-status-badge ps-quoting">Cotizando proveedor</span>
-              <div class="pipeline-action">
-                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                Esperar cotización para decidir
-              </div>
-              <div class="pipeline-deadline urgent">Decisión antes: juev 30/04</div>
-            </div>
-          </div>
-
-          <!-- ══ 6 · VIALIDAD · DESCARTAR ══ -->
-          <div class="opp-card fade-up"
-               data-decision="discard" data-dimarsa="false" data-magallanes="false"
-               data-buyer="" data-days="28" data-amount="18"
-               data-search="vialidad valparaiso neumaticos lubricantes filtros">
-
-            <div class="decision-header">
-              <div class="decision-badge discard">
-                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                No pierdas tiempo aquí
-              </div>
-              <div class="decision-reason">
-                Fuera de Magallanes + monto bajo + rubro mixto + cliente no frecuente. <strong>No vale la pena preparar propuesta.</strong>
-              </div>
-              <div class="score-compact">
-                <div class="score-number">41</div>
-                <div class="score-label-sm">SCORE</div>
-                <div class="score-bar-sm"><div class="score-fill-sm" style="width:41%"></div></div>
-              </div>
-            </div>
-
-            <div class="card-body">
-              <div class="card-meta">
-                <span class="card-code"><span class="org">Dirección de Vialidad Valparaíso</span> · 9912-78-LE25</span>
-                <div class="card-tags">
-                  <span class="tag zinc">Fuera de Magallanes</span>
-                  <span class="tag zinc">Monto bajo · $18M</span>
-                </div>
-              </div>
-
-              <div class="card-title">Suministro de neumáticos, filtros y lubricantes para maquinaria vial</div>
-
-              <div class="tactic-box">
-                <div class="tactic-ico"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-                <div>
-                  <div class="tactic-title">Descartar y enfocarse en las prioritarias</div>
-                  <div class="tactic-text">Ticket bajo ($18M), fuera de región, rubro mixto. <strong>El tiempo que tomaría preparar esta propuesta es mejor invertirlo en INDESPA ($185M) o Gobernación Marítima ($78M).</strong></div>
-                </div>
-              </div>
-
-              <div class="boss-box">
-                <div class="boss-ico">🧠</div>
-                <div>
-                  <div class="boss-label">Qué mostrarle a Jorge Guic</div>
-                  <div class="boss-text">"El sistema identificó esta licitación como de bajo valor estratégico para Recasur. Se descartó proactivamente para concentrar recursos en oportunidades de mayor retorno en Magallanes."</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pipeline-bar">
-              <span class="pipeline-status-badge ps-discard">Descartada</span>
-              <div class="pipeline-action">Sin acción requerida</div>
-              <div class="pipeline-deadline">—</div>
-            </div>
-          </div>
-
-        </div>
-        <div class="empty-state" id="emptyState"><p>Sin resultados con este filtro. Intenta con otro.</p></div>
+                <div class="empty-state" id="emptyState"><p>Sin resultados con este filtro. Intenta con otro.</p></div>
       </div>
 
       <!-- ═══ ASIDE ═══ -->
@@ -2526,19 +2053,29 @@ async function cargarDatosReales() {
 }
 
 function actualizarKPIs(k) {
-  // Oportunidades hoy
-  const mvals = document.querySelectorAll('.metric-val');
-  if (mvals[0]) mvals[0].innerHTML = k.activas_hoy || 0;
-
-  // Pipeline en millones
+  const activas = k.activas_hoy || 0;
   const pipeline = k.pipeline_clp ? Math.round(k.pipeline_clp / 1000000) : 0;
-  if (mvals[1]) mvals[1].innerHTML = `$${pipeline}<span class="unit">M</span>`;
+  const magallanes = k.oportunidades_magallanes || 0;
+  const dimarsa = k.alertas_dimarsa || 0;
+  const cierranSemana = k.cierran_semana || 0;
 
-  // Magallanes
-  if (mvals[2]) mvals[2].innerHTML = k.oportunidades_magallanes || 0;
+  const el1 = document.getElementById('kpi-activas');
+  const el2 = document.getElementById('kpi-pipeline');
+  const el3 = document.getElementById('kpi-magallanes');
+  const el4 = document.getElementById('kpi-dimarsa');
+  const ctx1 = document.getElementById('kpi-activas-ctx');
+  const ctx2 = document.getElementById('kpi-pipeline-ctx');
 
-  // Dimarsa
-  if (mvals[3]) mvals[3].innerHTML = k.alertas_dimarsa || 0;
+  if (el1) el1.innerHTML = activas;
+  if (el2) el2.innerHTML = `$${pipeline}<span class="unit">M</span>`;
+  if (el3) el3.innerHTML = magallanes;
+  if (el4) el4.innerHTML = dimarsa;
+  if (ctx1) ctx1.innerHTML = cierranSemana > 0
+    ? `<span class="down">↑ ${cierranSemana} cierran esta semana</span>`
+    : `${activas} activas hoy`;
+  if (ctx2) ctx2.innerHTML = pipeline > 0
+    ? `<span class="up">Pipeline en curso</span>`
+    : `Sin pipeline activo`;
 }
 
 function actualizarDayBlock(k) {
@@ -2548,22 +2085,35 @@ function actualizarDayBlock(k) {
   const mag = k.oportunidades_magallanes || 0;
   const pipeline = k.pipeline_clp ? Math.round(k.pipeline_clp / 1000000) : 0;
 
+  // Fecha de hoy
+  const now = new Date();
+  const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const greeting = document.getElementById('dayGreeting');
+  if (greeting) greeting.textContent = `${dias[now.getDay()]} ${now.getDate()} de ${meses[now.getMonth()]}, ${now.getFullYear()} · buenos días`;
+
   // Headline
-  const headline = document.querySelector('.day-headline');
-  if (headline) {
-    headline.innerHTML = `Jorge, tienes <strong>${activas} oportunidades</strong><br>activas en este momento`;
-  }
+  const headline = document.getElementById('dayHeadline');
+  if (headline) headline.innerHTML = `Jorge, tienes <strong>${activas} oportunidades</strong><br>activas en este momento`;
 
-  // Stats
-  const stats = document.querySelectorAll('.day-stat div:last-child');
-  if (stats[0]) stats[0].innerHTML = `<strong>${dimarsa}</strong> con Dimarsa — acción urgente`;
-  if (stats[1]) stats[1].innerHTML = `<strong>${hot}</strong> para postular ya`;
-  if (stats[2]) stats[2].innerHTML = `<strong>${mag}</strong> en Magallanes — ventaja tuya`;
-  if (stats[3]) stats[3].innerHTML = `Pipeline total <strong>$${pipeline}M CLP</strong>`;
+  // Stats por ID
+  const sd = document.getElementById('statDimarsa');
+  const sh = document.getElementById('statHot');
+  const sm = document.getElementById('statMag');
+  const sp = document.getElementById('statPipeline');
+  if (sd) sd.innerHTML = `<strong>${dimarsa}</strong> con Dimarsa — acción urgente`;
+  if (sh) sh.innerHTML = `<strong>${hot}</strong> para postular ya`;
+  if (sm) sm.innerHTML = `<strong>${mag}</strong> en Magallanes — ventaja tuya`;
+  if (sp) sp.textContent = `$${pipeline}M CLP`;
 
-  // CTA
-  const cta = document.querySelector('.day-cta');
-  if (cta) cta.textContent = `Ver mis ${hot} prioridades →`;
+  // Deadline - buscar la que cierra más pronto
+  const cta = document.getElementById('dayCta');
+  if (cta) cta.textContent = `Ver mis ${hot > 0 ? hot : activas} prioridades →`;
+
+  const dl = document.getElementById('dayDeadlineText');
+  if (dl && dimarsa > 0) dl.innerHTML = `⚠️ ${dimarsa} alerta${dimarsa > 1 ? 's' : ''} Dimarsa activa${dimarsa > 1 ? 's' : ''}`;
+  else if (dl && hot > 0) dl.innerHTML = `⭐ ${hot} licitación${hot > 1 ? 'es' : ''} prioritaria${hot > 1 ? 's' : ''} hoy`;
+  else if (dl) dl.innerHTML = `📋 ${activas} licitaciones para revisar`;
 }
 
 function getDecisionBadge(score, dimarsa, dias) {
@@ -2703,6 +2253,12 @@ function renderLicitaciones(lics) {
           </div>
         </div>` : ''}
       </div>
+      <div style="padding:0 20px 14px;">
+        <a class="btn-mp" href="${lic.url_ficha || `https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=${lic.codigo_externo}`}" target="_blank" onclick="event.stopPropagation()">
+          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Ver ficha oficial en Mercado Público →
+        </a>
+      </div>
       <div class="pipeline-bar">
         <span class="pipeline-status-badge ${pipeline.cls}">${pipeline.label}</span>
         <div class="pipeline-action">
@@ -2713,13 +2269,53 @@ function renderLicitaciones(lics) {
       </div>
     `;
 
+    // Click handler — abre ficha en mercadopublico.cl
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('button') || e.target.closest('a')) return;
+      const url = lic.url_ficha || `https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=${lic.codigo_externo}`;
+      window.open(url, '_blank');
+    });
+
     lista.appendChild(card);
   });
+
+  // Ocultar loading state
+  const loadingState = document.getElementById('loadingState');
+  if (loadingState) loadingState.style.display = 'none';
 
   // Actualizar contador
   const total = lista.querySelectorAll('.opp-card').length;
   const rcEl = document.getElementById('resultCount');
   if (rcEl) rcEl.textContent = total;
+
+  // Actualizar chips con contadores reales
+  const totalDimarsa = lista.querySelectorAll('.opp-card[data-dimarsa="true"]').length;
+  const totalHot = lista.querySelectorAll('.opp-card[data-decision="go"]').length;
+  const totalMag = lista.querySelectorAll('.opp-card[data-magallanes="true"]').length;
+  const totalClosing = Array.from(lista.querySelectorAll('.opp-card')).filter(c => parseInt(c.dataset.days) <= 10 && parseInt(c.dataset.days) > 0).length;
+  const totalBuyer = lista.querySelectorAll('.opp-card[data-buyer="frecuente"]').length;
+
+  // Actualizar badge del nav móvil
+  const pillHoy = document.getElementById('navPillHoy');
+  const pillDim = document.getElementById('navPillDimarsa');
+  if (pillHoy) pillHoy.textContent = total;
+  if (pillDim) {
+    pillDim.textContent = totalDimarsa;
+    pillDim.style.display = totalDimarsa > 0 ? 'block' : 'none';
+  }
+
+  // Actualizar texto de chips con contadores
+  document.querySelectorAll('.chip[data-f]').forEach(chip => {
+    const f = chip.dataset.f;
+    const cnt = chip.querySelector('.cnt');
+    if (!cnt) return;
+    if (f === 'all') cnt.textContent = total;
+    else if (f === 'dimarsa') cnt.textContent = totalDimarsa;
+    else if (f === 'go') cnt.textContent = totalHot;
+    else if (f === 'magallanes') cnt.textContent = totalMag;
+    else if (f === 'closing') cnt.textContent = totalClosing;
+    else if (f === 'buyer') cnt.textContent = totalBuyer;
+  });
 
   // Re-inicializar filtros con las nuevas cards
   initFiltros();
@@ -2770,6 +2366,40 @@ function initFiltros() {
     });
   });
 }
+
+// Click handler + botón para tarjetas demo (hardcodeadas)
+document.querySelectorAll('.opp-card[data-search]').forEach(card => {
+  card.style.cursor = 'pointer';
+
+  // Extraer código de la tarjeta
+  const codeEl = card.querySelector('.card-code, .opp-code');
+  if (codeEl) {
+    const text = codeEl.textContent;
+    const match = text.match(/[0-9A-Z]+-[0-9]+-[A-Z]+[0-9]+/);
+    if (match) {
+      const code = match[0];
+      const url = `https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=${code}`;
+
+      // Agregar botón antes del pipeline-bar
+      const pipelineBar = card.querySelector('.pipeline-bar');
+      if (pipelineBar && !card.querySelector('.btn-mp')) {
+        const btn = document.createElement('div');
+        btn.style.cssText = 'padding:0 20px 14px;';
+        btn.innerHTML = `<a class="btn-mp" href="${url}" target="_blank" onclick="event.stopPropagation()">
+          <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Ver ficha oficial en Mercado Público →
+        </a>`;
+        pipelineBar.parentNode.insertBefore(btn, pipelineBar);
+      }
+
+      // Click en toda la tarjeta también abre
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('button') || e.target.closest('a')) return;
+        window.open(url, '_blank');
+      });
+    }
+  }
+});
 
 // Iniciar carga de datos reales
 cargarDatosReales();
