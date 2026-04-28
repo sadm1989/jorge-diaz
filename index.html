@@ -1345,7 +1345,7 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
     <button class="nav-btn active">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
       Hoy
-      <span class="nav-badge gold">4</span>
+      <span class="nav-badge gold" id="badge-hoy">—</span>
     </button>
     <button class="nav-btn">
       <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
@@ -1510,11 +1510,11 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
     <div class="filter-section">
       <div class="filter-row">
         <span class="filter-lbl">Decisión</span>
-        <button class="chip active" data-f-type="decision" data-f="all">Todas <span class="cnt">6</span></button>
-        <button class="chip" data-f-type="decision" data-f="go"><span class="dot" style="background:var(--g500)"></span> Postular ya <span class="cnt">3</span></button>
-        <button class="chip" data-f-type="decision" data-f="check">Revisar margen <span class="cnt">1</span></button>
-        <button class="chip" data-f-type="decision" data-f="risk">Alto riesgo <span class="cnt">1</span></button>
-        <button class="chip" data-f-type="decision" data-f="discard">Descartar <span class="cnt">1</span></button>
+        <button class="chip active" data-f-type="decision" data-f="all">Todas <span class="cnt">—</span></button>
+        <button class="chip" data-f-type="decision" data-f="go"><span class="dot" style="background:var(--g500)"></span> Postular ya <span class="cnt">—</span></button>
+        <button class="chip" data-f-type="decision" data-f="check">Revisar margen <span class="cnt">—</span></button>
+        <button class="chip" data-f-type="decision" data-f="risk">Alto riesgo <span class="cnt">—</span></button>
+        <button class="chip" data-f-type="decision" data-f="discard">Descartar <span class="cnt">—</span></button>
       </div>
       <div class="filter-row">
         <span class="filter-lbl">Ver por</span>
@@ -1532,7 +1532,7 @@ mark { background:var(--gold-lt); color:var(--gold); padding:0 2px; border-radiu
       <!-- LISTA DE OPORTUNIDADES -->
       <div>
         <div class="result-bar">
-          <span>Mostrando <strong id="resultCount">6</strong> de <strong>6</strong> oportunidades</span>
+          <span>Mostrando <strong id="resultCount">—</strong> licitaciones reales de hoy</span>
           <span>Ordenado por prioridad</span>
         </div>
 
@@ -1909,20 +1909,30 @@ const cards = document.querySelectorAll('.opp-card');
 const resultCountEl = document.getElementById('resultCount');
 const emptyState = document.getElementById('emptyState');
 
-let activeFilters = { decision: 'all', estado: 'all' };
+// ════════════════════════════════════════
+// SISTEMA DE FILTROS — funciona con cards dinámicas
+// ════════════════════════════════════════
+let activeFilters = { decision: 'all', estado: 'all2' };
+
+function getAllCards() {
+  return document.querySelectorAll('#oppList .opp-card');
+}
 
 function applyFilters() {
   const query = (document.getElementById('searchInput').value || '').toLowerCase();
+  const allCards = getAllCards();
   let visible = 0;
 
-  cards.forEach(card => {
-    const dec = card.dataset.decision;
+  allCards.forEach(card => {
+    const dec = card.dataset.decision || '';
     const dimarsa = card.dataset.dimarsa === 'true';
     const magallanes = card.dataset.magallanes === 'true';
-    const buyer = card.dataset.buyer;
-    const days = parseInt(card.dataset.days);
-    const search = (card.dataset.search || '') + ' ' + card.querySelector('.card-title').textContent.toLowerCase();
+    const buyer = card.dataset.buyer || '';
+    const days = parseInt(card.dataset.days) || 0;
+    const titleEl = card.querySelector('.card-title, .opp-title');
+    const search = (card.dataset.search || '') + ' ' + (titleEl ? titleEl.textContent.toLowerCase() : '');
 
+    // Filtro decisión
     let dMatch = true;
     const df = activeFilters.decision;
     if (df === 'go') dMatch = dec === 'go' || dec === 'go-stock';
@@ -1930,13 +1940,15 @@ function applyFilters() {
     else if (df === 'risk') dMatch = dec === 'risk';
     else if (df === 'discard') dMatch = dec === 'discard';
 
+    // Filtro estado
     let eMatch = true;
     const ef = activeFilters.estado;
     if (ef === 'dimarsa') eMatch = dimarsa;
     else if (ef === 'magallanes') eMatch = magallanes;
-    else if (ef === 'closing') eMatch = days <= 10;
+    else if (ef === 'closing') eMatch = days > 0 && days <= 7;
     else if (ef === 'buyer') eMatch = buyer === 'frecuente';
 
+    // Búsqueda texto
     const sMatch = !query || search.includes(query);
 
     if (dMatch && eMatch && sMatch) {
@@ -1947,20 +1959,33 @@ function applyFilters() {
     }
   });
 
-  resultCountEl.textContent = visible;
-  emptyState.classList.toggle('show', visible === 0);
+  const rcEl = document.getElementById('resultCount');
+  if (rcEl) rcEl.textContent = visible;
+
+  const emptyState = document.getElementById('emptyState');
+  if (emptyState) emptyState.classList.toggle('show', visible === 0 && allCards.length > 0);
 }
 
+// Inicializar chips
 document.querySelectorAll('.chip').forEach(chip => {
   chip.addEventListener('click', () => {
     const type = chip.dataset.fType;
     const val = chip.dataset.f;
-    document.querySelectorAll(`.chip[data-f-type="${type}"]`).forEach(c => c.classList.remove('active','red','green','gold'));
+
+    // Desactivar chips del mismo grupo
+    document.querySelectorAll(`.chip[data-f-type="${type}"]`).forEach(c => {
+      c.classList.remove('active','red','green','gold');
+    });
+
+    // Activar este chip
     chip.classList.add('active');
     if (val === 'dimarsa') chip.classList.add('red');
-    if (val === 'magallanes') chip.classList.add('green');
-    if (val === 'go') chip.classList.add('green');
-    activeFilters[type === 'decision' ? 'decision' : 'estado'] = val;
+    if (val === 'magallanes' || val === 'go') chip.classList.add('green');
+
+    // Guardar filtro activo
+    if (type === 'decision') activeFilters.decision = val;
+    else activeFilters.estado = val;
+
     applyFilters();
   });
 });
@@ -2151,6 +2176,9 @@ function renderLicitaciones(lics) {
   const lista = document.getElementById('oppList');
   if (!lista) return;
 
+  // LIMPIAR COMPLETAMENTE — eliminar loading state y cualquier dato previo
+  lista.innerHTML = '';
+
   // Agregar banner de datos reales
   const banner = document.createElement('div');
   banner.style.cssText = `
@@ -2322,49 +2350,8 @@ function renderLicitaciones(lics) {
 }
 
 function initFiltros() {
-  // Re-cachear cards incluyendo las nuevas de Supabase
-  const allCards = document.querySelectorAll('.opp-card');
-
-  document.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const type = chip.dataset.fType;
-      const val = chip.dataset.f;
-      document.querySelectorAll(`.chip[data-f-type="${type}"]`).forEach(c => c.classList.remove('active','red','green','gold'));
-      chip.classList.add('active');
-      if (val === 'dimarsa') chip.classList.add('red');
-      if (val === 'magallanes') chip.classList.add('green');
-      if (val === 'go') chip.classList.add('green');
-      activeFilters[type === 'decision' ? 'decision' : 'estado'] = val;
-
-      const query = (document.getElementById('searchInput').value || '').toLowerCase();
-      let visible = 0;
-      allCards.forEach(card => {
-        const dec = card.dataset.decision;
-        const dim = card.dataset.dimarsa === 'true';
-        const mag = card.dataset.magallanes === 'true';
-        const buyer = card.dataset.buyer;
-        const days = parseInt(card.dataset.days);
-        const search = (card.dataset.search || '') + ' ' + (card.querySelector('.card-title')?.textContent || '').toLowerCase();
-
-        let dMatch = activeFilters.decision === 'all' || dec === activeFilters.decision ||
-          (activeFilters.decision === 'go' && (dec === 'go' || dec === 'go-stock'));
-        let eMatch = true;
-        const ef = activeFilters.estado;
-        if (ef === 'dimarsa') eMatch = dim;
-        else if (ef === 'magallanes') eMatch = mag;
-        else if (ef === 'closing') eMatch = days <= 10 && days > 0;
-        else if (ef === 'buyer') eMatch = buyer === 'frecuente';
-
-        const sMatch = !query || search.includes(query);
-
-        if (dMatch && eMatch && sMatch) { card.classList.remove('hidden'); visible++; }
-        else { card.classList.add('hidden'); }
-      });
-
-      document.getElementById('resultCount').textContent = visible;
-      document.getElementById('emptyState').classList.toggle('show', visible === 0);
-    });
-  });
+  // Solo llama applyFilters — los chips ya tienen sus listeners
+  applyFilters();
 }
 
 // Click handler + botón para tarjetas demo (hardcodeadas)
